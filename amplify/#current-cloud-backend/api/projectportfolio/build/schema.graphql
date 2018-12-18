@@ -1,0 +1,249 @@
+type Accomplishment {
+  id: ID!
+  name: String!
+  date: Int!
+  company: String!
+  description: String!
+  categories: [AccomplishmentCategory]
+}
+
+type AccomplishmentCategory {
+  id: ID!
+  description: String!
+  category: Category!
+  tags: [Tag]
+}
+
+type Category {
+  id: ID!
+  name: String!
+  group: String
+  tags: [Tag]
+}
+
+type Tag {
+  id: ID!
+  name: String!
+  category: Category
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelAccomplishmentConnection {
+  items: [Accomplishment]
+  nextToken: String
+}
+
+input ModelStringFilterInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+}
+
+input ModelIDFilterInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+}
+
+input ModelIntFilterInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  contains: Int
+  notContains: Int
+  between: [Int]
+}
+
+input ModelFloatFilterInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  contains: Float
+  notContains: Float
+  between: [Float]
+}
+
+input ModelBooleanFilterInput {
+  ne: Boolean
+  eq: Boolean
+}
+
+input ModelAccomplishmentFilterInput {
+  id: ModelIDFilterInput
+  name: ModelStringFilterInput
+  date: ModelIntFilterInput
+  company: ModelStringFilterInput
+  description: ModelStringFilterInput
+  and: [ModelAccomplishmentFilterInput]
+  or: [ModelAccomplishmentFilterInput]
+  not: ModelAccomplishmentFilterInput
+}
+
+type Query {
+  getAccomplishment(id: ID!): Accomplishment
+  listAccomplishments(filter: ModelAccomplishmentFilterInput, limit: Int, nextToken: String): ModelAccomplishmentConnection
+  getAccomplishmentCategory(id: ID!): AccomplishmentCategory
+  listAccomplishmentCategorys(filter: ModelAccomplishmentCategoryFilterInput, limit: Int, nextToken: String): ModelAccomplishmentCategoryConnection
+  getCategory(id: ID!): Category
+  listCategorys(filter: ModelCategoryFilterInput, limit: Int, nextToken: String): ModelCategoryConnection
+  getTag(id: ID!): Tag
+  listTags(filter: ModelTagFilterInput, limit: Int, nextToken: String): ModelTagConnection
+}
+
+input CreateAccomplishmentInput {
+  id: ID
+  name: String!
+  date: Int!
+  company: String!
+  description: String!
+}
+
+input UpdateAccomplishmentInput {
+  id: ID!
+  name: String
+  date: Int
+  company: String
+  description: String
+}
+
+input DeleteAccomplishmentInput {
+  id: ID
+}
+
+type Mutation {
+  createAccomplishment(input: CreateAccomplishmentInput!): Accomplishment
+  updateAccomplishment(input: UpdateAccomplishmentInput!): Accomplishment
+  deleteAccomplishment(input: DeleteAccomplishmentInput!): Accomplishment
+  createAccomplishmentCategory(input: CreateAccomplishmentCategoryInput!): AccomplishmentCategory
+  updateAccomplishmentCategory(input: UpdateAccomplishmentCategoryInput!): AccomplishmentCategory
+  deleteAccomplishmentCategory(input: DeleteAccomplishmentCategoryInput!): AccomplishmentCategory
+  createCategory(input: CreateCategoryInput!): Category
+  updateCategory(input: UpdateCategoryInput!): Category
+  deleteCategory(input: DeleteCategoryInput!): Category
+  createTag(input: CreateTagInput!): Tag
+  updateTag(input: UpdateTagInput!): Tag
+  deleteTag(input: DeleteTagInput!): Tag
+}
+
+type Subscription {
+  onCreateAccomplishment: Accomplishment @aws_subscribe(mutations: ["createAccomplishment"])
+  onUpdateAccomplishment: Accomplishment @aws_subscribe(mutations: ["updateAccomplishment"])
+  onDeleteAccomplishment: Accomplishment @aws_subscribe(mutations: ["deleteAccomplishment"])
+  onCreateAccomplishmentCategory: AccomplishmentCategory @aws_subscribe(mutations: ["createAccomplishmentCategory"])
+  onUpdateAccomplishmentCategory: AccomplishmentCategory @aws_subscribe(mutations: ["updateAccomplishmentCategory"])
+  onDeleteAccomplishmentCategory: AccomplishmentCategory @aws_subscribe(mutations: ["deleteAccomplishmentCategory"])
+  onCreateCategory: Category @aws_subscribe(mutations: ["createCategory"])
+  onUpdateCategory: Category @aws_subscribe(mutations: ["updateCategory"])
+  onDeleteCategory: Category @aws_subscribe(mutations: ["deleteCategory"])
+  onCreateTag: Tag @aws_subscribe(mutations: ["createTag"])
+  onUpdateTag: Tag @aws_subscribe(mutations: ["updateTag"])
+  onDeleteTag: Tag @aws_subscribe(mutations: ["deleteTag"])
+}
+
+type ModelAccomplishmentCategoryConnection {
+  items: [AccomplishmentCategory]
+  nextToken: String
+}
+
+input ModelAccomplishmentCategoryFilterInput {
+  id: ModelIDFilterInput
+  description: ModelStringFilterInput
+  and: [ModelAccomplishmentCategoryFilterInput]
+  or: [ModelAccomplishmentCategoryFilterInput]
+  not: ModelAccomplishmentCategoryFilterInput
+}
+
+input CreateAccomplishmentCategoryInput {
+  id: ID
+  description: String!
+}
+
+input UpdateAccomplishmentCategoryInput {
+  id: ID!
+  description: String
+}
+
+input DeleteAccomplishmentCategoryInput {
+  id: ID
+}
+
+type ModelCategoryConnection {
+  items: [Category]
+  nextToken: String
+}
+
+input ModelCategoryFilterInput {
+  id: ModelIDFilterInput
+  name: ModelStringFilterInput
+  group: ModelStringFilterInput
+  and: [ModelCategoryFilterInput]
+  or: [ModelCategoryFilterInput]
+  not: ModelCategoryFilterInput
+}
+
+input CreateCategoryInput {
+  id: ID
+  name: String!
+  group: String
+}
+
+input UpdateCategoryInput {
+  id: ID!
+  name: String
+  group: String
+}
+
+input DeleteCategoryInput {
+  id: ID
+}
+
+type ModelTagConnection {
+  items: [Tag]
+  nextToken: String
+}
+
+input ModelTagFilterInput {
+  id: ModelIDFilterInput
+  name: ModelStringFilterInput
+  and: [ModelTagFilterInput]
+  or: [ModelTagFilterInput]
+  not: ModelTagFilterInput
+}
+
+input CreateTagInput {
+  id: ID
+  name: String!
+}
+
+input UpdateTagInput {
+  id: ID!
+  name: String
+}
+
+input DeleteTagInput {
+  id: ID
+}

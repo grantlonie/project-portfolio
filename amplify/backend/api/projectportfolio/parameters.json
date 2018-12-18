@@ -1,0 +1,13 @@
+{
+    "AppSyncApiName": "projectportfolio",
+    "AuthCognitoUserPoolId": {
+        "Fn::GetAtt": [
+            "authcognito4dbc173b",
+            "Outputs.UserPoolId"
+        ]
+    },
+    "schemaGraphql": "s3://projectportfolio-20181217165803-deployment/amplify-appsync-files/schema.graphql.1545090113945",
+    "ResolverBucket": "projectportfolio-20181217165803-deployment",
+    "ResolverRootKey": "amplify-appsync-files",
+    "DeploymentTimestamp": "1545090113945"
+}

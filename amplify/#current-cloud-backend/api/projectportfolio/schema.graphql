@@ -1,0 +1,28 @@
+type Accomplishment @model {
+	id: ID!
+	name: String!
+	date: Int!
+	company: String!
+	description: String!
+	categories: [AccomplishmentCategory]
+}
+
+type AccomplishmentCategory @model {
+	id: ID!
+	description: String!
+	category: Category!
+	tags: [Tag]
+}
+
+type Category @model {
+	id: ID!
+	name: String!
+	group: String
+	tags: [Tag]
+}
+
+type Tag @model {
+	id: ID!
+	name: String!
+	category: Category
+}
