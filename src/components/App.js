@@ -23,7 +23,15 @@ const PAGES = [
 ]
 
 class App extends Component {
-	state = { showDrawer: false }
+	constructor(props) {
+		super(props)
+
+		this.state = { showDrawer: false, userId: null }
+
+		Auth.currentUserInfo().then(data => {
+			this.setState({ userId: data.id })
+		})
+	}
 
 	handleLogout() {
 		Auth.signOut()
@@ -38,7 +46,7 @@ class App extends Component {
 	}
 
 	render() {
-		Auth.currentUserInfo().then(data => console.log(data))
+		const { userId, showDrawer } = this.state
 
 		return (
 			<Router>
@@ -63,7 +71,7 @@ class App extends Component {
 						</Toolbar>
 					</AppBar>
 
-					<Drawer open={this.state.showDrawer} onClose={this.toggleDrawer.bind(this)}>
+					<Drawer open={showDrawer} onClose={this.toggleDrawer.bind(this)}>
 						<div
 							tabIndex={0}
 							role="button"
@@ -79,8 +87,15 @@ class App extends Component {
 						</div>
 					</Drawer>
 
-					<Route exact path="/" component={() => <ListAccomplishments />} />
-					<Route path="/editAccomplishments" component={() => <EditAccomplishments />} />
+					<Route
+						exact
+						path="/"
+						component={() => (userId === null ? null : <ListAccomplishments userId={userId} />)}
+					/>
+					<Route
+						path="/editAccomplishments"
+						component={() => (userId === null ? null : <EditAccomplishments userId={userId} />)}
+					/>
 				</div>
 			</Router>
 		)

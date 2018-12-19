@@ -13,7 +13,11 @@ export default class ListAccomplishments extends Component {
 	}
 
 	async updateData() {
-		const { data } = await API.graphql(graphqlOperation(listAccomplishments))
+		const { data } = await API.graphql(
+			graphqlOperation(listAccomplishments, {
+				filter: { userId: { eq: this.props.userId } },
+			})
+		)
 		this.setState({ accomplishments: data.listAccomplishments.items })
 	}
 
