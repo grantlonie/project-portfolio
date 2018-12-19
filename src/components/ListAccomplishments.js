@@ -1,28 +1,9 @@
 import React, { Component } from 'react'
-import API, { graphqlOperation } from '@aws-amplify/api'
+import { connect } from 'react-redux'
 
-import { listAccomplishments } from '../graphql/queries'
-
-export default class ListAccomplishments extends Component {
-	constructor(props) {
-		super(props)
-
-		this.updateData()
-
-		this.state = { accomplishments: [] }
-	}
-
-	async updateData() {
-		const { data } = await API.graphql(
-			graphqlOperation(listAccomplishments, {
-				filter: { userId: { eq: this.props.userId } },
-			})
-		)
-		this.setState({ accomplishments: data.listAccomplishments.items })
-	}
-
+class ListAccomplishments extends Component {
 	render() {
-		const { accomplishments } = this.state
+		const { accomplishments } = this.props
 
 		if (accomplishments.length === 0) return <h3>Loading...</h3>
 
@@ -35,3 +16,7 @@ export default class ListAccomplishments extends Component {
 		)
 	}
 }
+
+const mapStateToProps = ({ accomplishments }) => ({ accomplishments })
+
+export default connect(mapStateToProps)(ListAccomplishments)

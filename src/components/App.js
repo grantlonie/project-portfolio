@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { Auth } from 'aws-amplify'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { withAuthenticator } from 'aws-amplify-react'
@@ -17,6 +18,8 @@ import MenuIcon from '@material-ui/icons/Menu'
 import ListAccomplishments from './ListAccomplishments'
 import EditAccomplishments from './EditAccomplishments'
 
+import { getAllData } from '../js/apiInterface'
+
 const PAGES = [
 	{ link: '/', text: 'List Accomplishments' },
 	{ link: '/editAccomplishments', text: 'Edit Accomplishments' },
@@ -26,11 +29,12 @@ class App extends Component {
 	constructor(props) {
 		super(props)
 
-		this.state = { showDrawer: false, userId: null }
-
-		Auth.currentUserInfo().then(data => {
-			this.setState({ userId: data.id })
+		// Get user and accomplisment data and update redux
+		getAllData().then(data => {
+			this.props.updateAllData(data)
 		})
+
+		this.state = { showDrawer: false }
 	}
 
 	handleLogout() {
@@ -46,7 +50,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { userId, showDrawer } = this.state
+		const { showDrawer } = this.state
 
 		return (
 			<Router>
@@ -87,19 +91,26 @@ class App extends Component {
 						</div>
 					</Drawer>
 
-					<Route
-						exact
-						path="/"
-						component={() => (userId === null ? null : <ListAccomplishments userId={userId} />)}
-					/>
-					<Route
-						path="/editAccomplishments"
-						component={() => (userId === null ? null : <EditAccomplishments userId={userId} />)}
-					/>
+					<Route exact path="/" component={() => <ListAccomplishments />} />
+
+					<Route path="/editAccomplishments" component={() => <EditAccomplishments />} />
 				</div>
 			</Router>
 		)
 	}
 }
 
-export default withAuthenticator(App)
+const mapDispatchToProps = dispatch => {
+	return {
+		updateAllData: data => {
+			dispatch({ type: 'UPDATE_ALL_DATA', ...data })
+		},
+	}
+}
+
+export default withAuthenticator(
+	connect(
+		null,
+		mapDispatchToProps
+	)(App)
+)
