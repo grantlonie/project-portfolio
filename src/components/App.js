@@ -38,6 +38,8 @@ class App extends Component {
 	}
 
 	render() {
+		Auth.currentUserInfo().then(data => console.log(data))
+
 		return (
 			<Router>
 				<div>

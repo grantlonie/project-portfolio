@@ -1,34 +1,64 @@
 // eslint-disable
 // this is an auto generated file. This will be overwritten
 
+export const getUser = `query GetUser($id: ID!) {
+  getUser(id: $id) {
+    id
+    APIkey
+    email
+  }
+}
+`;
+export const listUsers = `query ListUsers(
+  $filter: ModelUserFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      APIkey
+      email
+    }
+    nextToken
+  }
+}
+`;
 export const getAccomplishment = `query GetAccomplishment($id: ID!) {
   getAccomplishment(id: $id) {
     id
+    userId
     name
     date
     company
     description
     categories {
       id
+      userId
       description
       category {
         id
+        userId
         name
         group
         tags {
           id
+          userId
           name
         }
       }
       tags {
         id
+        userId
         name
         category {
           id
+          userId
           name
           group
           tags {
             id
+            userId
             name
           }
         }
@@ -45,31 +75,38 @@ export const listAccomplishments = `query ListAccomplishments(
   listAccomplishments(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      userId
       name
       date
       company
       description
       categories {
         id
+        userId
         description
         category {
           id
+          userId
           name
           group
           tags {
             id
+            userId
             name
           }
         }
         tags {
           id
+          userId
           name
           category {
             id
+            userId
             name
             group
             tags {
               id
+              userId
               name
             }
           }
@@ -83,25 +120,31 @@ export const listAccomplishments = `query ListAccomplishments(
 export const getAccomplishmentCategory = `query GetAccomplishmentCategory($id: ID!) {
   getAccomplishmentCategory(id: $id) {
     id
+    userId
     description
     category {
       id
+      userId
       name
       group
       tags {
         id
+        userId
         name
       }
     }
     tags {
       id
+      userId
       name
       category {
         id
+        userId
         name
         group
         tags {
           id
+          userId
           name
         }
       }
@@ -121,25 +164,31 @@ export const listAccomplishmentCategorys = `query ListAccomplishmentCategorys(
   ) {
     items {
       id
+      userId
       description
       category {
         id
+        userId
         name
         group
         tags {
           id
+          userId
           name
         }
       }
       tags {
         id
+        userId
         name
         category {
           id
+          userId
           name
           group
           tags {
             id
+            userId
             name
           }
         }
@@ -152,17 +201,21 @@ export const listAccomplishmentCategorys = `query ListAccomplishmentCategorys(
 export const getCategory = `query GetCategory($id: ID!) {
   getCategory(id: $id) {
     id
+    userId
     name
     group
     tags {
       id
+      userId
       name
       category {
         id
+        userId
         name
         group
         tags {
           id
+          userId
           name
         }
       }
@@ -178,17 +231,21 @@ export const listCategorys = `query ListCategorys(
   listCategorys(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      userId
       name
       group
       tags {
         id
+        userId
         name
         category {
           id
+          userId
           name
           group
           tags {
             id
+            userId
             name
           }
         }
@@ -201,13 +258,16 @@ export const listCategorys = `query ListCategorys(
 export const getTag = `query GetTag($id: ID!) {
   getTag(id: $id) {
     id
+    userId
     name
     category {
       id
+      userId
       name
       group
       tags {
         id
+        userId
         name
       }
     }
@@ -218,13 +278,16 @@ export const listTags = `query ListTags($filter: ModelTagFilterInput, $limit: In
   listTags(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
+      userId
       name
       category {
         id
+        userId
         name
         group
         tags {
           id
+          userId
           name
         }
       }

@@ -1,5 +1,12 @@
+type User {
+  id: String!
+  APIkey: String
+  email: String
+}
+
 type Accomplishment {
   id: ID!
+  userId: String!
   name: String!
   date: Int!
   company: String!
@@ -9,6 +16,7 @@ type Accomplishment {
 
 type AccomplishmentCategory {
   id: ID!
+  userId: String!
   description: String!
   category: Category!
   tags: [Tag]
@@ -16,6 +24,7 @@ type AccomplishmentCategory {
 
 type Category {
   id: ID!
+  userId: String!
   name: String!
   group: String
   tags: [Tag]
@@ -23,6 +32,7 @@ type Category {
 
 type Tag {
   id: ID!
+  userId: String!
   name: String!
   category: Category
 }
@@ -32,8 +42,8 @@ enum ModelSortDirection {
   DESC
 }
 
-type ModelAccomplishmentConnection {
-  items: [Accomplishment]
+type ModelUserConnection {
+  items: [User]
   nextToken: String
 }
 
@@ -92,18 +102,18 @@ input ModelBooleanFilterInput {
   eq: Boolean
 }
 
-input ModelAccomplishmentFilterInput {
-  id: ModelIDFilterInput
-  name: ModelStringFilterInput
-  date: ModelIntFilterInput
-  company: ModelStringFilterInput
-  description: ModelStringFilterInput
-  and: [ModelAccomplishmentFilterInput]
-  or: [ModelAccomplishmentFilterInput]
-  not: ModelAccomplishmentFilterInput
+input ModelUserFilterInput {
+  id: ModelStringFilterInput
+  APIkey: ModelStringFilterInput
+  email: ModelStringFilterInput
+  and: [ModelUserFilterInput]
+  or: [ModelUserFilterInput]
+  not: ModelUserFilterInput
 }
 
 type Query {
+  getUser(id: ID!): User
+  listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
   getAccomplishment(id: ID!): Accomplishment
   listAccomplishments(filter: ModelAccomplishmentFilterInput, limit: Int, nextToken: String): ModelAccomplishmentConnection
   getAccomplishmentCategory(id: ID!): AccomplishmentCategory
@@ -114,27 +124,26 @@ type Query {
   listTags(filter: ModelTagFilterInput, limit: Int, nextToken: String): ModelTagConnection
 }
 
-input CreateAccomplishmentInput {
+input CreateUserInput {
   id: ID
-  name: String!
-  date: Int!
-  company: String!
-  description: String!
+  APIkey: String
+  email: String
 }
 
-input UpdateAccomplishmentInput {
-  id: ID!
-  name: String
-  date: Int
-  company: String
-  description: String
+input UpdateUserInput {
+  id: String!
+  APIkey: String
+  email: String
 }
 
-input DeleteAccomplishmentInput {
+input DeleteUserInput {
   id: ID
 }
 
 type Mutation {
+  createUser(input: CreateUserInput!): User
+  updateUser(input: UpdateUserInput!): User
+  deleteUser(input: DeleteUserInput!): User
   createAccomplishment(input: CreateAccomplishmentInput!): Accomplishment
   updateAccomplishment(input: UpdateAccomplishmentInput!): Accomplishment
   deleteAccomplishment(input: DeleteAccomplishmentInput!): Accomplishment
@@ -150,6 +159,9 @@ type Mutation {
 }
 
 type Subscription {
+  onCreateUser: User @aws_subscribe(mutations: ["createUser"])
+  onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
+  onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])
   onCreateAccomplishment: Accomplishment @aws_subscribe(mutations: ["createAccomplishment"])
   onUpdateAccomplishment: Accomplishment @aws_subscribe(mutations: ["updateAccomplishment"])
   onDeleteAccomplishment: Accomplishment @aws_subscribe(mutations: ["deleteAccomplishment"])
@@ -164,6 +176,45 @@ type Subscription {
   onDeleteTag: Tag @aws_subscribe(mutations: ["deleteTag"])
 }
 
+type ModelAccomplishmentConnection {
+  items: [Accomplishment]
+  nextToken: String
+}
+
+input ModelAccomplishmentFilterInput {
+  id: ModelIDFilterInput
+  userId: ModelStringFilterInput
+  name: ModelStringFilterInput
+  date: ModelIntFilterInput
+  company: ModelStringFilterInput
+  description: ModelStringFilterInput
+  and: [ModelAccomplishmentFilterInput]
+  or: [ModelAccomplishmentFilterInput]
+  not: ModelAccomplishmentFilterInput
+}
+
+input CreateAccomplishmentInput {
+  id: ID
+  userId: String!
+  name: String!
+  date: Int!
+  company: String!
+  description: String!
+}
+
+input UpdateAccomplishmentInput {
+  id: ID!
+  userId: String
+  name: String
+  date: Int
+  company: String
+  description: String
+}
+
+input DeleteAccomplishmentInput {
+  id: ID
+}
+
 type ModelAccomplishmentCategoryConnection {
   items: [AccomplishmentCategory]
   nextToken: String
@@ -171,6 +222,7 @@ type ModelAccomplishmentCategoryConnection {
 
 input ModelAccomplishmentCategoryFilterInput {
   id: ModelIDFilterInput
+  userId: ModelStringFilterInput
   description: ModelStringFilterInput
   and: [ModelAccomplishmentCategoryFilterInput]
   or: [ModelAccomplishmentCategoryFilterInput]
@@ -179,11 +231,13 @@ input ModelAccomplishmentCategoryFilterInput {
 
 input CreateAccomplishmentCategoryInput {
   id: ID
+  userId: String!
   description: String!
 }
 
 input UpdateAccomplishmentCategoryInput {
   id: ID!
+  userId: String
   description: String
 }
 
@@ -198,6 +252,7 @@ type ModelCategoryConnection {
 
 input ModelCategoryFilterInput {
   id: ModelIDFilterInput
+  userId: ModelStringFilterInput
   name: ModelStringFilterInput
   group: ModelStringFilterInput
   and: [ModelCategoryFilterInput]
@@ -207,12 +262,14 @@ input ModelCategoryFilterInput {
 
 input CreateCategoryInput {
   id: ID
+  userId: String!
   name: String!
   group: String
 }
 
 input UpdateCategoryInput {
   id: ID!
+  userId: String
   name: String
   group: String
 }
@@ -228,6 +285,7 @@ type ModelTagConnection {
 
 input ModelTagFilterInput {
   id: ModelIDFilterInput
+  userId: ModelStringFilterInput
   name: ModelStringFilterInput
   and: [ModelTagFilterInput]
   or: [ModelTagFilterInput]
@@ -236,11 +294,13 @@ input ModelTagFilterInput {
 
 input CreateTagInput {
   id: ID
+  userId: String!
   name: String!
 }
 
 input UpdateTagInput {
   id: ID!
+  userId: String
   name: String
 }
 

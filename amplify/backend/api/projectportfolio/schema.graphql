@@ -1,5 +1,12 @@
+type User @model {
+	id: String!
+	APIkey: String
+	email: String
+}
+
 type Accomplishment @model {
 	id: ID!
+	userId: String!
 	name: String!
 	date: Int!
 	company: String!
@@ -9,6 +16,7 @@ type Accomplishment @model {
 
 type AccomplishmentCategory @model {
 	id: ID!
+	userId: String!
 	description: String!
 	category: Category!
 	tags: [Tag]
@@ -16,6 +24,7 @@ type AccomplishmentCategory @model {
 
 type Category @model {
 	id: ID!
+	userId: String!
 	name: String!
 	group: String
 	tags: [Tag]
@@ -23,6 +32,7 @@ type Category @model {
 
 type Tag @model {
 	id: ID!
+	userId: String!
 	name: String!
 	category: Category
 }
