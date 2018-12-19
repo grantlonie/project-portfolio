@@ -4,7 +4,7 @@ import Amplify from '@aws-amplify/core'
 import '@aws-amplify/auth'
 
 import './index.css'
-import App from './App'
+import App from './components/App'
 import * as serviceWorker from './serviceWorker'
 import aws_exports from './aws-exports'
 

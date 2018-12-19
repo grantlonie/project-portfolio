@@ -2,9 +2,8 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { withAuthenticator } from 'aws-amplify-react'
 
-import ListAccomplishments from './components/ListAccomplishments'
-import EditAccomplishments from './components/EditAccomplishments'
-import './App.css'
+import ListAccomplishments from './ListAccomplishments'
+import EditAccomplishments from './EditAccomplishments'
 
 class App extends Component {
 	render() {
