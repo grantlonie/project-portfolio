@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { TextField, Typography } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
+
+import MainProps from './MainProps'
+import Categories from './Categories'
 
 class Edit extends Component {
 	constructor(props) {
@@ -37,7 +40,7 @@ class Edit extends Component {
 
 		if (!accomplishment) {
 			accomplishment = {
-				id: null,
+				id: '',
 				name: '',
 				date: Date.now(),
 				company: '',
@@ -55,14 +58,11 @@ class Edit extends Component {
 		}
 	}
 
-	handleChange({ target: { name, value } }) {
+	handleMainPropChange({ target: { name, value } }) {
 		this.setState({ [name]: value })
 	}
 
 	render() {
-		const { id, name, company, date, description, categories } = this.state
-		console.log('date: ', date)
-
 		return (
 			<div style={this.bodyStyle}>
 				<Typography variant="h3" gutterBottom>
@@ -70,64 +70,9 @@ class Edit extends Component {
 				</Typography>
 
 				<div style={this.contentStyle}>
-					<div id="col1">
-						<TextField
-							InputLabelProps={{
-								shrink: true,
-							}}
-							fullWidth
-							disabled
-							label="Id"
-							margin="normal"
-							name="id"
-							value={id}
-						/>
+					<MainProps category={this.state} handleChange={this.handleMainPropChange.bind(this)} />
 
-						<TextField
-							required
-							fullWidth
-							placeholder="Id name"
-							label="Name"
-							margin="normal"
-							name="name"
-							value={name}
-							onChange={this.handleChange.bind(this)}
-						/>
-
-						<TextField
-							required
-							fullWidth
-							label="Date"
-							type="date"
-							margin="normal"
-							name="date"
-							value={date}
-							onChange={this.handleChange.bind(this)}
-						/>
-
-						<TextField
-							required
-							fullWidth
-							label="Company"
-							margin="normal"
-							name="company"
-							value={company}
-							onChange={this.handleChange.bind(this)}
-						/>
-
-						<TextField
-							required
-							fullWidth
-							multiline
-							label="Description"
-							margin="normal"
-							name="description"
-							value={description}
-							onChange={this.handleChange.bind(this)}
-						/>
-					</div>
-
-					<div id="col1">hello</div>
+					<Categories accomplishmentCategories={this.state.categories} />
 				</div>
 			</div>
 		)

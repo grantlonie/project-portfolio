@@ -17,7 +17,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 
 import ListAccomplishments from './ListAccomplishments'
 import Accomplishments from './Accomplishments'
-import Edit from './Edit'
+import EditAccomplishment from './EditAccomplishment'
 
 import { getAllData } from '../js/apiInterface'
 
@@ -96,7 +96,7 @@ class App extends Component {
 
 					<Route path="/accomplishments" component={Accomplishments} />
 
-					<Route path="/edit/:id" component={Edit} />
+					<Route path="/editAccomplishment/:id" component={EditAccomplishment} />
 				</div>
 			</Router>
 		)

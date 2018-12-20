@@ -116,7 +116,7 @@ class Accomplishments extends Component {
 			field => field.description.toLowerCase().indexOf(this.state.filter) > -1
 		)
 
-		if (redirect) return <Redirect to={`edit/${redirect}`} />
+		if (redirect) return <Redirect to={`editAccomplishment/${redirect}`} />
 
 		return (
 			<div>
