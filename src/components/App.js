@@ -16,13 +16,14 @@ import {
 import MenuIcon from '@material-ui/icons/Menu'
 
 import ListAccomplishments from './ListAccomplishments'
-import EditAccomplishments from './EditAccomplishments'
+import Accomplishments from './Accomplishments'
+import Edit from './Edit'
 
 import { getAllData } from '../js/apiInterface'
 
-const PAGES = [
+const drawerLinks = [
 	{ link: '/', text: 'List Accomplishments' },
-	{ link: '/editAccomplishments', text: 'Edit Accomplishments' },
+	{ link: '/accomplishments', text: 'Accomplishments' },
 ]
 
 class App extends Component {
@@ -82,7 +83,7 @@ class App extends Component {
 							onClick={this.toggleDrawer.bind(this)}
 							onKeyDown={this.toggleDrawer.bind(this)}>
 							<List>
-								{PAGES.map(page => (
+								{drawerLinks.map(page => (
 									<Link key={page.text} to={page.link}>
 										<ListItem button>{page.text}</ListItem>
 									</Link>
@@ -91,9 +92,11 @@ class App extends Component {
 						</div>
 					</Drawer>
 
-					<Route exact path="/" component={() => <ListAccomplishments />} />
+					<Route exact path="/" component={ListAccomplishments} />
 
-					<Route path="/editAccomplishments" component={() => <EditAccomplishments />} />
+					<Route path="/accomplishments" component={Accomplishments} />
+
+					<Route path="/edit/:id" component={Edit} />
 				</div>
 			</Router>
 		)

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Table,
@@ -25,7 +26,7 @@ const headers = [
 	{ id: 'description', label: 'Description' },
 ]
 
-class EditAccomplishments extends Component {
+class Accomplishments extends Component {
 	constructor(props) {
 		super(props)
 
@@ -41,7 +42,12 @@ class EditAccomplishments extends Component {
 			orderBy: 'id',
 			order: 'asc',
 			filter: '',
+			redirect: null,
 		}
+	}
+
+	handleClickRow(id) {
+		this.setState({ redirect: id })
 	}
 
 	handleRequestSort = orderBy => {
@@ -104,11 +110,13 @@ class EditAccomplishments extends Component {
 
 	render() {
 		const { accomplishments, deleteAccomplishment, updateAccomplishment } = this.props
-		const { order, orderBy, page, filter } = this.state
+		const { order, orderBy, page, filter, redirect } = this.state
 
 		const filteredAccomplishments = accomplishments.filter(
 			field => field.description.toLowerCase().indexOf(this.state.filter) > -1
 		)
+
+		if (redirect) return <Redirect to={`edit/${redirect}`} />
 
 		return (
 			<div>
@@ -156,9 +164,8 @@ class EditAccomplishments extends Component {
 						{this.stableSort(filteredAccomplishments, this.getSorting(order, orderBy))
 							.slice(page * this.rowsPerPage, page * this.rowsPerPage + this.rowsPerPage)
 							.map(field => {
-								console.log('field: ', field)
 								return (
-									<TableRow hover key={field.id}>
+									<TableRow hover key={field.id} onClick={this.handleClickRow.bind(this, field.id)}>
 										<TableCell>{field.id}</TableCell>
 										<TableCell>{field.name}</TableCell>
 										<TableCell>{field.date}</TableCell>
@@ -191,4 +198,4 @@ class EditAccomplishments extends Component {
 
 const mapStateToProps = ({ accomplishments }) => ({ accomplishments })
 
-export default connect(mapStateToProps)(EditAccomplishments)
+export default connect(mapStateToProps)(Accomplishments)
