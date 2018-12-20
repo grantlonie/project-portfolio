@@ -1,26 +1,30 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { TextField, Typography } from '@material-ui/core'
+import { TextField, Typography, Button } from '@material-ui/core'
+
+import Typeahead from '../Typeahead'
 
 class Categories extends Component {
 	constructor(props) {
 		super(props)
 
-		this.state = { categoryFilter: '' }
+		this.state = { showAddCategoryButton: false }
 	}
 
-	handleCategoryFilterChange({ target: { value } }) {
-		this.setState({ categoryFilter: value })
+	handleAddCategory() {
+		const { showAddCategoryButton, categoryFilter } = this.state
+
+		if (showAddCategoryButton) {
+			this.props.addCategory(categoryFilter)
+		}
 	}
 
 	render() {
-		const { accomplishmentCategories, categoryFilter } = this.state
+		const { accomplishmentCategories, showAddCategoryButton } = this.state
 		const { categories } = this.props
 
-		if (categories) {
-			const categoryGroups = categories.map(category => category.group)
-			console.log('categoryGroups: ', categoryGroups)
-		}
+		const categoryGroups = categories.map(category => category.group)
+		console.log('categoryGroups: ', categoryGroups)
 
 		return (
 			<div>
@@ -30,12 +34,18 @@ class Categories extends Component {
 
 				{!categories ? null : categories.map(category => <div>hi</div>)}
 
-				<TextField
-					label="Add Category"
-					margin="normal"
-					value={categoryFilter}
-					onChange={this.handleCategoryFilterChange.bind(this)}
-				/>
+				<div style={{ display: 'flex' }}>
+					<Typeahead list={categories.map(i => i.name)} />
+					<Button
+						style={{ opacity: showAddCategoryButton ? '1' : '0' }}
+						disabled={!showAddCategoryButton}
+						size="small"
+						variant="contained"
+						color="primary"
+						onClick={this.handleAddCategory.bind(this)}>
+						Create
+					</Button>
+				</div>
 			</div>
 		)
 	}
@@ -45,8 +55,8 @@ const mapStateToProps = ({ categories }) => ({ categories })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		addCategory: data => {
-			dispatch({ type: 'ADD_CATEGORY', data })
+		addCategory: category => {
+			dispatch({ type: 'ADD_CATEGORY', category })
 		},
 	}
 }

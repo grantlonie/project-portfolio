@@ -11,6 +11,9 @@ const rootReducer = (state = initialState, action) => {
 			delete action.type
 			return { ...state, ...action }
 
+		case 'ADD_CATEGORY':
+			return { ...state, category: [...state.categories, action.category] }
+
 		default:
 			return state
 	}
