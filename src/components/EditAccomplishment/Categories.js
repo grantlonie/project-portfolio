@@ -1,14 +1,17 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { TextField, Typography, Button } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
+import { Typeahead } from 'react-bootstrap-typeahead'
+import 'react-bootstrap-typeahead/css/Typeahead.css'
+import API, { graphqlOperation } from '@aws-amplify/api'
 
-import Typeahead from '../Typeahead'
+import { createCategory } from '../../graphql/mutations'
 
 class Categories extends Component {
 	constructor(props) {
 		super(props)
 
-		this.state = { showAddCategoryButton: false }
+		this.typeaheadRef = React.createRef()
 	}
 
 	handleAddCategory() {
@@ -19,12 +22,28 @@ class Categories extends Component {
 		}
 	}
 
+	handleSelectedCategory(category) {
+		const { userId, addAccomplishmentCategory } = this.props
+
+		// New category created
+		if (category[0].customOption) {
+			API.graphql(
+				graphqlOperation(createCategory, { input: { userId, name: category[0].label } })
+			).then(({ data }) => {
+				addAccomplishmentCategory(data.createCategory.name)
+			})
+		} else {
+			addAccomplishmentCategory(category[0])
+		}
+
+		// clear typeahead input
+		this.typeaheadRef.current.instanceRef.clear()
+	}
+
 	render() {
-		const { accomplishmentCategories, showAddCategoryButton } = this.state
-		const { categories } = this.props
+		const { categories, accomplishmentCategories } = this.props
 
 		const categoryGroups = categories.map(category => category.group)
-		console.log('categoryGroups: ', categoryGroups)
 
 		return (
 			<div>
@@ -32,26 +51,25 @@ class Categories extends Component {
 					Categories
 				</Typography>
 
-				{!categories ? null : categories.map(category => <div>hi</div>)}
+				{!accomplishmentCategories
+					? null
+					: accomplishmentCategories.map(category => <div key={category}>{category}</div>)}
 
 				<div style={{ display: 'flex' }}>
-					<Typeahead list={categories.map(i => i.name)} />
-					<Button
-						style={{ opacity: showAddCategoryButton ? '1' : '0' }}
-						disabled={!showAddCategoryButton}
-						size="small"
-						variant="contained"
-						color="primary"
-						onClick={this.handleAddCategory.bind(this)}>
-						Create
-					</Button>
+					<Typeahead
+						options={categories.map(i => i.name)}
+						onChange={selected => this.handleSelectedCategory(selected)}
+						ref={this.typeaheadRef}
+						allowNew
+						clearButton
+					/>
 				</div>
 			</div>
 		)
 	}
 }
 
-const mapStateToProps = ({ categories }) => ({ categories })
+const mapStateToProps = ({ categories, userId }) => ({ categories, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {

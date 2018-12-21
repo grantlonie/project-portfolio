@@ -45,6 +45,7 @@ class Edit extends Component {
 				date: Date.now(),
 				company: '',
 				description: '',
+				categories: [],
 			}
 		}
 
@@ -62,6 +63,12 @@ class Edit extends Component {
 		this.setState({ [name]: value })
 	}
 
+	addAccomplishmentCategory(category) {
+		const categories = [...(this.state.categories || []), category]
+
+		this.setState({ categories })
+	}
+
 	render() {
 		return (
 			<div style={this.bodyStyle}>
@@ -72,7 +79,10 @@ class Edit extends Component {
 				<div style={this.contentStyle}>
 					<MainProps category={this.state} handleChange={this.handleMainPropChange.bind(this)} />
 
-					<Categories accomplishmentCategories={this.state.categories} />
+					<Categories
+						accomplishmentCategories={this.state.categories}
+						addAccomplishmentCategory={this.addAccomplishmentCategory.bind(this)}
+					/>
 				</div>
 			</div>
 		)

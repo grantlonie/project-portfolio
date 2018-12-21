@@ -12,7 +12,6 @@ import {
 	Tooltip,
 	TableSortLabel,
 	TextField,
-	Input,
 } from '@material-ui/core'
 
 import { createAccomplishment } from '../graphql/mutations'
@@ -109,7 +108,7 @@ class Accomplishments extends Component {
 	}
 
 	render() {
-		const { accomplishments, deleteAccomplishment, updateAccomplishment } = this.props
+		const { accomplishments } = this.props
 		const { order, orderBy, page, filter, redirect } = this.state
 
 		const filteredAccomplishments = accomplishments.filter(
