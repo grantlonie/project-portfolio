@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Typography } from '@material-ui/core'
+import { Typography, TextField } from '@material-ui/core'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import 'react-bootstrap-typeahead/css/Typeahead.css'
 import API, { graphqlOperation } from '@aws-amplify/api'
@@ -14,26 +14,20 @@ class Categories extends Component {
 		this.typeaheadRef = React.createRef()
 	}
 
-	handleAddCategory() {
-		const { showAddCategoryButton, categoryFilter } = this.state
-
-		if (showAddCategoryButton) {
-			this.props.addCategory(categoryFilter)
-		}
-	}
-
-	handleSelectedCategory(category) {
-		const { userId, addAccomplishmentCategory } = this.props
+	handleSelectedCategory(categoryName) {
+		const { userId, addAccomplishmentCategory, addCategoryToStore, categories } = this.props
 
 		// New category created
-		if (category[0].customOption) {
+		if (categoryName[0].customOption) {
 			API.graphql(
-				graphqlOperation(createCategory, { input: { userId, name: category[0].label } })
-			).then(({ data }) => {
-				addAccomplishmentCategory(data.createCategory.name)
+				graphqlOperation(createCategory, { input: { userId, name: categoryName[0].label } })
+			).then(({ data: { createCategory } }) => {
+				addCategoryToStore(createCategory)
+				addAccomplishmentCategory(createCategory)
 			})
 		} else {
-			addAccomplishmentCategory(category[0])
+			const category = categories.find(category => category.name === categoryName[0])
+			addAccomplishmentCategory(category)
 		}
 
 		// clear typeahead input
@@ -41,9 +35,38 @@ class Categories extends Component {
 	}
 
 	render() {
-		const { categories, accomplishmentCategories } = this.props
+		const { categories, accomplishmentCategories, handleDescriptionChange } = this.props
+
+		const unusedCategories = categories.filter(
+			category =>
+				(accomplishmentCategories || []).findIndex(
+					accCategory => accCategory.name === category.name
+				) === -1
+		)
 
 		const categoryGroups = categories.map(category => category.group)
+
+		const categoryData =
+			!accomplishmentCategories || accomplishmentCategories.length === 0 ? null : (
+				<div style={{ marginBottom: '30px' }}>
+					{accomplishmentCategories.map((category, categoryI) => (
+						<div key={category.name}>
+							<Typography variant="h6">{category.name}</Typography>
+
+							<TextField
+								fullWidth
+								multiline
+								variant="outlined"
+								label="Description"
+								style={{ margin: '5px 0 20px 0' }}
+								name="description"
+								value={category.description}
+								onChange={({ target: { value } }) => handleDescriptionChange(categoryI, value)}
+							/>
+						</div>
+					))}
+				</div>
+			)
 
 		return (
 			<div>
@@ -51,19 +74,16 @@ class Categories extends Component {
 					Categories
 				</Typography>
 
-				{!accomplishmentCategories
-					? null
-					: accomplishmentCategories.map(category => <div key={category}>{category}</div>)}
+				{categoryData}
 
-				<div style={{ display: 'flex' }}>
-					<Typeahead
-						options={categories.map(i => i.name)}
-						onChange={selected => this.handleSelectedCategory(selected)}
-						ref={this.typeaheadRef}
-						allowNew
-						clearButton
-					/>
-				</div>
+				<Typeahead
+					options={unusedCategories.map(i => i.name)}
+					onChange={selected => this.handleSelectedCategory(selected)}
+					ref={this.typeaheadRef}
+					placeholder="Add a category..."
+					allowNew
+					clearButton
+				/>
 			</div>
 		)
 	}
@@ -73,7 +93,7 @@ const mapStateToProps = ({ categories, userId }) => ({ categories, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		addCategory: category => {
+		addCategoryToStore: category => {
 			dispatch({ type: 'ADD_CATEGORY', category })
 		},
 	}

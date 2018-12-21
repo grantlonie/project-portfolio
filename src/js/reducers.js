@@ -14,9 +14,21 @@ const rootReducer = (state = initialState, action) => {
 		case 'ADD_CATEGORY':
 			return { ...state, category: [...state.categories, action.category] }
 
+		case 'UPDATE_ACCOMPLISHMENT':
+			return updateAccomplishment(state, action)
+
 		default:
 			return state
 	}
+}
+
+function updateAccomplishment(state, { accomplishment }) {
+	const accomplishments = [...state.accomplishments].map(stateAccomplishment => {
+		if (stateAccomplishment.id === accomplishment.id) return accomplishment
+		else return stateAccomplishment
+	})
+
+	return { ...state, accomplishments }
 }
 
 export default rootReducer
