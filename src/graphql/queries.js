@@ -32,37 +32,15 @@ export const getAccomplishment = `query GetAccomplishment($id: ID!) {
     date
     company
     description
-    categories {
-      id
-      userId
-      description
-      category {
+    skills {
+      items {
         id
         userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
+        description
+        skillId
+        toolIds
       }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
+      nextToken
     }
   }
 }
@@ -80,84 +58,45 @@ export const listAccomplishments = `query ListAccomplishments(
       date
       company
       description
-      categories {
-        id
-        userId
-        description
-        category {
+      skills {
+        items {
           id
           userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
+          description
+          skillId
+          toolIds
         }
-        tags {
-          id
-          userId
-          name
-          category {
-            id
-            userId
-            name
-            group
-            tags {
-              id
-              userId
-              name
-            }
-          }
-        }
+        nextToken
       }
     }
     nextToken
   }
 }
 `;
-export const getAccomplishmentCategory = `query GetAccomplishmentCategory($id: ID!) {
-  getAccomplishmentCategory(id: $id) {
+export const getAccomplishmentSkill = `query GetAccomplishmentSkill($id: ID!) {
+  getAccomplishmentSkill(id: $id) {
     id
     userId
+    accomplishment {
+      id
+      userId
+      name
+      date
+      company
+      description
+    }
     description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
+    skillId
+    toolIds
   }
 }
 `;
-export const listAccomplishmentCategorys = `query ListAccomplishmentCategorys(
-  $filter: ModelAccomplishmentCategoryFilterInput
+export const listAccomplishmentSkills = `query ListAccomplishmentSkills(
+  $filter: ModelAccomplishmentSkillFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  listAccomplishmentCategorys(
+  listAccomplishmentSkills(
     filter: $filter
     limit: $limit
     nextToken: $nextToken
@@ -165,34 +104,17 @@ export const listAccomplishmentCategorys = `query ListAccomplishmentCategorys(
     items {
       id
       userId
+      accomplishment {
+        id
+        userId
+        name
+        date
+        company
+        description
+      }
       description
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
+      skillId
+      toolIds
     }
     nextToken
   }
@@ -203,22 +125,13 @@ export const getCategory = `query GetCategory($id: ID!) {
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
@@ -233,30 +146,21 @@ export const listCategorys = `query ListCategorys(
       id
       userId
       name
-      group
-      tags {
-        id
-        userId
-        name
-        category {
+      skills {
+        items {
           id
           userId
           name
-          group
-          tags {
-            id
-            userId
-            name
-          }
         }
+        nextToken
       }
     }
     nextToken
   }
 }
 `;
-export const getTag = `query GetTag($id: ID!) {
-  getTag(id: $id) {
+export const getSkill = `query GetSkill($id: ID!) {
+  getSkill(id: $id) {
     id
     userId
     name
@@ -264,18 +168,24 @@ export const getTag = `query GetTag($id: ID!) {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
   }
 }
 `;
-export const listTags = `query ListTags($filter: ModelTagFilterInput, $limit: Int, $nextToken: String) {
-  listTags(filter: $filter, limit: $limit, nextToken: $nextToken) {
+export const listSkills = `query ListSkills(
+  $filter: ModelSkillFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listSkills(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
       userId
@@ -284,13 +194,48 @@ export const listTags = `query ListTags($filter: ModelTagFilterInput, $limit: In
         id
         userId
         name
-        group
-        tags {
+      }
+      tools {
+        items {
           id
           userId
           name
         }
+        nextToken
       }
+    }
+    nextToken
+  }
+}
+`;
+export const getTool = `query GetTool($id: ID!) {
+  getTool(id: $id) {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
+  }
+}
+`;
+export const listTools = `query ListTools(
+  $filter: ModelToolFilterInput
+  $limit: Int
+  $nextToken: String
+) {
+  listTools(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    items {
+      id
+      userId
+      skill {
+        id
+        userId
+        name
+      }
+      name
     }
     nextToken
   }

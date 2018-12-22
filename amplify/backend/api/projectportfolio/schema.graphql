@@ -4,35 +4,45 @@ type User @model {
 	email: String
 }
 
+# Dimension tables
 type Accomplishment @model {
 	id: ID!
 	userId: String!
 	name: String!
-	date: Int!
+	date: String!
 	company: String!
 	description: String!
-	categories: [AccomplishmentCategory]
+	skills: [AccomplishmentSkill]! @connection(name: "AccomplishmentSkills")
 }
 
-type AccomplishmentCategory @model {
+type AccomplishmentSkill @model {
 	id: ID!
 	userId: String!
+	accomplishment: Accomplishment! @connection(name: "AccomplishmentSkills")
 	description: String!
-	category: Category!
-	tags: [Tag]
+	skillId: String!
+	toolIds: [String]!
 }
 
+# Fact tables
 type Category @model {
 	id: ID!
 	userId: String!
 	name: String!
-	group: String
-	tags: [Tag]
+	skills: [Skill]! @connection(name: "CategorySkills")
 }
 
-type Tag @model {
+type Skill @model {
 	id: ID!
 	userId: String!
 	name: String!
-	category: Category
+	category: Category! @connection(name: "CategorySkills")
+	tools: [Tool]! @connection(name: "SkillTools")
+}
+
+type Tool @model {
+	id: ID!
+	userId: String!
+	skill: Skill! @connection(name: "SkillTools")
+	name: String!
 }

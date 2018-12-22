@@ -33,37 +33,15 @@ export const createAccomplishment = `mutation CreateAccomplishment($input: Creat
     date
     company
     description
-    categories {
-      id
-      userId
-      description
-      category {
+    skills {
+      items {
         id
         userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
+        description
+        skillId
+        toolIds
       }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
+      nextToken
     }
   }
 }
@@ -76,37 +54,15 @@ export const updateAccomplishment = `mutation UpdateAccomplishment($input: Updat
     date
     company
     description
-    categories {
-      id
-      userId
-      description
-      category {
+    skills {
+      items {
         id
         userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
+        description
+        skillId
+        toolIds
       }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
+      nextToken
     }
   }
 }
@@ -119,149 +75,70 @@ export const deleteAccomplishment = `mutation DeleteAccomplishment($input: Delet
     date
     company
     description
-    categories {
+    skills {
+      items {
+        id
+        userId
+        description
+        skillId
+        toolIds
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const createAccomplishmentSkill = `mutation CreateAccomplishmentSkill($input: CreateAccomplishmentSkillInput!) {
+  createAccomplishmentSkill(input: $input) {
+    id
+    userId
+    accomplishment {
       id
       userId
+      name
+      date
+      company
       description
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
     }
+    description
+    skillId
+    toolIds
   }
 }
 `;
-export const createAccomplishmentCategory = `mutation CreateAccomplishmentCategory(
-  $input: CreateAccomplishmentCategoryInput!
-) {
-  createAccomplishmentCategory(input: $input) {
+export const updateAccomplishmentSkill = `mutation UpdateAccomplishmentSkill($input: UpdateAccomplishmentSkillInput!) {
+  updateAccomplishmentSkill(input: $input) {
     id
     userId
+    accomplishment {
+      id
+      userId
+      name
+      date
+      company
+      description
+    }
     description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
+    skillId
+    toolIds
   }
 }
 `;
-export const updateAccomplishmentCategory = `mutation UpdateAccomplishmentCategory(
-  $input: UpdateAccomplishmentCategoryInput!
-) {
-  updateAccomplishmentCategory(input: $input) {
+export const deleteAccomplishmentSkill = `mutation DeleteAccomplishmentSkill($input: DeleteAccomplishmentSkillInput!) {
+  deleteAccomplishmentSkill(input: $input) {
     id
     userId
+    accomplishment {
+      id
+      userId
+      name
+      date
+      company
+      description
+    }
     description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
-  }
-}
-`;
-export const deleteAccomplishmentCategory = `mutation DeleteAccomplishmentCategory(
-  $input: DeleteAccomplishmentCategoryInput!
-) {
-  deleteAccomplishmentCategory(input: $input) {
-    id
-    userId
-    description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
+    skillId
+    toolIds
   }
 }
 `;
@@ -270,22 +147,13 @@ export const createCategory = `mutation CreateCategory($input: CreateCategoryInp
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
@@ -295,22 +163,13 @@ export const updateCategory = `mutation UpdateCategory($input: UpdateCategoryInp
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
@@ -320,28 +179,19 @@ export const deleteCategory = `mutation DeleteCategory($input: DeleteCategoryInp
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
 `;
-export const createTag = `mutation CreateTag($input: CreateTagInput!) {
-  createTag(input: $input) {
+export const createSkill = `mutation CreateSkill($input: CreateSkillInput!) {
+  createSkill(input: $input) {
     id
     userId
     name
@@ -349,18 +199,20 @@ export const createTag = `mutation CreateTag($input: CreateTagInput!) {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
   }
 }
 `;
-export const updateTag = `mutation UpdateTag($input: UpdateTagInput!) {
-  updateTag(input: $input) {
+export const updateSkill = `mutation UpdateSkill($input: UpdateSkillInput!) {
+  updateSkill(input: $input) {
     id
     userId
     name
@@ -368,18 +220,20 @@ export const updateTag = `mutation UpdateTag($input: UpdateTagInput!) {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
   }
 }
 `;
-export const deleteTag = `mutation DeleteTag($input: DeleteTagInput!) {
-  deleteTag(input: $input) {
+export const deleteSkill = `mutation DeleteSkill($input: DeleteSkillInput!) {
+  deleteSkill(input: $input) {
     id
     userId
     name
@@ -387,13 +241,54 @@ export const deleteTag = `mutation DeleteTag($input: DeleteTagInput!) {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
+  }
+}
+`;
+export const createTool = `mutation CreateTool($input: CreateToolInput!) {
+  createTool(input: $input) {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
+  }
+}
+`;
+export const updateTool = `mutation UpdateTool($input: UpdateToolInput!) {
+  updateTool(input: $input) {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
+  }
+}
+`;
+export const deleteTool = `mutation DeleteTool($input: DeleteToolInput!) {
+  deleteTool(input: $input) {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
   }
 }
 `;

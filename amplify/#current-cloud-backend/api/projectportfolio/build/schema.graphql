@@ -8,33 +8,41 @@ type Accomplishment {
   id: ID!
   userId: String!
   name: String!
-  date: Int!
+  date: String!
   company: String!
   description: String!
-  categories: [AccomplishmentCategory]
+  skills(filter: ModelAccomplishmentSkillFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelAccomplishmentSkillConnection
 }
 
-type AccomplishmentCategory {
+type AccomplishmentSkill {
   id: ID!
   userId: String!
+  accomplishment: Accomplishment!
   description: String!
-  category: Category!
-  tags: [Tag]
+  skillId: String!
+  toolIds: [String]!
 }
 
 type Category {
   id: ID!
   userId: String!
   name: String!
-  group: String
-  tags: [Tag]
+  skills(filter: ModelSkillFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelSkillConnection
 }
 
-type Tag {
+type Skill {
   id: ID!
   userId: String!
   name: String!
-  category: Category
+  category: Category!
+  tools(filter: ModelToolFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelToolConnection
+}
+
+type Tool {
+  id: ID!
+  userId: String!
+  skill: Skill!
+  name: String!
 }
 
 enum ModelSortDirection {
@@ -116,12 +124,14 @@ type Query {
   listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
   getAccomplishment(id: ID!): Accomplishment
   listAccomplishments(filter: ModelAccomplishmentFilterInput, limit: Int, nextToken: String): ModelAccomplishmentConnection
-  getAccomplishmentCategory(id: ID!): AccomplishmentCategory
-  listAccomplishmentCategorys(filter: ModelAccomplishmentCategoryFilterInput, limit: Int, nextToken: String): ModelAccomplishmentCategoryConnection
+  getAccomplishmentSkill(id: ID!): AccomplishmentSkill
+  listAccomplishmentSkills(filter: ModelAccomplishmentSkillFilterInput, limit: Int, nextToken: String): ModelAccomplishmentSkillConnection
   getCategory(id: ID!): Category
   listCategorys(filter: ModelCategoryFilterInput, limit: Int, nextToken: String): ModelCategoryConnection
-  getTag(id: ID!): Tag
-  listTags(filter: ModelTagFilterInput, limit: Int, nextToken: String): ModelTagConnection
+  getSkill(id: ID!): Skill
+  listSkills(filter: ModelSkillFilterInput, limit: Int, nextToken: String): ModelSkillConnection
+  getTool(id: ID!): Tool
+  listTools(filter: ModelToolFilterInput, limit: Int, nextToken: String): ModelToolConnection
 }
 
 input CreateUserInput {
@@ -147,15 +157,18 @@ type Mutation {
   createAccomplishment(input: CreateAccomplishmentInput!): Accomplishment
   updateAccomplishment(input: UpdateAccomplishmentInput!): Accomplishment
   deleteAccomplishment(input: DeleteAccomplishmentInput!): Accomplishment
-  createAccomplishmentCategory(input: CreateAccomplishmentCategoryInput!): AccomplishmentCategory
-  updateAccomplishmentCategory(input: UpdateAccomplishmentCategoryInput!): AccomplishmentCategory
-  deleteAccomplishmentCategory(input: DeleteAccomplishmentCategoryInput!): AccomplishmentCategory
+  createAccomplishmentSkill(input: CreateAccomplishmentSkillInput!): AccomplishmentSkill
+  updateAccomplishmentSkill(input: UpdateAccomplishmentSkillInput!): AccomplishmentSkill
+  deleteAccomplishmentSkill(input: DeleteAccomplishmentSkillInput!): AccomplishmentSkill
   createCategory(input: CreateCategoryInput!): Category
   updateCategory(input: UpdateCategoryInput!): Category
   deleteCategory(input: DeleteCategoryInput!): Category
-  createTag(input: CreateTagInput!): Tag
-  updateTag(input: UpdateTagInput!): Tag
-  deleteTag(input: DeleteTagInput!): Tag
+  createSkill(input: CreateSkillInput!): Skill
+  updateSkill(input: UpdateSkillInput!): Skill
+  deleteSkill(input: DeleteSkillInput!): Skill
+  createTool(input: CreateToolInput!): Tool
+  updateTool(input: UpdateToolInput!): Tool
+  deleteTool(input: DeleteToolInput!): Tool
 }
 
 type Subscription {
@@ -165,15 +178,18 @@ type Subscription {
   onCreateAccomplishment: Accomplishment @aws_subscribe(mutations: ["createAccomplishment"])
   onUpdateAccomplishment: Accomplishment @aws_subscribe(mutations: ["updateAccomplishment"])
   onDeleteAccomplishment: Accomplishment @aws_subscribe(mutations: ["deleteAccomplishment"])
-  onCreateAccomplishmentCategory: AccomplishmentCategory @aws_subscribe(mutations: ["createAccomplishmentCategory"])
-  onUpdateAccomplishmentCategory: AccomplishmentCategory @aws_subscribe(mutations: ["updateAccomplishmentCategory"])
-  onDeleteAccomplishmentCategory: AccomplishmentCategory @aws_subscribe(mutations: ["deleteAccomplishmentCategory"])
+  onCreateAccomplishmentSkill: AccomplishmentSkill @aws_subscribe(mutations: ["createAccomplishmentSkill"])
+  onUpdateAccomplishmentSkill: AccomplishmentSkill @aws_subscribe(mutations: ["updateAccomplishmentSkill"])
+  onDeleteAccomplishmentSkill: AccomplishmentSkill @aws_subscribe(mutations: ["deleteAccomplishmentSkill"])
   onCreateCategory: Category @aws_subscribe(mutations: ["createCategory"])
   onUpdateCategory: Category @aws_subscribe(mutations: ["updateCategory"])
   onDeleteCategory: Category @aws_subscribe(mutations: ["deleteCategory"])
-  onCreateTag: Tag @aws_subscribe(mutations: ["createTag"])
-  onUpdateTag: Tag @aws_subscribe(mutations: ["updateTag"])
-  onDeleteTag: Tag @aws_subscribe(mutations: ["deleteTag"])
+  onCreateSkill: Skill @aws_subscribe(mutations: ["createSkill"])
+  onUpdateSkill: Skill @aws_subscribe(mutations: ["updateSkill"])
+  onDeleteSkill: Skill @aws_subscribe(mutations: ["deleteSkill"])
+  onCreateTool: Tool @aws_subscribe(mutations: ["createTool"])
+  onUpdateTool: Tool @aws_subscribe(mutations: ["updateTool"])
+  onDeleteTool: Tool @aws_subscribe(mutations: ["deleteTool"])
 }
 
 type ModelAccomplishmentConnection {
@@ -185,7 +201,7 @@ input ModelAccomplishmentFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   name: ModelStringFilterInput
-  date: ModelIntFilterInput
+  date: ModelStringFilterInput
   company: ModelStringFilterInput
   description: ModelStringFilterInput
   and: [ModelAccomplishmentFilterInput]
@@ -197,7 +213,7 @@ input CreateAccomplishmentInput {
   id: ID
   userId: String!
   name: String!
-  date: Int!
+  date: String!
   company: String!
   description: String!
 }
@@ -206,7 +222,7 @@ input UpdateAccomplishmentInput {
   id: ID!
   userId: String
   name: String
-  date: Int
+  date: String
   company: String
   description: String
 }
@@ -215,33 +231,41 @@ input DeleteAccomplishmentInput {
   id: ID
 }
 
-type ModelAccomplishmentCategoryConnection {
-  items: [AccomplishmentCategory]
+type ModelAccomplishmentSkillConnection {
+  items: [AccomplishmentSkill]
   nextToken: String
 }
 
-input ModelAccomplishmentCategoryFilterInput {
+input ModelAccomplishmentSkillFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   description: ModelStringFilterInput
-  and: [ModelAccomplishmentCategoryFilterInput]
-  or: [ModelAccomplishmentCategoryFilterInput]
-  not: ModelAccomplishmentCategoryFilterInput
+  skillId: ModelStringFilterInput
+  toolIds: ModelStringFilterInput
+  and: [ModelAccomplishmentSkillFilterInput]
+  or: [ModelAccomplishmentSkillFilterInput]
+  not: ModelAccomplishmentSkillFilterInput
 }
 
-input CreateAccomplishmentCategoryInput {
+input CreateAccomplishmentSkillInput {
   id: ID
   userId: String!
   description: String!
+  skillId: String!
+  toolIds: [String]!
+  accomplishmentSkillAccomplishmentId: ID!
 }
 
-input UpdateAccomplishmentCategoryInput {
+input UpdateAccomplishmentSkillInput {
   id: ID!
   userId: String
   description: String
+  skillId: String
+  toolIds: [String]
+  accomplishmentSkillAccomplishmentId: ID
 }
 
-input DeleteAccomplishmentCategoryInput {
+input DeleteAccomplishmentSkillInput {
   id: ID
 }
 
@@ -254,7 +278,6 @@ input ModelCategoryFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   name: ModelStringFilterInput
-  group: ModelStringFilterInput
   and: [ModelCategoryFilterInput]
   or: [ModelCategoryFilterInput]
   not: ModelCategoryFilterInput
@@ -264,46 +287,78 @@ input CreateCategoryInput {
   id: ID
   userId: String!
   name: String!
-  group: String
 }
 
 input UpdateCategoryInput {
   id: ID!
   userId: String
   name: String
-  group: String
 }
 
 input DeleteCategoryInput {
   id: ID
 }
 
-type ModelTagConnection {
-  items: [Tag]
+type ModelSkillConnection {
+  items: [Skill]
   nextToken: String
 }
 
-input ModelTagFilterInput {
+input ModelSkillFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   name: ModelStringFilterInput
-  and: [ModelTagFilterInput]
-  or: [ModelTagFilterInput]
-  not: ModelTagFilterInput
+  and: [ModelSkillFilterInput]
+  or: [ModelSkillFilterInput]
+  not: ModelSkillFilterInput
 }
 
-input CreateTagInput {
+input CreateSkillInput {
   id: ID
   userId: String!
   name: String!
+  skillCategoryId: ID!
 }
 
-input UpdateTagInput {
+input UpdateSkillInput {
   id: ID!
   userId: String
   name: String
+  skillCategoryId: ID
 }
 
-input DeleteTagInput {
+input DeleteSkillInput {
+  id: ID
+}
+
+type ModelToolConnection {
+  items: [Tool]
+  nextToken: String
+}
+
+input ModelToolFilterInput {
+  id: ModelIDFilterInput
+  userId: ModelStringFilterInput
+  name: ModelStringFilterInput
+  and: [ModelToolFilterInput]
+  or: [ModelToolFilterInput]
+  not: ModelToolFilterInput
+}
+
+input CreateToolInput {
+  id: ID
+  userId: String!
+  name: String!
+  toolSkillId: ID!
+}
+
+input UpdateToolInput {
+  id: ID!
+  userId: String
+  name: String
+  toolSkillId: ID
+}
+
+input DeleteToolInput {
   id: ID
 }

@@ -1311,14 +1311,14 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "AccomplishmentCategoryTable": {
+        "AccomplishmentSkillTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "AccomplishmentCategory",
+                            "AccomplishmentSkill",
                             {
                                 "Fn::GetAtt": [
                                     "GraphQLAPI",
@@ -1338,6 +1338,10 @@
                     {
                         "AttributeName": "id",
                         "AttributeType": "S"
+                    },
+                    {
+                        "AttributeName": "accomplishmentSkillAccomplishmentId",
+                        "AttributeType": "S"
                     }
                 ],
                 "ProvisionedThroughput": {
@@ -1350,17 +1354,39 @@
                 },
                 "StreamSpecification": {
                     "StreamViewType": "NEW_AND_OLD_IMAGES"
-                }
+                },
+                "GlobalSecondaryIndexes": [
+                    {
+                        "IndexName": "gsi-AccomplishmentSkills",
+                        "KeySchema": [
+                            {
+                                "AttributeName": "accomplishmentSkillAccomplishmentId",
+                                "KeyType": "HASH"
+                            }
+                        ],
+                        "Projection": {
+                            "ProjectionType": "ALL"
+                        },
+                        "ProvisionedThroughput": {
+                            "ReadCapacityUnits": {
+                                "Ref": "DynamoDBModelTableReadIOPS"
+                            },
+                            "WriteCapacityUnits": {
+                                "Ref": "DynamoDBModelTableWriteIOPS"
+                            }
+                        }
+                    }
+                ]
             }
         },
-        "AccomplishmentCategoryIAMRole": {
+        "AccomplishmentSkillIAMRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "RoleName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "AccomplishmentCategoryTable",
+                            "AccomplishmentSkillTable",
                             "role",
                             {
                                 "Fn::GetAtt": [
@@ -1404,7 +1430,7 @@
                                     "Resource": [
                                         {
                                             "Fn::GetAtt": [
-                                                "AccomplishmentCategoryTable",
+                                                "AccomplishmentSkillTable",
                                                 "Arn"
                                             ]
                                         },
@@ -1414,7 +1440,7 @@
                                                 [
                                                     {
                                                         "Fn::GetAtt": [
-                                                            "AccomplishmentCategoryTable",
+                                                            "AccomplishmentSkillTable",
                                                             "Arn"
                                                         ]
                                                     },
@@ -1430,7 +1456,7 @@
                 ]
             }
         },
-        "AccomplishmentCategoryDataSource": {
+        "AccomplishmentSkillDataSource": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
                 "ApiId": {
@@ -1439,11 +1465,11 @@
                         "ApiId"
                     ]
                 },
-                "Name": "AccomplishmentCategoryTable",
+                "Name": "AccomplishmentSkillTable",
                 "Type": "AMAZON_DYNAMODB",
                 "ServiceRoleArn": {
                     "Fn::GetAtt": [
-                        "AccomplishmentCategoryIAMRole",
+                        "AccomplishmentSkillIAMRole",
                         "Arn"
                     ]
                 },
@@ -1456,7 +1482,7 @@
                                     ":",
                                     {
                                         "Fn::GetAtt": [
-                                            "AccomplishmentCategoryTable",
+                                            "AccomplishmentSkillTable",
                                             "Arn"
                                         ]
                                     }
@@ -1465,13 +1491,13 @@
                         ]
                     },
                     "TableName": {
-                        "Ref": "AccomplishmentCategoryTable"
+                        "Ref": "AccomplishmentSkillTable"
                     }
                 }
             },
-            "DependsOn": "AccomplishmentCategoryIAMRole"
+            "DependsOn": "AccomplishmentSkillIAMRole"
         },
-        "GetAccomplishmentCategoryResolver": {
+        "GetAccomplishmentSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1482,11 +1508,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentCategoryDataSource",
+                        "AccomplishmentSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "getAccomplishmentCategory",
+                "FieldName": "getAccomplishmentSkill",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1508,7 +1534,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getAccomplishmentCategory",
+                                                    "getAccomplishmentSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1542,7 +1568,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getAccomplishmentCategory",
+                                                    "getAccomplishmentSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1559,7 +1585,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "ListAccomplishmentCategoryResolver": {
+        "ListAccomplishmentSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1570,11 +1596,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentCategoryDataSource",
+                        "AccomplishmentSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "listAccomplishmentCategorys",
+                "FieldName": "listAccomplishmentSkills",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1596,7 +1622,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listAccomplishmentCategorys",
+                                                    "listAccomplishmentSkills",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1630,7 +1656,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listAccomplishmentCategorys",
+                                                    "listAccomplishmentSkills",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1647,7 +1673,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "CreateAccomplishmentCategoryResolver": {
+        "CreateAccomplishmentSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1658,11 +1684,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentCategoryDataSource",
+                        "AccomplishmentSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "createAccomplishmentCategory",
+                "FieldName": "createAccomplishmentSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1684,7 +1710,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createAccomplishmentCategory",
+                                                    "createAccomplishmentSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1718,7 +1744,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createAccomplishmentCategory",
+                                                    "createAccomplishmentSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1735,7 +1761,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "UpdateAccomplishmentCategoryResolver": {
+        "UpdateAccomplishmentSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1746,11 +1772,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentCategoryDataSource",
+                        "AccomplishmentSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "updateAccomplishmentCategory",
+                "FieldName": "updateAccomplishmentSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1772,7 +1798,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateAccomplishmentCategory",
+                                                    "updateAccomplishmentSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1806,7 +1832,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateAccomplishmentCategory",
+                                                    "updateAccomplishmentSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1823,7 +1849,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "DeleteAccomplishmentCategoryResolver": {
+        "DeleteAccomplishmentSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1834,11 +1860,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentCategoryDataSource",
+                        "AccomplishmentSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "deleteAccomplishmentCategory",
+                "FieldName": "deleteAccomplishmentSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1860,7 +1886,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteAccomplishmentCategory",
+                                                    "deleteAccomplishmentSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1894,7 +1920,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteAccomplishmentCategory",
+                                                    "deleteAccomplishmentSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2511,14 +2537,14 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "TagTable": {
+        "SkillTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "Tag",
+                            "Skill",
                             {
                                 "Fn::GetAtt": [
                                     "GraphQLAPI",
@@ -2538,6 +2564,10 @@
                     {
                         "AttributeName": "id",
                         "AttributeType": "S"
+                    },
+                    {
+                        "AttributeName": "skillCategoryId",
+                        "AttributeType": "S"
                     }
                 ],
                 "ProvisionedThroughput": {
@@ -2550,17 +2580,39 @@
                 },
                 "StreamSpecification": {
                     "StreamViewType": "NEW_AND_OLD_IMAGES"
-                }
+                },
+                "GlobalSecondaryIndexes": [
+                    {
+                        "IndexName": "gsi-CategorySkills",
+                        "KeySchema": [
+                            {
+                                "AttributeName": "skillCategoryId",
+                                "KeyType": "HASH"
+                            }
+                        ],
+                        "Projection": {
+                            "ProjectionType": "ALL"
+                        },
+                        "ProvisionedThroughput": {
+                            "ReadCapacityUnits": {
+                                "Ref": "DynamoDBModelTableReadIOPS"
+                            },
+                            "WriteCapacityUnits": {
+                                "Ref": "DynamoDBModelTableWriteIOPS"
+                            }
+                        }
+                    }
+                ]
             }
         },
-        "TagIAMRole": {
+        "SkillIAMRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "RoleName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "TagTable",
+                            "SkillTable",
                             "role",
                             {
                                 "Fn::GetAtt": [
@@ -2604,7 +2656,7 @@
                                     "Resource": [
                                         {
                                             "Fn::GetAtt": [
-                                                "TagTable",
+                                                "SkillTable",
                                                 "Arn"
                                             ]
                                         },
@@ -2614,7 +2666,7 @@
                                                 [
                                                     {
                                                         "Fn::GetAtt": [
-                                                            "TagTable",
+                                                            "SkillTable",
                                                             "Arn"
                                                         ]
                                                     },
@@ -2630,7 +2682,7 @@
                 ]
             }
         },
-        "TagDataSource": {
+        "SkillDataSource": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
                 "ApiId": {
@@ -2639,11 +2691,11 @@
                         "ApiId"
                     ]
                 },
-                "Name": "TagTable",
+                "Name": "SkillTable",
                 "Type": "AMAZON_DYNAMODB",
                 "ServiceRoleArn": {
                     "Fn::GetAtt": [
-                        "TagIAMRole",
+                        "SkillIAMRole",
                         "Arn"
                     ]
                 },
@@ -2656,7 +2708,7 @@
                                     ":",
                                     {
                                         "Fn::GetAtt": [
-                                            "TagTable",
+                                            "SkillTable",
                                             "Arn"
                                         ]
                                     }
@@ -2665,13 +2717,13 @@
                         ]
                     },
                     "TableName": {
-                        "Ref": "TagTable"
+                        "Ref": "SkillTable"
                     }
                 }
             },
-            "DependsOn": "TagIAMRole"
+            "DependsOn": "SkillIAMRole"
         },
-        "GetTagResolver": {
+        "GetSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -2682,11 +2734,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TagDataSource",
+                        "SkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "getTag",
+                "FieldName": "getSkill",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -2708,7 +2760,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getTag",
+                                                    "getSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2742,7 +2794,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getTag",
+                                                    "getSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2759,7 +2811,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "ListTagResolver": {
+        "ListSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -2770,11 +2822,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TagDataSource",
+                        "SkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "listTags",
+                "FieldName": "listSkills",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -2796,7 +2848,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listTags",
+                                                    "listSkills",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2830,7 +2882,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listTags",
+                                                    "listSkills",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2847,7 +2899,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "CreateTagResolver": {
+        "CreateSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -2858,11 +2910,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TagDataSource",
+                        "SkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "createTag",
+                "FieldName": "createSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -2884,7 +2936,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createTag",
+                                                    "createSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2918,7 +2970,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createTag",
+                                                    "createSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -2935,7 +2987,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "UpdateTagResolver": {
+        "UpdateSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -2946,11 +2998,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TagDataSource",
+                        "SkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "updateTag",
+                "FieldName": "updateSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -2972,7 +3024,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateTag",
+                                                    "updateSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -3006,7 +3058,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateTag",
+                                                    "updateSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -3023,7 +3075,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "DeleteTagResolver": {
+        "DeleteSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -3034,11 +3086,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "TagDataSource",
+                        "SkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "deleteTag",
+                "FieldName": "deleteSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -3060,7 +3112,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteTag",
+                                                    "deleteSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -3094,7 +3146,1161 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteTag",
+                                                    "deleteSkill",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "ToolTable": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+                "TableName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "Tool",
+                            {
+                                "Fn::GetAtt": [
+                                    "GraphQLAPI",
+                                    "ApiId"
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "KeySchema": [
+                    {
+                        "AttributeName": "id",
+                        "KeyType": "HASH"
+                    }
+                ],
+                "AttributeDefinitions": [
+                    {
+                        "AttributeName": "id",
+                        "AttributeType": "S"
+                    },
+                    {
+                        "AttributeName": "toolSkillId",
+                        "AttributeType": "S"
+                    }
+                ],
+                "ProvisionedThroughput": {
+                    "ReadCapacityUnits": {
+                        "Ref": "DynamoDBModelTableReadIOPS"
+                    },
+                    "WriteCapacityUnits": {
+                        "Ref": "DynamoDBModelTableWriteIOPS"
+                    }
+                },
+                "StreamSpecification": {
+                    "StreamViewType": "NEW_AND_OLD_IMAGES"
+                },
+                "GlobalSecondaryIndexes": [
+                    {
+                        "IndexName": "gsi-SkillTools",
+                        "KeySchema": [
+                            {
+                                "AttributeName": "toolSkillId",
+                                "KeyType": "HASH"
+                            }
+                        ],
+                        "Projection": {
+                            "ProjectionType": "ALL"
+                        },
+                        "ProvisionedThroughput": {
+                            "ReadCapacityUnits": {
+                                "Ref": "DynamoDBModelTableReadIOPS"
+                            },
+                            "WriteCapacityUnits": {
+                                "Ref": "DynamoDBModelTableWriteIOPS"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "ToolIAMRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+                "RoleName": {
+                    "Fn::Join": [
+                        "-",
+                        [
+                            "ToolTable",
+                            "role",
+                            {
+                                "Fn::GetAtt": [
+                                    "GraphQLAPI",
+                                    "ApiId"
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "AssumeRolePolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Principal": {
+                                "Service": "appsync.amazonaws.com"
+                            },
+                            "Action": "sts:AssumeRole"
+                        }
+                    ]
+                },
+                "Policies": [
+                    {
+                        "PolicyName": "DynamoDBAccess",
+                        "PolicyDocument": {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Action": [
+                                        "dynamodb:BatchGetItem",
+                                        "dynamodb:BatchWriteItem",
+                                        "dynamodb:PutItem",
+                                        "dynamodb:DeleteItem",
+                                        "dynamodb:GetItem",
+                                        "dynamodb:Scan",
+                                        "dynamodb:Query",
+                                        "dynamodb:UpdateItem"
+                                    ],
+                                    "Resource": [
+                                        {
+                                            "Fn::GetAtt": [
+                                                "ToolTable",
+                                                "Arn"
+                                            ]
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                "/",
+                                                [
+                                                    {
+                                                        "Fn::GetAtt": [
+                                                            "ToolTable",
+                                                            "Arn"
+                                                        ]
+                                                    },
+                                                    "*"
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        "ToolDataSource": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "Name": "ToolTable",
+                "Type": "AMAZON_DYNAMODB",
+                "ServiceRoleArn": {
+                    "Fn::GetAtt": [
+                        "ToolIAMRole",
+                        "Arn"
+                    ]
+                },
+                "DynamoDBConfig": {
+                    "AwsRegion": {
+                        "Fn::Select": [
+                            3,
+                            {
+                                "Fn::Split": [
+                                    ":",
+                                    {
+                                        "Fn::GetAtt": [
+                                            "ToolTable",
+                                            "Arn"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "TableName": {
+                        "Ref": "ToolTable"
+                    }
+                }
+            },
+            "DependsOn": "ToolIAMRole"
+        },
+        "GetToolResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "ToolDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "getTool",
+                "TypeName": "Query",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Query",
+                                                    "getTool",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Query",
+                                                    "getTool",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "ListToolResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "ToolDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "listTools",
+                "TypeName": "Query",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Query",
+                                                    "listTools",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Query",
+                                                    "listTools",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "CreateToolResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "ToolDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "createTool",
+                "TypeName": "Mutation",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Mutation",
+                                                    "createTool",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Mutation",
+                                                    "createTool",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "UpdateToolResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "ToolDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "updateTool",
+                "TypeName": "Mutation",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Mutation",
+                                                    "updateTool",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Mutation",
+                                                    "updateTool",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "DeleteToolResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "ToolDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "deleteTool",
+                "TypeName": "Mutation",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Mutation",
+                                                    "deleteTool",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Mutation",
+                                                    "deleteTool",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "AccomplishmentskillsResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "AccomplishmentSkillDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "skills",
+                "TypeName": "Accomplishment",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Accomplishment",
+                                                    "skills",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Accomplishment",
+                                                    "skills",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "AccomplishmentSkillaccomplishmentResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "AccomplishmentDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "accomplishment",
+                "TypeName": "AccomplishmentSkill",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "AccomplishmentSkill",
+                                                    "accomplishment",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "AccomplishmentSkill",
+                                                    "accomplishment",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "CategoryskillsResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "SkillDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "skills",
+                "TypeName": "Category",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Category",
+                                                    "skills",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Category",
+                                                    "skills",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "SkillcategoryResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "CategoryDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "category",
+                "TypeName": "Skill",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Skill",
+                                                    "category",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Skill",
+                                                    "category",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "SkilltoolsResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "ToolDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "tools",
+                "TypeName": "Skill",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Skill",
+                                                    "tools",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Skill",
+                                                    "tools",
+                                                    "response",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "DependsOn": "GraphQLSchema"
+        },
+        "ToolskillResolver": {
+            "Type": "AWS::AppSync::Resolver",
+            "Properties": {
+                "ApiId": {
+                    "Fn::GetAtt": [
+                        "GraphQLAPI",
+                        "ApiId"
+                    ]
+                },
+                "DataSourceName": {
+                    "Fn::GetAtt": [
+                        "SkillDataSource",
+                        "Name"
+                    ]
+                },
+                "FieldName": "skill",
+                "TypeName": "Tool",
+                "RequestMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Tool",
+                                                    "skill",
+                                                    "request",
+                                                    {
+                                                        "Ref": "DeploymentTimestamp"
+                                                    }
+                                                ]
+                                            ]
+                                        }
+                                    ]
+                                ]
+                            }
+                        ]
+                    ]
+                },
+                "ResponseMappingTemplateS3Location": {
+                    "Fn::Join": [
+                        "",
+                        [
+                            "s3://",
+                            {
+                                "Fn::Join": [
+                                    "/",
+                                    [
+                                        {
+                                            "Ref": "ResolverBucket"
+                                        },
+                                        {
+                                            "Ref": "ResolverRootKey"
+                                        },
+                                        {
+                                            "Fn::Join": [
+                                                ".",
+                                                [
+                                                    "Tool",
+                                                    "skill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"

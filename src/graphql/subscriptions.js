@@ -33,37 +33,15 @@ export const onCreateAccomplishment = `subscription OnCreateAccomplishment {
     date
     company
     description
-    categories {
-      id
-      userId
-      description
-      category {
+    skills {
+      items {
         id
         userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
+        description
+        skillId
+        toolIds
       }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
+      nextToken
     }
   }
 }
@@ -76,37 +54,15 @@ export const onUpdateAccomplishment = `subscription OnUpdateAccomplishment {
     date
     company
     description
-    categories {
-      id
-      userId
-      description
-      category {
+    skills {
+      items {
         id
         userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
+        description
+        skillId
+        toolIds
       }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
+      nextToken
     }
   }
 }
@@ -119,143 +75,70 @@ export const onDeleteAccomplishment = `subscription OnDeleteAccomplishment {
     date
     company
     description
-    categories {
+    skills {
+      items {
+        id
+        userId
+        description
+        skillId
+        toolIds
+      }
+      nextToken
+    }
+  }
+}
+`;
+export const onCreateAccomplishmentSkill = `subscription OnCreateAccomplishmentSkill {
+  onCreateAccomplishmentSkill {
+    id
+    userId
+    accomplishment {
       id
       userId
+      name
+      date
+      company
       description
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-      tags {
-        id
-        userId
-        name
-        category {
-          id
-          userId
-          name
-          group
-          tags {
-            id
-            userId
-            name
-          }
-        }
-      }
     }
+    description
+    skillId
+    toolIds
   }
 }
 `;
-export const onCreateAccomplishmentCategory = `subscription OnCreateAccomplishmentCategory {
-  onCreateAccomplishmentCategory {
+export const onUpdateAccomplishmentSkill = `subscription OnUpdateAccomplishmentSkill {
+  onUpdateAccomplishmentSkill {
     id
     userId
+    accomplishment {
+      id
+      userId
+      name
+      date
+      company
+      description
+    }
     description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
+    skillId
+    toolIds
   }
 }
 `;
-export const onUpdateAccomplishmentCategory = `subscription OnUpdateAccomplishmentCategory {
-  onUpdateAccomplishmentCategory {
+export const onDeleteAccomplishmentSkill = `subscription OnDeleteAccomplishmentSkill {
+  onDeleteAccomplishmentSkill {
     id
     userId
+    accomplishment {
+      id
+      userId
+      name
+      date
+      company
+      description
+    }
     description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
-  }
-}
-`;
-export const onDeleteAccomplishmentCategory = `subscription OnDeleteAccomplishmentCategory {
-  onDeleteAccomplishmentCategory {
-    id
-    userId
-    description
-    category {
-      id
-      userId
-      name
-      group
-      tags {
-        id
-        userId
-        name
-      }
-    }
-    tags {
-      id
-      userId
-      name
-      category {
-        id
-        userId
-        name
-        group
-        tags {
-          id
-          userId
-          name
-        }
-      }
-    }
+    skillId
+    toolIds
   }
 }
 `;
@@ -264,22 +147,13 @@ export const onCreateCategory = `subscription OnCreateCategory {
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
@@ -289,22 +163,13 @@ export const onUpdateCategory = `subscription OnUpdateCategory {
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
@@ -314,28 +179,19 @@ export const onDeleteCategory = `subscription OnDeleteCategory {
     id
     userId
     name
-    group
-    tags {
-      id
-      userId
-      name
-      category {
+    skills {
+      items {
         id
         userId
         name
-        group
-        tags {
-          id
-          userId
-          name
-        }
       }
+      nextToken
     }
   }
 }
 `;
-export const onCreateTag = `subscription OnCreateTag {
-  onCreateTag {
+export const onCreateSkill = `subscription OnCreateSkill {
+  onCreateSkill {
     id
     userId
     name
@@ -343,18 +199,20 @@ export const onCreateTag = `subscription OnCreateTag {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
   }
 }
 `;
-export const onUpdateTag = `subscription OnUpdateTag {
-  onUpdateTag {
+export const onUpdateSkill = `subscription OnUpdateSkill {
+  onUpdateSkill {
     id
     userId
     name
@@ -362,18 +220,20 @@ export const onUpdateTag = `subscription OnUpdateTag {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
   }
 }
 `;
-export const onDeleteTag = `subscription OnDeleteTag {
-  onDeleteTag {
+export const onDeleteSkill = `subscription OnDeleteSkill {
+  onDeleteSkill {
     id
     userId
     name
@@ -381,13 +241,54 @@ export const onDeleteTag = `subscription OnDeleteTag {
       id
       userId
       name
-      group
-      tags {
+    }
+    tools {
+      items {
         id
         userId
         name
       }
+      nextToken
     }
+  }
+}
+`;
+export const onCreateTool = `subscription OnCreateTool {
+  onCreateTool {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
+  }
+}
+`;
+export const onUpdateTool = `subscription OnUpdateTool {
+  onUpdateTool {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
+  }
+}
+`;
+export const onDeleteTool = `subscription OnDeleteTool {
+  onDeleteTool {
+    id
+    userId
+    skill {
+      id
+      userId
+      name
+    }
+    name
   }
 }
 `;
