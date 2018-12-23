@@ -1,8 +1,8 @@
 const initialState = {
 	userId: null,
 	accomplishments: [],
-	accomplishmentCategories: [],
-	categories: [],
+	allCategories: [],
+	allSkills: [],
 }
 
 const rootReducer = (state = initialState, action) => {
@@ -11,8 +11,8 @@ const rootReducer = (state = initialState, action) => {
 			delete action.type
 			return { ...state, ...action }
 
-		case 'ADD_CATEGORY':
-			return { ...state, category: [...state.categories, action.category] }
+		case 'ADD_SKILL':
+			return { ...state, allSkills: [...state.allSkills, action.skill] }
 
 		case 'UPDATE_ACCOMPLISHMENT':
 			return updateAccomplishment(state, action)

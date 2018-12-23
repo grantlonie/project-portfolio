@@ -4,8 +4,8 @@ import { Typography, Button } from '@material-ui/core'
 import API, { graphqlOperation } from '@aws-amplify/api'
 
 import MainProps from './MainProps'
-import Categories from './Categories'
-import { updateAccomplishment, updateCategory } from '../../graphql/mutations'
+import Skills from './Skills'
+import { updateAccomplishment } from '../../graphql/mutations'
 
 class Edit extends Component {
 	constructor(props) {
@@ -26,7 +26,7 @@ class Edit extends Component {
 			gridGap: '20px 20px',
 		}
 
-		this.state = { ...accomplishment, mainPropsAreUpdated: false, categoriesAreUpdated: false }
+		this.state = { ...accomplishment, mainPropsAreUpdated: false, skillsAreUpdated: false }
 	}
 
 	getAccomplishment() {
@@ -40,14 +40,17 @@ class Edit extends Component {
 		let accomplishment
 		if (id) accomplishment = accomplishments.find(i => i.id === id)
 
-		if (!accomplishment) {
+		if (accomplishment) {
+			// adjust skills array structure
+			accomplishment.skills = accomplishment.skills.items
+		} else {
 			accomplishment = {
 				id: '',
 				name: '',
 				date: Date.now(),
 				company: '',
 				description: '',
-				categories: [],
+				skills: [],
 			}
 		}
 
@@ -65,17 +68,32 @@ class Edit extends Component {
 		this.setState({ [name]: value, mainPropsAreUpdated: true })
 	}
 
-	addAccomplishmentCategory(category) {
-		const categories = [...(this.state.categories || []), category]
+	addSkill(skillId) {
+		const skills = [...(this.state.skills || []), { id: skillId, description: '' }]
 
-		this.setState({ categories, categoriesAreUpdated: true })
+		this.setState({ skills, skillsAreUpdated: true })
 	}
 
-	handleCategoryDescriptionChange(index, value) {
-		const newCategories = [...this.state.categories]
-		newCategories[index].description = value
+	addTool(skillId, toolId) {
+		const skills = JSON.parse(JSON.stringify(this.state.skills)).map(skill => {
+			if (skill.id === skillId) {
+				if (!skill.hasOwnProperty('toolIds')) skill.toolIds = []
+				skill.toolIds.push(toolId)
+			}
 
-		this.setState({ categories: newCategories, categoriesAreUpdated: true })
+			return skill
+		})
+
+		this.setState({ skills, skillsAreUpdated: true })
+	}
+
+	handleSkillDescriptionChange(skillId, value) {
+		const newSkills = this.state.skills.map(skill => {
+			if (skill.id === skillId) skill.description = value
+			return skill
+		})
+
+		this.setState({ skills: newSkills, skillsAreUpdated: true })
 	}
 
 	handleUpdateAccomplishment() {
@@ -85,14 +103,13 @@ class Edit extends Component {
 			date,
 			company,
 			description,
-			categories,
+			skills,
 			mainPropsAreUpdated,
-			categoriesAreUpdated,
+			skillsAreUpdated,
 		} = this.state
 		const { userId, updateAccomplishmentInStore } = this.props
 
 		if (mainPropsAreUpdated) {
-			console.log('mainPropsAreUpdated: ', mainPropsAreUpdated)
 			API.graphql(
 				graphqlOperation(updateAccomplishment, {
 					input: { id, userId, name, company, date, description },
@@ -102,21 +119,19 @@ class Edit extends Component {
 			})
 		}
 
-		if (categoriesAreUpdated) {
-			console.log('categoriesAreUpdated: ', categoriesAreUpdated)
-			categories.forEach(category => {
+		if (skillsAreUpdated) {
+			skills.forEach(skill => {
 				console.log(
 					'message:',
 					graphqlOperation(updateAccomplishment, {
-						input: { id, categories: { userId, description, category: { id: category.id } } },
+						input: { id, skills: { userId, description, skill: { id: skill.id } } },
 					})
 				)
 				API.graphql(
 					graphqlOperation(updateAccomplishment, {
-						input: { id, categories: { userId, description, category: { id: category.id } } },
+						input: { id, skills: { userId, description, skill: { id: skill.id } } },
 					})
 				).then(data => {
-					console.log('data: ', data)
 					// updateAccomplishmentInStore(updateAccomplishment)
 				})
 			})
@@ -125,7 +140,7 @@ class Edit extends Component {
 	}
 
 	render() {
-		const { mainPropsAreUpdated, categoriesAreUpdated, categories } = this.state
+		const { mainPropsAreUpdated, skillsAreUpdated, skills } = this.state
 
 		return (
 			<div style={this.bodyStyle}>
@@ -137,19 +152,23 @@ class Edit extends Component {
 					<Button
 						variant="contained"
 						color="secondary"
-						disabled={!mainPropsAreUpdated && !categoriesAreUpdated}
+						disabled={!mainPropsAreUpdated && !skillsAreUpdated}
 						onClick={this.handleUpdateAccomplishment.bind(this)}>
 						Update
 					</Button>
 				</div>
 
 				<div style={this.contentStyle}>
-					<MainProps category={this.state} handleChange={this.handleMainPropChange.bind(this)} />
+					<MainProps
+						accomplishment={this.state}
+						handleChange={this.handleMainPropChange.bind(this)}
+					/>
 
-					<Categories
-						accomplishmentCategories={categories}
-						addAccomplishmentCategory={this.addAccomplishmentCategory.bind(this)}
-						handleDescriptionChange={this.handleCategoryDescriptionChange.bind(this)}
+					<Skills
+						skills={skills}
+						addSkill={this.addSkill.bind(this)}
+						addTool={this.addTool.bind(this)}
+						handleDescriptionChange={this.handleSkillDescriptionChange.bind(this)}
 					/>
 				</div>
 			</div>

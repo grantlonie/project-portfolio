@@ -1,45 +1,50 @@
 import API, { graphqlOperation } from '@aws-amplify/api'
 import { Auth } from 'aws-amplify'
 
-import { listAccomplishments, listAccomplishmentCategorys, listCategorys } from '../graphql/queries'
+import { listAccomplishments, listCategorys, listSkills, listTools } from '../graphql/queries'
 
 function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
 }
 
-async function getAccomplishmentCategories(userId) {
-	const { data } = await API.graphql(
-		graphqlOperation(listAccomplishmentCategorys, {
-			filter: { userId: { eq: userId } },
-		})
-	)
-	return data.listAccomplishmentCategorys.items
-}
-
-async function getCategories(userId) {
-	const { data } = await API.graphql(
+export function getCategories(userId) {
+	return API.graphql(
 		graphqlOperation(listCategorys, {
 			filter: { userId: { eq: userId } },
 		})
-	)
-	return data.listCategorys.items
+	).then(data => data.data.listCategorys.items)
 }
 
-async function getAccomplishments(userId) {
-	const { data } = await API.graphql(
+function getSkills(userId) {
+	return API.graphql(
+		graphqlOperation(listSkills, {
+			filter: { userId: { eq: userId } },
+		})
+	).then(data => data.data.listSkills.items)
+}
+
+export function getTools(userId) {
+	return API.graphql(
+		graphqlOperation(listTools, {
+			filter: { userId: { eq: userId } },
+		})
+	).then(data => data.data.listTools.items)
+}
+
+function getAccomplishments(userId) {
+	return API.graphql(
 		graphqlOperation(listAccomplishments, {
 			filter: { userId: { eq: userId } },
 		})
-	)
-
-	return data.listAccomplishments.items
+	).then(data => data.data.listAccomplishments.items)
 }
 
 export async function getAllData() {
 	const userId = await getUserId()
-	const accomplishmentCategories = await getAccomplishmentCategories(userId)
-	const categories = await getCategories(userId)
 	const accomplishments = await getAccomplishments(userId)
+	const allSkills = await getSkills(userId)
 
-	return { userId, accomplishments, accomplishmentCategories, categories }
+	return { userId, accomplishments, allSkills }
 }
+
+export const generalCategoryId = '24d5c4be-4753-4e25-8ffe-ad8d899c4a6c'
