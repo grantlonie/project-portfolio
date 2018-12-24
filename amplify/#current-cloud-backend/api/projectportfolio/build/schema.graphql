@@ -4,20 +4,20 @@ type User {
   email: String
 }
 
-type Accomplishment {
+type Project {
   id: ID!
   userId: String!
   name: String!
   date: String!
-  company: String!
+  company: String
   description: String!
-  skills(filter: ModelAccomplishmentSkillFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelAccomplishmentSkillConnection
+  skills(filter: ModelProjectSkillFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelProjectSkillConnection
 }
 
-type AccomplishmentSkill {
+type ProjectSkill {
   id: ID!
   userId: String!
-  accomplishment: Accomplishment!
+  project: Project!
   description: String!
   skillId: String!
   toolIds: [String]!
@@ -34,7 +34,7 @@ type Skill {
   id: ID!
   userId: String!
   name: String!
-  category: Category!
+  category: Category
   tools(filter: ModelToolFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelToolConnection
 }
 
@@ -122,10 +122,10 @@ input ModelUserFilterInput {
 type Query {
   getUser(id: ID!): User
   listUsers(filter: ModelUserFilterInput, limit: Int, nextToken: String): ModelUserConnection
-  getAccomplishment(id: ID!): Accomplishment
-  listAccomplishments(filter: ModelAccomplishmentFilterInput, limit: Int, nextToken: String): ModelAccomplishmentConnection
-  getAccomplishmentSkill(id: ID!): AccomplishmentSkill
-  listAccomplishmentSkills(filter: ModelAccomplishmentSkillFilterInput, limit: Int, nextToken: String): ModelAccomplishmentSkillConnection
+  getProject(id: ID!): Project
+  listProjects(filter: ModelProjectFilterInput, limit: Int, nextToken: String): ModelProjectConnection
+  getProjectSkill(id: ID!): ProjectSkill
+  listProjectSkills(filter: ModelProjectSkillFilterInput, limit: Int, nextToken: String): ModelProjectSkillConnection
   getCategory(id: ID!): Category
   listCategorys(filter: ModelCategoryFilterInput, limit: Int, nextToken: String): ModelCategoryConnection
   getSkill(id: ID!): Skill
@@ -154,12 +154,12 @@ type Mutation {
   createUser(input: CreateUserInput!): User
   updateUser(input: UpdateUserInput!): User
   deleteUser(input: DeleteUserInput!): User
-  createAccomplishment(input: CreateAccomplishmentInput!): Accomplishment
-  updateAccomplishment(input: UpdateAccomplishmentInput!): Accomplishment
-  deleteAccomplishment(input: DeleteAccomplishmentInput!): Accomplishment
-  createAccomplishmentSkill(input: CreateAccomplishmentSkillInput!): AccomplishmentSkill
-  updateAccomplishmentSkill(input: UpdateAccomplishmentSkillInput!): AccomplishmentSkill
-  deleteAccomplishmentSkill(input: DeleteAccomplishmentSkillInput!): AccomplishmentSkill
+  createProject(input: CreateProjectInput!): Project
+  updateProject(input: UpdateProjectInput!): Project
+  deleteProject(input: DeleteProjectInput!): Project
+  createProjectSkill(input: CreateProjectSkillInput!): ProjectSkill
+  updateProjectSkill(input: UpdateProjectSkillInput!): ProjectSkill
+  deleteProjectSkill(input: DeleteProjectSkillInput!): ProjectSkill
   createCategory(input: CreateCategoryInput!): Category
   updateCategory(input: UpdateCategoryInput!): Category
   deleteCategory(input: DeleteCategoryInput!): Category
@@ -175,12 +175,12 @@ type Subscription {
   onCreateUser: User @aws_subscribe(mutations: ["createUser"])
   onUpdateUser: User @aws_subscribe(mutations: ["updateUser"])
   onDeleteUser: User @aws_subscribe(mutations: ["deleteUser"])
-  onCreateAccomplishment: Accomplishment @aws_subscribe(mutations: ["createAccomplishment"])
-  onUpdateAccomplishment: Accomplishment @aws_subscribe(mutations: ["updateAccomplishment"])
-  onDeleteAccomplishment: Accomplishment @aws_subscribe(mutations: ["deleteAccomplishment"])
-  onCreateAccomplishmentSkill: AccomplishmentSkill @aws_subscribe(mutations: ["createAccomplishmentSkill"])
-  onUpdateAccomplishmentSkill: AccomplishmentSkill @aws_subscribe(mutations: ["updateAccomplishmentSkill"])
-  onDeleteAccomplishmentSkill: AccomplishmentSkill @aws_subscribe(mutations: ["deleteAccomplishmentSkill"])
+  onCreateProject: Project @aws_subscribe(mutations: ["createProject"])
+  onUpdateProject: Project @aws_subscribe(mutations: ["updateProject"])
+  onDeleteProject: Project @aws_subscribe(mutations: ["deleteProject"])
+  onCreateProjectSkill: ProjectSkill @aws_subscribe(mutations: ["createProjectSkill"])
+  onUpdateProjectSkill: ProjectSkill @aws_subscribe(mutations: ["updateProjectSkill"])
+  onDeleteProjectSkill: ProjectSkill @aws_subscribe(mutations: ["deleteProjectSkill"])
   onCreateCategory: Category @aws_subscribe(mutations: ["createCategory"])
   onUpdateCategory: Category @aws_subscribe(mutations: ["updateCategory"])
   onDeleteCategory: Category @aws_subscribe(mutations: ["deleteCategory"])
@@ -192,33 +192,33 @@ type Subscription {
   onDeleteTool: Tool @aws_subscribe(mutations: ["deleteTool"])
 }
 
-type ModelAccomplishmentConnection {
-  items: [Accomplishment]
+type ModelProjectConnection {
+  items: [Project]
   nextToken: String
 }
 
-input ModelAccomplishmentFilterInput {
+input ModelProjectFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   name: ModelStringFilterInput
   date: ModelStringFilterInput
   company: ModelStringFilterInput
   description: ModelStringFilterInput
-  and: [ModelAccomplishmentFilterInput]
-  or: [ModelAccomplishmentFilterInput]
-  not: ModelAccomplishmentFilterInput
+  and: [ModelProjectFilterInput]
+  or: [ModelProjectFilterInput]
+  not: ModelProjectFilterInput
 }
 
-input CreateAccomplishmentInput {
+input CreateProjectInput {
   id: ID
   userId: String!
   name: String!
   date: String!
-  company: String!
+  company: String
   description: String!
 }
 
-input UpdateAccomplishmentInput {
+input UpdateProjectInput {
   id: ID!
   userId: String
   name: String
@@ -227,45 +227,45 @@ input UpdateAccomplishmentInput {
   description: String
 }
 
-input DeleteAccomplishmentInput {
+input DeleteProjectInput {
   id: ID
 }
 
-type ModelAccomplishmentSkillConnection {
-  items: [AccomplishmentSkill]
+type ModelProjectSkillConnection {
+  items: [ProjectSkill]
   nextToken: String
 }
 
-input ModelAccomplishmentSkillFilterInput {
+input ModelProjectSkillFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   description: ModelStringFilterInput
   skillId: ModelStringFilterInput
   toolIds: ModelStringFilterInput
-  and: [ModelAccomplishmentSkillFilterInput]
-  or: [ModelAccomplishmentSkillFilterInput]
-  not: ModelAccomplishmentSkillFilterInput
+  and: [ModelProjectSkillFilterInput]
+  or: [ModelProjectSkillFilterInput]
+  not: ModelProjectSkillFilterInput
 }
 
-input CreateAccomplishmentSkillInput {
+input CreateProjectSkillInput {
   id: ID
   userId: String!
   description: String!
   skillId: String!
   toolIds: [String]!
-  accomplishmentSkillAccomplishmentId: ID!
+  projectSkillProjectId: ID!
 }
 
-input UpdateAccomplishmentSkillInput {
+input UpdateProjectSkillInput {
   id: ID!
   userId: String
   description: String
   skillId: String
   toolIds: [String]
-  accomplishmentSkillAccomplishmentId: ID
+  projectSkillProjectId: ID
 }
 
-input DeleteAccomplishmentSkillInput {
+input DeleteProjectSkillInput {
   id: ID
 }
 
@@ -317,7 +317,7 @@ input CreateSkillInput {
   id: ID
   userId: String!
   name: String!
-  skillCategoryId: ID!
+  skillCategoryId: ID
 }
 
 input UpdateSkillInput {

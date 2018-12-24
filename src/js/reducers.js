@@ -1,6 +1,6 @@
 const initialState = {
 	userId: null,
-	accomplishments: [],
+	projects: [],
 	allCategories: [],
 	allSkills: [],
 }
@@ -14,21 +14,21 @@ const rootReducer = (state = initialState, action) => {
 		case 'ADD_SKILL':
 			return { ...state, allSkills: [...state.allSkills, action.skill] }
 
-		case 'UPDATE_ACCOMPLISHMENT':
-			return updateAccomplishment(state, action)
+		case 'UPDATE_PROJECT':
+			return updateProject(state, action)
 
 		default:
 			return state
 	}
 }
 
-function updateAccomplishment(state, { accomplishment }) {
-	const accomplishments = [...state.accomplishments].map(stateAccomplishment => {
-		if (stateAccomplishment.id === accomplishment.id) return accomplishment
-		else return stateAccomplishment
+function updateProject(state, { project }) {
+	const projects = [...state.projects].map(stateProject => {
+		if (stateProject.id === project.id) return project
+		else return stateProject
 	})
 
-	return { ...state, accomplishments }
+	return { ...state, projects }
 }
 
 export default rootReducer

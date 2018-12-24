@@ -25,8 +25,8 @@ export const deleteUser = `mutation DeleteUser($input: DeleteUserInput!) {
   }
 }
 `;
-export const createAccomplishment = `mutation CreateAccomplishment($input: CreateAccomplishmentInput!) {
-  createAccomplishment(input: $input) {
+export const createProject = `mutation CreateProject($input: CreateProjectInput!) {
+  createProject(input: $input) {
     id
     userId
     name
@@ -46,8 +46,8 @@ export const createAccomplishment = `mutation CreateAccomplishment($input: Creat
   }
 }
 `;
-export const updateAccomplishment = `mutation UpdateAccomplishment($input: UpdateAccomplishmentInput!) {
-  updateAccomplishment(input: $input) {
+export const updateProject = `mutation UpdateProject($input: UpdateProjectInput!) {
+  updateProject(input: $input) {
     id
     userId
     name
@@ -67,8 +67,8 @@ export const updateAccomplishment = `mutation UpdateAccomplishment($input: Updat
   }
 }
 `;
-export const deleteAccomplishment = `mutation DeleteAccomplishment($input: DeleteAccomplishmentInput!) {
-  deleteAccomplishment(input: $input) {
+export const deleteProject = `mutation DeleteProject($input: DeleteProjectInput!) {
+  deleteProject(input: $input) {
     id
     userId
     name
@@ -88,11 +88,11 @@ export const deleteAccomplishment = `mutation DeleteAccomplishment($input: Delet
   }
 }
 `;
-export const createAccomplishmentSkill = `mutation CreateAccomplishmentSkill($input: CreateAccomplishmentSkillInput!) {
-  createAccomplishmentSkill(input: $input) {
+export const createProjectSkill = `mutation CreateProjectSkill($input: CreateProjectSkillInput!) {
+  createProjectSkill(input: $input) {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name
@@ -106,11 +106,11 @@ export const createAccomplishmentSkill = `mutation CreateAccomplishmentSkill($in
   }
 }
 `;
-export const updateAccomplishmentSkill = `mutation UpdateAccomplishmentSkill($input: UpdateAccomplishmentSkillInput!) {
-  updateAccomplishmentSkill(input: $input) {
+export const updateProjectSkill = `mutation UpdateProjectSkill($input: UpdateProjectSkillInput!) {
+  updateProjectSkill(input: $input) {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name
@@ -124,11 +124,11 @@ export const updateAccomplishmentSkill = `mutation UpdateAccomplishmentSkill($in
   }
 }
 `;
-export const deleteAccomplishmentSkill = `mutation DeleteAccomplishmentSkill($input: DeleteAccomplishmentSkillInput!) {
-  deleteAccomplishmentSkill(input: $input) {
+export const deleteProjectSkill = `mutation DeleteProjectSkill($input: DeleteProjectSkillInput!) {
+  deleteProjectSkill(input: $input) {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name

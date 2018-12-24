@@ -1,7 +1,7 @@
 import API, { graphqlOperation } from '@aws-amplify/api'
 import { Auth } from 'aws-amplify'
 
-import { listAccomplishments, listCategorys, listSkills, listTools } from '../graphql/queries'
+import { listProjects, listCategorys, listSkills, listTools } from '../graphql/queries'
 
 function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
@@ -31,20 +31,18 @@ export function getTools(userId) {
 	).then(data => data.data.listTools.items)
 }
 
-function getAccomplishments(userId) {
+function getProjects(userId) {
 	return API.graphql(
-		graphqlOperation(listAccomplishments, {
+		graphqlOperation(listProjects, {
 			filter: { userId: { eq: userId } },
 		})
-	).then(data => data.data.listAccomplishments.items)
+	).then(data => data.data.listProjects.items)
 }
 
 export async function getAllData() {
 	const userId = await getUserId()
-	const accomplishments = await getAccomplishments(userId)
+	const projects = await getProjects(userId)
 	const allSkills = await getSkills(userId)
 
-	return { userId, accomplishments, allSkills }
+	return { userId, projects, allSkills }
 }
-
-export const generalCategoryId = '24d5c4be-4753-4e25-8ffe-ad8d899c4a6c'

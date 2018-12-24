@@ -25,8 +25,8 @@ export const onDeleteUser = `subscription OnDeleteUser {
   }
 }
 `;
-export const onCreateAccomplishment = `subscription OnCreateAccomplishment {
-  onCreateAccomplishment {
+export const onCreateProject = `subscription OnCreateProject {
+  onCreateProject {
     id
     userId
     name
@@ -46,8 +46,8 @@ export const onCreateAccomplishment = `subscription OnCreateAccomplishment {
   }
 }
 `;
-export const onUpdateAccomplishment = `subscription OnUpdateAccomplishment {
-  onUpdateAccomplishment {
+export const onUpdateProject = `subscription OnUpdateProject {
+  onUpdateProject {
     id
     userId
     name
@@ -67,8 +67,8 @@ export const onUpdateAccomplishment = `subscription OnUpdateAccomplishment {
   }
 }
 `;
-export const onDeleteAccomplishment = `subscription OnDeleteAccomplishment {
-  onDeleteAccomplishment {
+export const onDeleteProject = `subscription OnDeleteProject {
+  onDeleteProject {
     id
     userId
     name
@@ -88,11 +88,11 @@ export const onDeleteAccomplishment = `subscription OnDeleteAccomplishment {
   }
 }
 `;
-export const onCreateAccomplishmentSkill = `subscription OnCreateAccomplishmentSkill {
-  onCreateAccomplishmentSkill {
+export const onCreateProjectSkill = `subscription OnCreateProjectSkill {
+  onCreateProjectSkill {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name
@@ -106,11 +106,11 @@ export const onCreateAccomplishmentSkill = `subscription OnCreateAccomplishmentS
   }
 }
 `;
-export const onUpdateAccomplishmentSkill = `subscription OnUpdateAccomplishmentSkill {
-  onUpdateAccomplishmentSkill {
+export const onUpdateProjectSkill = `subscription OnUpdateProjectSkill {
+  onUpdateProjectSkill {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name
@@ -124,11 +124,11 @@ export const onUpdateAccomplishmentSkill = `subscription OnUpdateAccomplishmentS
   }
 }
 `;
-export const onDeleteAccomplishmentSkill = `subscription OnDeleteAccomplishmentSkill {
-  onDeleteAccomplishmentSkill {
+export const onDeleteProjectSkill = `subscription OnDeleteProjectSkill {
+  onDeleteProjectSkill {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name

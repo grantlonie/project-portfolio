@@ -5,20 +5,20 @@ type User @model {
 }
 
 # Dimension tables
-type Accomplishment @model {
+type Project @model {
 	id: ID!
 	userId: String!
 	name: String!
 	date: String!
-	company: String!
+	company: String
 	description: String!
-	skills: [AccomplishmentSkill]! @connection(name: "AccomplishmentSkills")
+	skills: [ProjectSkill]! @connection(name: "ProjectSkills")
 }
 
-type AccomplishmentSkill @model {
+type ProjectSkill @model {
 	id: ID!
 	userId: String!
-	accomplishment: Accomplishment! @connection(name: "AccomplishmentSkills")
+	project: Project! @connection(name: "ProjectSkills")
 	description: String!
 	skillId: String!
 	toolIds: [String]!
@@ -36,7 +36,7 @@ type Skill @model {
 	id: ID!
 	userId: String!
 	name: String!
-	category: Category! @connection(name: "CategorySkills")
+	category: Category @connection(name: "CategorySkills")
 	tools: [Tool]! @connection(name: "SkillTools")
 }
 

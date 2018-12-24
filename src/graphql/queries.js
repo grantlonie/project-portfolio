@@ -24,8 +24,8 @@ export const listUsers = `query ListUsers(
   }
 }
 `;
-export const getAccomplishment = `query GetAccomplishment($id: ID!) {
-  getAccomplishment(id: $id) {
+export const getProject = `query GetProject($id: ID!) {
+  getProject(id: $id) {
     id
     userId
     name
@@ -45,12 +45,12 @@ export const getAccomplishment = `query GetAccomplishment($id: ID!) {
   }
 }
 `;
-export const listAccomplishments = `query ListAccomplishments(
-  $filter: ModelAccomplishmentFilterInput
+export const listProjects = `query ListProjects(
+  $filter: ModelProjectFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  listAccomplishments(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  listProjects(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
       userId
@@ -73,11 +73,11 @@ export const listAccomplishments = `query ListAccomplishments(
   }
 }
 `;
-export const getAccomplishmentSkill = `query GetAccomplishmentSkill($id: ID!) {
-  getAccomplishmentSkill(id: $id) {
+export const getProjectSkill = `query GetProjectSkill($id: ID!) {
+  getProjectSkill(id: $id) {
     id
     userId
-    accomplishment {
+    project {
       id
       userId
       name
@@ -91,20 +91,16 @@ export const getAccomplishmentSkill = `query GetAccomplishmentSkill($id: ID!) {
   }
 }
 `;
-export const listAccomplishmentSkills = `query ListAccomplishmentSkills(
-  $filter: ModelAccomplishmentSkillFilterInput
+export const listProjectSkills = `query ListProjectSkills(
+  $filter: ModelProjectSkillFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  listAccomplishmentSkills(
-    filter: $filter
-    limit: $limit
-    nextToken: $nextToken
-  ) {
+  listProjectSkills(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
       userId
-      accomplishment {
+      project {
         id
         userId
         name

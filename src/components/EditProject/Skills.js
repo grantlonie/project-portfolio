@@ -6,7 +6,6 @@ import 'react-bootstrap-typeahead/css/Typeahead.css'
 import API, { graphqlOperation } from '@aws-amplify/api'
 
 import { createSkill, createTool } from '../../graphql/mutations'
-import { generalCategoryId } from '../../js/apiInterface'
 
 class Skills extends Component {
 	constructor(props) {
@@ -22,7 +21,7 @@ class Skills extends Component {
 		if (skill[0].customOption) {
 			API.graphql(
 				graphqlOperation(createSkill, {
-					input: { userId, name: skill[0].label, skillCategoryId: generalCategoryId },
+					input: { userId, name: skill[0].label },
 				})
 			).then(({ data: { createSkill } }) => {
 				addSkillToStore(createSkill)
@@ -66,7 +65,7 @@ class Skills extends Component {
 			skillData[category.name].push({ ...skill, name })
 		})
 
-		// List of skills that are not in accomplishment that can be added
+		// List of skills that are not in project that can be added
 		const unselectedSkills = allSkills.filter(
 			category => (skills || []).findIndex(accCategory => accCategory.id === category.id) === -1
 		)

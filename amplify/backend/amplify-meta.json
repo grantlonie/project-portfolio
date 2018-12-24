@@ -19,7 +19,7 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/projectportfolio-20181217165803-deployment/amplify-cfn-templates/auth/cognito4dbc173b-cloudformation-template.yml",
 				"logicalId": "authcognito4dbc173b"
 			},
-			"lastPushTimeStamp": "2018-12-22T13:52:10.446Z",
+			"lastPushTimeStamp": "2018-12-24T13:36:06.789Z",
 			"output": {
 				"AppClientSecret": "nl214d2pqj0c1bjavp0jeflu6rg9aiiujet4c73l7g1mdqpn85b",
 				"UserPoolId": "us-east-1_omLqykAil",
@@ -49,8 +49,8 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/projectportfolio-20181217165803-deployment/amplify-cfn-templates/api/cloudformation-template.json",
 				"logicalId": "apiprojectportfolio"
 			},
-			"lastPushTimeStamp": "2018-12-22T13:52:14.092Z",
-			"lastPushDirHash": "gcv061uod/K0O9d54mQgnap63eE="
+			"lastPushTimeStamp": "2018-12-24T13:36:08.929Z",
+			"lastPushDirHash": "mVR3jfJhx0rNDanKvtMtf1+EFwk="
 		}
 	},
 	"hosting": {
@@ -61,7 +61,7 @@
 				"s3TemplateURL": "https://s3.amazonaws.com/projectportfolio-20181217165803-deployment/amplify-cfn-templates/hosting/template.json",
 				"logicalId": "hostingS3AndCloudFront"
 			},
-			"lastPushTimeStamp": "2018-12-22T13:52:10.448Z",
+			"lastPushTimeStamp": "2018-12-24T13:36:06.792Z",
 			"output": {
 				"S3BucketSecureURL": "https://projectportfolio-20181217174051-hostingbucket.s3.amazonaws.com",
 				"WebsiteURL": "http://projectportfolio-20181217174051-hostingbucket.s3-website-us-east-1.amazonaws.com",

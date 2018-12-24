@@ -5,13 +5,13 @@ import API, { graphqlOperation } from '@aws-amplify/api'
 
 import MainProps from './MainProps'
 import Skills from './Skills'
-import { updateAccomplishment } from '../../graphql/mutations'
+import { updateProject } from '../../graphql/mutations'
 
 class Edit extends Component {
 	constructor(props) {
 		super(props)
 
-		const accomplishment = this.getAccomplishment()
+		const project = this.getProject()
 
 		this.bodyStyle = {
 			margin: 'auto',
@@ -26,25 +26,25 @@ class Edit extends Component {
 			gridGap: '20px 20px',
 		}
 
-		this.state = { ...accomplishment, mainPropsAreUpdated: false, skillsAreUpdated: false }
+		this.state = { ...project, mainPropsAreUpdated: false, skillsAreUpdated: false }
 	}
 
-	getAccomplishment() {
+	getProject() {
 		const {
 			match: {
 				params: { id },
 			},
-			accomplishments,
+			projects,
 		} = this.props
 
-		let accomplishment
-		if (id) accomplishment = accomplishments.find(i => i.id === id)
+		let project
+		if (id) project = projects.find(i => i.id === id)
 
-		if (accomplishment) {
+		if (project) {
 			// adjust skills array structure
-			accomplishment.skills = accomplishment.skills.items
+			project.skills = project.skills.items
 		} else {
-			accomplishment = {
+			project = {
 				id: '',
 				name: '',
 				date: Date.now(),
@@ -54,13 +54,13 @@ class Edit extends Component {
 			}
 		}
 
-		return accomplishment
+		return project
 	}
 
 	componentDidUpdate(prevProps) {
-		// if accomplishments list length changes, update accomplishment
-		if (prevProps.accomplishments.length !== this.props.accomplishments.length) {
-			this.setState({ ...this.getAccomplishment() })
+		// if projects list length changes, update project
+		if (prevProps.projects.length !== this.props.projects.length) {
+			this.setState({ ...this.getProject() })
 		}
 	}
 
@@ -96,7 +96,7 @@ class Edit extends Component {
 		this.setState({ skills: newSkills, skillsAreUpdated: true })
 	}
 
-	handleUpdateAccomplishment() {
+	handleUpdateProject() {
 		const {
 			id,
 			name,
@@ -107,15 +107,15 @@ class Edit extends Component {
 			mainPropsAreUpdated,
 			skillsAreUpdated,
 		} = this.state
-		const { userId, updateAccomplishmentInStore } = this.props
+		const { userId, updateProjectInStore } = this.props
 
 		if (mainPropsAreUpdated) {
 			API.graphql(
-				graphqlOperation(updateAccomplishment, {
+				graphqlOperation(updateProject, {
 					input: { id, userId, name, company, date, description },
 				})
-			).then(({ data: { updateAccomplishment } }) => {
-				updateAccomplishmentInStore(updateAccomplishment)
+			).then(({ data: { updateProject } }) => {
+				updateProjectInStore(updateProject)
 			})
 		}
 
@@ -123,16 +123,16 @@ class Edit extends Component {
 			skills.forEach(skill => {
 				console.log(
 					'message:',
-					graphqlOperation(updateAccomplishment, {
+					graphqlOperation(updateProject, {
 						input: { id, skills: { userId, description, skill: { id: skill.id } } },
 					})
 				)
 				API.graphql(
-					graphqlOperation(updateAccomplishment, {
+					graphqlOperation(updateProject, {
 						input: { id, skills: { userId, description, skill: { id: skill.id } } },
 					})
 				).then(data => {
-					// updateAccomplishmentInStore(updateAccomplishment)
+					// updateProjectInStore(updateProject)
 				})
 			})
 		} else {
@@ -146,21 +146,21 @@ class Edit extends Component {
 			<div style={this.bodyStyle}>
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Typography variant="h4" gutterBottom>
-						Edit Accomplishment
+						Edit Project
 					</Typography>
 
 					<Button
 						variant="contained"
 						color="secondary"
 						disabled={!mainPropsAreUpdated && !skillsAreUpdated}
-						onClick={this.handleUpdateAccomplishment.bind(this)}>
+						onClick={this.handleUpdateProject.bind(this)}>
 						Update
 					</Button>
 				</div>
 
 				<div style={this.contentStyle}>
 					<MainProps
-						accomplishment={this.state}
+						project={this.state}
 						handleChange={this.handleMainPropChange.bind(this)}
 					/>
 
@@ -176,12 +176,12 @@ class Edit extends Component {
 	}
 }
 
-const mapStateToProps = ({ accomplishments, userId }) => ({ accomplishments, userId })
+const mapStateToProps = ({ projects, userId }) => ({ projects, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		updateAccomplishmentInStore: accomplishment => {
-			dispatch({ type: 'UPDATE_ACCOMPLISHMENT', accomplishment })
+		updateProjectInStore: project => {
+			dispatch({ type: 'UPDATE_PROJECT', project })
 		},
 	}
 }

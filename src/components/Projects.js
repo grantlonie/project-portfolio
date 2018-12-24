@@ -14,9 +14,9 @@ import {
 	TextField,
 } from '@material-ui/core'
 
-import { createAccomplishment } from '../graphql/mutations'
+import { createProject } from '../graphql/mutations'
 
-const emptyAccomplishment = { name: '', date: null, company: '', description: '' }
+const emptyProject = { name: '', date: null, company: '', description: '' }
 const headers = [
 	{ id: 'id', label: 'ID' },
 	{ id: 'name', label: 'Name' },
@@ -25,7 +25,7 @@ const headers = [
 	{ id: 'description', label: 'Description' },
 ]
 
-class Accomplishments extends Component {
+class Projects extends Component {
 	constructor(props) {
 		super(props)
 
@@ -99,23 +99,23 @@ class Accomplishments extends Component {
 		addField()
 	}
 
-	async handleAddAccomplishment() {
-		const newAccomplishment = await API.graphql(
-			graphqlOperation(createAccomplishment, { input: { ...this.state } })
+	async handleAddProject() {
+		const newProject = await API.graphql(
+			graphqlOperation(createProject, { input: { ...this.state } })
 		)
-		console.log('newAccomplishment: ', newAccomplishment)
-		this.setState({ ...emptyAccomplishment })
+		console.log('newProject: ', newProject)
+		this.setState({ ...emptyProject })
 	}
 
 	render() {
-		const { accomplishments } = this.props
+		const { projects } = this.props
 		const { order, orderBy, page, filter, redirect } = this.state
 
-		const filteredAccomplishments = accomplishments.filter(
+		const filteredProjects = projects.filter(
 			field => field.description.toLowerCase().indexOf(this.state.filter) > -1
 		)
 
-		if (redirect) return <Redirect to={`editAccomplishment/${redirect}`} />
+		if (redirect) return <Redirect to={`editProject/${redirect}`} />
 
 		return (
 			<div>
@@ -134,9 +134,9 @@ class Accomplishments extends Component {
 						src="./assets/img/baseline-add_circle-24px.svg"
 						onClick={this.handleAddField.bind(this)}
 						draggable="false"
-						alt="Add Accomplishment"
+						alt="Add Project"
 					/>
-					<em>Add Accomplishment</em>
+					<em>Add Project</em>
 				</div>
 
 				<Table aria-labelledby="tableTitle">
@@ -160,7 +160,7 @@ class Accomplishments extends Component {
 					</TableHead>
 
 					<TableBody>
-						{this.stableSort(filteredAccomplishments, this.getSorting(order, orderBy))
+						{this.stableSort(filteredProjects, this.getSorting(order, orderBy))
 							.slice(page * this.rowsPerPage, page * this.rowsPerPage + this.rowsPerPage)
 							.map(field => {
 								return (
@@ -178,7 +178,7 @@ class Accomplishments extends Component {
 
 				<TablePagination
 					component="div"
-					count={filteredAccomplishments.length}
+					count={filteredProjects.length}
 					rowsPerPage={this.rowsPerPage}
 					rowsPerPageOptions={[]}
 					page={page}
@@ -195,6 +195,6 @@ class Accomplishments extends Component {
 	}
 }
 
-const mapStateToProps = ({ accomplishments }) => ({ accomplishments })
+const mapStateToProps = ({ projects }) => ({ projects })
 
-export default connect(mapStateToProps)(Accomplishments)
+export default connect(mapStateToProps)(Projects)

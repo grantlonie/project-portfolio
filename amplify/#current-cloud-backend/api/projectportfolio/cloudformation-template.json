@@ -711,14 +711,14 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "AccomplishmentTable": {
+        "ProjectTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "Accomplishment",
+                            "Project",
                             {
                                 "Fn::GetAtt": [
                                     "GraphQLAPI",
@@ -753,14 +753,14 @@
                 }
             }
         },
-        "AccomplishmentIAMRole": {
+        "ProjectIAMRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "RoleName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "AccomplishmentTable",
+                            "ProjectTable",
                             "role",
                             {
                                 "Fn::GetAtt": [
@@ -804,7 +804,7 @@
                                     "Resource": [
                                         {
                                             "Fn::GetAtt": [
-                                                "AccomplishmentTable",
+                                                "ProjectTable",
                                                 "Arn"
                                             ]
                                         },
@@ -814,7 +814,7 @@
                                                 [
                                                     {
                                                         "Fn::GetAtt": [
-                                                            "AccomplishmentTable",
+                                                            "ProjectTable",
                                                             "Arn"
                                                         ]
                                                     },
@@ -830,7 +830,7 @@
                 ]
             }
         },
-        "AccomplishmentDataSource": {
+        "ProjectDataSource": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
                 "ApiId": {
@@ -839,11 +839,11 @@
                         "ApiId"
                     ]
                 },
-                "Name": "AccomplishmentTable",
+                "Name": "ProjectTable",
                 "Type": "AMAZON_DYNAMODB",
                 "ServiceRoleArn": {
                     "Fn::GetAtt": [
-                        "AccomplishmentIAMRole",
+                        "ProjectIAMRole",
                         "Arn"
                     ]
                 },
@@ -856,7 +856,7 @@
                                     ":",
                                     {
                                         "Fn::GetAtt": [
-                                            "AccomplishmentTable",
+                                            "ProjectTable",
                                             "Arn"
                                         ]
                                     }
@@ -865,13 +865,13 @@
                         ]
                     },
                     "TableName": {
-                        "Ref": "AccomplishmentTable"
+                        "Ref": "ProjectTable"
                     }
                 }
             },
-            "DependsOn": "AccomplishmentIAMRole"
+            "DependsOn": "ProjectIAMRole"
         },
-        "GetAccomplishmentResolver": {
+        "GetProjectResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -882,11 +882,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentDataSource",
+                        "ProjectDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "getAccomplishment",
+                "FieldName": "getProject",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -908,7 +908,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getAccomplishment",
+                                                    "getProject",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -942,7 +942,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getAccomplishment",
+                                                    "getProject",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -959,7 +959,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "ListAccomplishmentResolver": {
+        "ListProjectResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -970,11 +970,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentDataSource",
+                        "ProjectDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "listAccomplishments",
+                "FieldName": "listProjects",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -996,7 +996,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listAccomplishments",
+                                                    "listProjects",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1030,7 +1030,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listAccomplishments",
+                                                    "listProjects",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1047,7 +1047,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "CreateAccomplishmentResolver": {
+        "CreateProjectResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1058,11 +1058,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentDataSource",
+                        "ProjectDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "createAccomplishment",
+                "FieldName": "createProject",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1084,7 +1084,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createAccomplishment",
+                                                    "createProject",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1118,7 +1118,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createAccomplishment",
+                                                    "createProject",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1135,7 +1135,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "UpdateAccomplishmentResolver": {
+        "UpdateProjectResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1146,11 +1146,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentDataSource",
+                        "ProjectDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "updateAccomplishment",
+                "FieldName": "updateProject",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1172,7 +1172,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateAccomplishment",
+                                                    "updateProject",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1206,7 +1206,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateAccomplishment",
+                                                    "updateProject",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1223,7 +1223,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "DeleteAccomplishmentResolver": {
+        "DeleteProjectResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1234,11 +1234,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentDataSource",
+                        "ProjectDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "deleteAccomplishment",
+                "FieldName": "deleteProject",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1260,7 +1260,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteAccomplishment",
+                                                    "deleteProject",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1294,7 +1294,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteAccomplishment",
+                                                    "deleteProject",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1311,14 +1311,14 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "AccomplishmentSkillTable": {
+        "ProjectSkillTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
                 "TableName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "AccomplishmentSkill",
+                            "ProjectSkill",
                             {
                                 "Fn::GetAtt": [
                                     "GraphQLAPI",
@@ -1340,7 +1340,7 @@
                         "AttributeType": "S"
                     },
                     {
-                        "AttributeName": "accomplishmentSkillAccomplishmentId",
+                        "AttributeName": "projectSkillProjectId",
                         "AttributeType": "S"
                     }
                 ],
@@ -1357,10 +1357,10 @@
                 },
                 "GlobalSecondaryIndexes": [
                     {
-                        "IndexName": "gsi-AccomplishmentSkills",
+                        "IndexName": "gsi-ProjectSkills",
                         "KeySchema": [
                             {
-                                "AttributeName": "accomplishmentSkillAccomplishmentId",
+                                "AttributeName": "projectSkillProjectId",
                                 "KeyType": "HASH"
                             }
                         ],
@@ -1379,14 +1379,14 @@
                 ]
             }
         },
-        "AccomplishmentSkillIAMRole": {
+        "ProjectSkillIAMRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
                 "RoleName": {
                     "Fn::Join": [
                         "-",
                         [
-                            "AccomplishmentSkillTable",
+                            "ProjectSkillTable",
                             "role",
                             {
                                 "Fn::GetAtt": [
@@ -1430,7 +1430,7 @@
                                     "Resource": [
                                         {
                                             "Fn::GetAtt": [
-                                                "AccomplishmentSkillTable",
+                                                "ProjectSkillTable",
                                                 "Arn"
                                             ]
                                         },
@@ -1440,7 +1440,7 @@
                                                 [
                                                     {
                                                         "Fn::GetAtt": [
-                                                            "AccomplishmentSkillTable",
+                                                            "ProjectSkillTable",
                                                             "Arn"
                                                         ]
                                                     },
@@ -1456,7 +1456,7 @@
                 ]
             }
         },
-        "AccomplishmentSkillDataSource": {
+        "ProjectSkillDataSource": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
                 "ApiId": {
@@ -1465,11 +1465,11 @@
                         "ApiId"
                     ]
                 },
-                "Name": "AccomplishmentSkillTable",
+                "Name": "ProjectSkillTable",
                 "Type": "AMAZON_DYNAMODB",
                 "ServiceRoleArn": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillIAMRole",
+                        "ProjectSkillIAMRole",
                         "Arn"
                     ]
                 },
@@ -1482,7 +1482,7 @@
                                     ":",
                                     {
                                         "Fn::GetAtt": [
-                                            "AccomplishmentSkillTable",
+                                            "ProjectSkillTable",
                                             "Arn"
                                         ]
                                     }
@@ -1491,13 +1491,13 @@
                         ]
                     },
                     "TableName": {
-                        "Ref": "AccomplishmentSkillTable"
+                        "Ref": "ProjectSkillTable"
                     }
                 }
             },
-            "DependsOn": "AccomplishmentSkillIAMRole"
+            "DependsOn": "ProjectSkillIAMRole"
         },
-        "GetAccomplishmentSkillResolver": {
+        "GetProjectSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1508,11 +1508,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillDataSource",
+                        "ProjectSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "getAccomplishmentSkill",
+                "FieldName": "getProjectSkill",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1534,7 +1534,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getAccomplishmentSkill",
+                                                    "getProjectSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1568,7 +1568,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "getAccomplishmentSkill",
+                                                    "getProjectSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1585,7 +1585,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "ListAccomplishmentSkillResolver": {
+        "ListProjectSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1596,11 +1596,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillDataSource",
+                        "ProjectSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "listAccomplishmentSkills",
+                "FieldName": "listProjectSkills",
                 "TypeName": "Query",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1622,7 +1622,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listAccomplishmentSkills",
+                                                    "listProjectSkills",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1656,7 +1656,7 @@
                                                 ".",
                                                 [
                                                     "Query",
-                                                    "listAccomplishmentSkills",
+                                                    "listProjectSkills",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1673,7 +1673,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "CreateAccomplishmentSkillResolver": {
+        "CreateProjectSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1684,11 +1684,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillDataSource",
+                        "ProjectSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "createAccomplishmentSkill",
+                "FieldName": "createProjectSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1710,7 +1710,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createAccomplishmentSkill",
+                                                    "createProjectSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1744,7 +1744,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "createAccomplishmentSkill",
+                                                    "createProjectSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1761,7 +1761,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "UpdateAccomplishmentSkillResolver": {
+        "UpdateProjectSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1772,11 +1772,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillDataSource",
+                        "ProjectSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "updateAccomplishmentSkill",
+                "FieldName": "updateProjectSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1798,7 +1798,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateAccomplishmentSkill",
+                                                    "updateProjectSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1832,7 +1832,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "updateAccomplishmentSkill",
+                                                    "updateProjectSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1849,7 +1849,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "DeleteAccomplishmentSkillResolver": {
+        "DeleteProjectSkillResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -1860,11 +1860,11 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillDataSource",
+                        "ProjectSkillDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "deleteAccomplishmentSkill",
+                "FieldName": "deleteProjectSkill",
                 "TypeName": "Mutation",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
@@ -1886,7 +1886,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteAccomplishmentSkill",
+                                                    "deleteProjectSkill",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -1920,7 +1920,7 @@
                                                 ".",
                                                 [
                                                     "Mutation",
-                                                    "deleteAccomplishmentSkill",
+                                                    "deleteProjectSkill",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -3789,7 +3789,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "AccomplishmentskillsResolver": {
+        "ProjectskillsResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -3800,12 +3800,12 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentSkillDataSource",
+                        "ProjectSkillDataSource",
                         "Name"
                     ]
                 },
                 "FieldName": "skills",
-                "TypeName": "Accomplishment",
+                "TypeName": "Project",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
                         "",
@@ -3825,7 +3825,7 @@
                                             "Fn::Join": [
                                                 ".",
                                                 [
-                                                    "Accomplishment",
+                                                    "Project",
                                                     "skills",
                                                     "request",
                                                     {
@@ -3859,7 +3859,7 @@
                                             "Fn::Join": [
                                                 ".",
                                                 [
-                                                    "Accomplishment",
+                                                    "Project",
                                                     "skills",
                                                     "response",
                                                     {
@@ -3877,7 +3877,7 @@
             },
             "DependsOn": "GraphQLSchema"
         },
-        "AccomplishmentSkillaccomplishmentResolver": {
+        "ProjectSkillprojectResolver": {
             "Type": "AWS::AppSync::Resolver",
             "Properties": {
                 "ApiId": {
@@ -3888,12 +3888,12 @@
                 },
                 "DataSourceName": {
                     "Fn::GetAtt": [
-                        "AccomplishmentDataSource",
+                        "ProjectDataSource",
                         "Name"
                     ]
                 },
-                "FieldName": "accomplishment",
-                "TypeName": "AccomplishmentSkill",
+                "FieldName": "project",
+                "TypeName": "ProjectSkill",
                 "RequestMappingTemplateS3Location": {
                     "Fn::Join": [
                         "",
@@ -3913,8 +3913,8 @@
                                             "Fn::Join": [
                                                 ".",
                                                 [
-                                                    "AccomplishmentSkill",
-                                                    "accomplishment",
+                                                    "ProjectSkill",
+                                                    "project",
                                                     "request",
                                                     {
                                                         "Ref": "DeploymentTimestamp"
@@ -3947,8 +3947,8 @@
                                             "Fn::Join": [
                                                 ".",
                                                 [
-                                                    "AccomplishmentSkill",
-                                                    "accomplishment",
+                                                    "ProjectSkill",
+                                                    "project",
                                                     "response",
                                                     {
                                                         "Ref": "DeploymentTimestamp"

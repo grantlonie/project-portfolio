@@ -5,7 +5,7 @@
   "query": {
       "expression": "#connectionAttribute = :connectionAttribute",
       "expressionNames": {
-          "#connectionAttribute": "accomplishmentSkillAccomplishmentId"
+          "#connectionAttribute": "projectSkillProjectId"
     },
       "expressionValues": {
           ":connectionAttribute": {
@@ -33,5 +33,5 @@ null
   #else
 null
   #end,
-  "index": "gsi-AccomplishmentSkills"
+  "index": "gsi-ProjectSkills"
 }

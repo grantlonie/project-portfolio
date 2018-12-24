@@ -1,8 +1,8 @@
 import React from 'react'
 import { TextField } from '@material-ui/core'
 
-const MainProps = ({ accomplishment, handleChange }) => {
-	const { id, name, company, date, description } = accomplishment
+const MainProps = ({ project, handleChange }) => {
+	const { id, name, company, date, description } = project
 
 	return (
 		<div id="col1">
