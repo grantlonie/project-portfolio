@@ -20,7 +20,7 @@ type ProjectSkill {
   project: Project!
   description: String
   skillId: String!
-  toolIds: [String]!
+  toolIds: [String]
 }
 
 type Category {
@@ -252,7 +252,7 @@ input CreateProjectSkillInput {
   userId: String!
   description: String
   skillId: String!
-  toolIds: [String]!
+  toolIds: [String]
   projectSkillProjectId: ID!
 }
 

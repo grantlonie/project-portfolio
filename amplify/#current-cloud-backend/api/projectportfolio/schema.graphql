@@ -12,7 +12,7 @@ type Project @model {
 	name: String
 	company: String
 	description: String
-	skills: [ProjectSkill]! @connection(name: "ProjectSkills")
+	skills: [ProjectSkill] @connection(name: "ProjectSkills")
 }
 
 type ProjectSkill @model {
@@ -21,7 +21,7 @@ type ProjectSkill @model {
 	project: Project! @connection(name: "ProjectSkills")
 	description: String
 	skillId: String!
-	toolIds: [String]!
+	toolIds: [String]
 }
 
 # Fact tables
@@ -37,7 +37,7 @@ type Skill @model {
 	userId: String!
 	name: String!
 	category: Category @connection(name: "CategorySkills")
-	tools: [Tool]! @connection(name: "SkillTools")
+	tools: [Tool] @connection(name: "SkillTools")
 }
 
 type Tool @model {

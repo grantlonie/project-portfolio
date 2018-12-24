@@ -5,7 +5,7 @@ import API, { graphqlOperation } from '@aws-amplify/api'
 
 import MainProps from './MainProps'
 import Skills from './Skills'
-import { updateProject } from '../../graphql/mutations'
+import { updateProject, updateProjectSkill, createProjectSkill } from '../../graphql/mutations'
 
 class Edit extends Component {
 	constructor(props) {
@@ -68,10 +68,17 @@ class Edit extends Component {
 		this.setState({ [name]: value, mainPropsAreUpdated: true })
 	}
 
-	addSkill(skillId) {
-		const skills = [...(this.state.skills || []), { id: skillId, description: '' }]
+	addProjectSkill(skillId) {
+		const { userId } = this.props
 
-		this.setState({ skills, skillsAreUpdated: true })
+		API.graphql(
+			graphqlOperation(createProjectSkill, {
+				input: { userId, skillId, projectSkillProjectId: this.state.id },
+			})
+		).then(({ data: { createProjectSkill: { id } } }) => {
+			const skills = [...(this.state.skills || []), { id, skillId }]
+			this.setState({ skills })
+		})
 	}
 
 	addTool(skillId, toolId) {
@@ -87,9 +94,9 @@ class Edit extends Component {
 		this.setState({ skills, skillsAreUpdated: true })
 	}
 
-	handleSkillDescriptionChange(skillId, value) {
+	handleSkillDescriptionChange(id, value) {
 		const newSkills = this.state.skills.map(skill => {
-			if (skill.id === skillId) skill.description = value
+			if (skill.id === id) skill.description = value
 			return skill
 		})
 
@@ -121,15 +128,9 @@ class Edit extends Component {
 
 		if (skillsAreUpdated) {
 			skills.forEach(skill => {
-				console.log(
-					'message:',
-					graphqlOperation(updateProject, {
-						input: { id, skills: { userId, description, skill: { id: skill.id } } },
-					})
-				)
 				API.graphql(
-					graphqlOperation(updateProject, {
-						input: { id, skills: { userId, description, skill: { id: skill.id } } },
+					graphqlOperation(updateProjectSkill, {
+						input: { id: skill.id, projectSkillProjectId: id, description: skill.description },
 					})
 				).then(data => {
 					// updateProjectInStore(updateProject)
@@ -163,7 +164,7 @@ class Edit extends Component {
 
 					<Skills
 						skills={skills}
-						addSkill={this.addSkill.bind(this)}
+						addProjectSkill={this.addProjectSkill.bind(this)}
 						addTool={this.addTool.bind(this)}
 						handleDescriptionChange={this.handleSkillDescriptionChange.bind(this)}
 					/>

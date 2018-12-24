@@ -15,7 +15,7 @@ class Skills extends Component {
 	}
 
 	handleSelectedSkill(skill) {
-		const { userId, addSkill, addSkillToStore } = this.props
+		const { userId, addProjectSkill, addSkillToStore } = this.props
 
 		// New skill created
 		if (skill[0].customOption) {
@@ -25,10 +25,10 @@ class Skills extends Component {
 				})
 			).then(({ data: { createSkill } }) => {
 				addSkillToStore(createSkill)
-				addSkill(createSkill.id)
+				addProjectSkill(createSkill.id)
 			})
 		} else {
-			addSkill(skill[0].id)
+			addProjectSkill(skill[0].id)
 		}
 
 		// clear typeahead input
@@ -59,7 +59,7 @@ class Skills extends Component {
 		// Create nested skills inside respective categories
 		let skillData = {}
 		skills.forEach(skill => {
-			const { name, category } = allSkills.find(i => i.id === skill.id)
+			const { name, category } = allSkills.find(i => i.id === skill.skillId)
 			if (!skillData.hasOwnProperty(category.name)) skillData[category.name] = []
 
 			skillData[category.name].push({ ...skill, name })
@@ -67,7 +67,7 @@ class Skills extends Component {
 
 		// List of skills that are not in project that can be added
 		const unselectedSkills = allSkills.filter(
-			category => (skills || []).findIndex(accCategory => accCategory.id === category.id) === -1
+			i => (skills || []).findIndex(skill => skill.skillId === i.id) === -1
 		)
 
 		// If a skill exists, create skills component
@@ -84,7 +84,7 @@ class Skills extends Component {
 						<div>
 							{skillData[categoryName].map(skill => {
 								// Create lists of tools that are selected in skill and remaining unselected
-								const allTools = allSkills.find(i => i.id === skill.id).tools.items
+								const allTools = allSkills.find(i => i.id === skill.skillId).tools.items
 								let selectedTools = []
 								let unselectedTools = []
 								allTools.forEach(tool => {
