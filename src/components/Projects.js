@@ -16,7 +16,6 @@ import {
 
 import { createProject } from '../graphql/mutations'
 
-const emptyProject = { name: '', date: null, company: '', description: '' }
 const headers = [
 	{ id: 'id', label: 'ID' },
 	{ id: 'name', label: 'Name' },
@@ -92,19 +91,21 @@ class Projects extends Component {
 		this.setState({ filter: value.toLowerCase() })
 	}
 
-	handleAddField() {
-		const { fields, addField } = this.props
-
-		this.setState({ page: Math.ceil(fields.length / this.rowsPerPage) })
-		addField()
-	}
-
 	async handleAddProject() {
+		const { userId, addProject } = this.props
+
+		const date = new Date()
+		const year = date.getFullYear()
+		const month = date.getMonth()
+		const day = date.getDate()
+
+		const emptyProject = { userId, date: `${year}-${month}-${day}` }
+
 		const newProject = await API.graphql(
-			graphqlOperation(createProject, { input: { ...this.state } })
+			graphqlOperation(createProject, { input: { ...emptyProject } })
 		)
 		console.log('newProject: ', newProject)
-		this.setState({ ...emptyProject })
+		addProject(newProject)
 	}
 
 	render() {
@@ -132,7 +133,7 @@ class Projects extends Component {
 					<img
 						style={{ margin: '0 10px 0 30px', height: '30px' }}
 						src="./assets/img/baseline-add_circle-24px.svg"
-						onClick={this.handleAddField.bind(this)}
+						onClick={this.handleAddProject.bind(this)}
 						draggable="false"
 						alt="Add Project"
 					/>
@@ -195,6 +196,17 @@ class Projects extends Component {
 	}
 }
 
-const mapStateToProps = ({ projects }) => ({ projects })
+const mapStateToProps = ({ projects, userId }) => ({ projects, userId })
 
-export default connect(mapStateToProps)(Projects)
+const mapDispatchToProps = dispatch => {
+	return {
+		addProject: project => {
+			dispatch({ type: 'ADD_PROJECT', project })
+		},
+	}
+}
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Projects)

@@ -11,6 +11,9 @@ const rootReducer = (state = initialState, action) => {
 			delete action.type
 			return { ...state, ...action }
 
+		case 'ADD_PROJECT':
+			return { ...state, projects: [...state.projects, action.project] }
+
 		case 'ADD_SKILL':
 			return { ...state, allSkills: [...state.allSkills, action.skill] }
 

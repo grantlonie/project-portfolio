@@ -21,16 +21,13 @@ import EditProject from './EditProject'
 
 import { getAllData } from '../js/apiInterface'
 
-const drawerLinks = [
-	{ link: '/', text: 'List Projects' },
-	{ link: '/projects', text: 'Projects' },
-]
+const drawerLinks = [{ link: '/', text: 'List Projects' }, { link: '/projects', text: 'Projects' }]
 
 class App extends Component {
 	constructor(props) {
 		super(props)
 
-		// Get user and accomplisment data and update redux
+		// Get user and project data and update redux
 		getAllData().then(data => {
 			this.props.updateAllData(data)
 		})
