@@ -8,10 +8,10 @@ type User @model {
 type Project @model {
 	id: ID!
 	userId: String!
-	name: String!
 	date: String!
+	name: String
 	company: String
-	description: String!
+	description: String
 	skills: [ProjectSkill]! @connection(name: "ProjectSkills")
 }
 
@@ -19,7 +19,7 @@ type ProjectSkill @model {
 	id: ID!
 	userId: String!
 	project: Project! @connection(name: "ProjectSkills")
-	description: String!
+	description: String
 	skillId: String!
 	toolIds: [String]!
 }

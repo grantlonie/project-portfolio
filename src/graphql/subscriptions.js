@@ -29,8 +29,8 @@ export const onCreateProject = `subscription OnCreateProject {
   onCreateProject {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -50,8 +50,8 @@ export const onUpdateProject = `subscription OnUpdateProject {
   onUpdateProject {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -71,8 +71,8 @@ export const onDeleteProject = `subscription OnDeleteProject {
   onDeleteProject {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -95,8 +95,8 @@ export const onCreateProjectSkill = `subscription OnCreateProjectSkill {
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }
@@ -113,8 +113,8 @@ export const onUpdateProjectSkill = `subscription OnUpdateProjectSkill {
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }
@@ -131,8 +131,8 @@ export const onDeleteProjectSkill = `subscription OnDeleteProjectSkill {
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }

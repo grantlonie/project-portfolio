@@ -7,10 +7,10 @@ type User {
 type Project {
   id: ID!
   userId: String!
-  name: String!
   date: String!
+  name: String
   company: String
-  description: String!
+  description: String
   skills(filter: ModelProjectSkillFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelProjectSkillConnection
 }
 
@@ -18,7 +18,7 @@ type ProjectSkill {
   id: ID!
   userId: String!
   project: Project!
-  description: String!
+  description: String
   skillId: String!
   toolIds: [String]!
 }
@@ -200,8 +200,8 @@ type ModelProjectConnection {
 input ModelProjectFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
-  name: ModelStringFilterInput
   date: ModelStringFilterInput
+  name: ModelStringFilterInput
   company: ModelStringFilterInput
   description: ModelStringFilterInput
   and: [ModelProjectFilterInput]
@@ -212,17 +212,17 @@ input ModelProjectFilterInput {
 input CreateProjectInput {
   id: ID
   userId: String!
-  name: String!
   date: String!
+  name: String
   company: String
-  description: String!
+  description: String
 }
 
 input UpdateProjectInput {
   id: ID!
   userId: String
-  name: String
   date: String
+  name: String
   company: String
   description: String
 }
@@ -250,7 +250,7 @@ input ModelProjectSkillFilterInput {
 input CreateProjectSkillInput {
   id: ID
   userId: String!
-  description: String!
+  description: String
   skillId: String!
   toolIds: [String]!
   projectSkillProjectId: ID!

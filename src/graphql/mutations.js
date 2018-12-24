@@ -29,8 +29,8 @@ export const createProject = `mutation CreateProject($input: CreateProjectInput!
   createProject(input: $input) {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -50,8 +50,8 @@ export const updateProject = `mutation UpdateProject($input: UpdateProjectInput!
   updateProject(input: $input) {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -71,8 +71,8 @@ export const deleteProject = `mutation DeleteProject($input: DeleteProjectInput!
   deleteProject(input: $input) {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -95,8 +95,8 @@ export const createProjectSkill = `mutation CreateProjectSkill($input: CreatePro
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }
@@ -113,8 +113,8 @@ export const updateProjectSkill = `mutation UpdateProjectSkill($input: UpdatePro
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }
@@ -131,8 +131,8 @@ export const deleteProjectSkill = `mutation DeleteProjectSkill($input: DeletePro
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }

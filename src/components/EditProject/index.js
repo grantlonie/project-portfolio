@@ -47,7 +47,7 @@ class Edit extends Component {
 			project = {
 				id: '',
 				name: '',
-				date: Date.now(),
+				date: '',
 				company: '',
 				description: '',
 				skills: [],
@@ -159,10 +159,7 @@ class Edit extends Component {
 				</div>
 
 				<div style={this.contentStyle}>
-					<MainProps
-						project={this.state}
-						handleChange={this.handleMainPropChange.bind(this)}
-					/>
+					<MainProps project={this.state} handleChange={this.handleMainPropChange.bind(this)} />
 
 					<Skills
 						skills={skills}

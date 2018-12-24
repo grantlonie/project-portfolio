@@ -101,20 +101,20 @@ class Projects extends Component {
 
 		const emptyProject = { userId, date: `${year}-${month}-${day}` }
 
-		const newProject = await API.graphql(
+		const { data } = await API.graphql(
 			graphqlOperation(createProject, { input: { ...emptyProject } })
 		)
-		console.log('newProject: ', newProject)
-		addProject(newProject)
+		addProject(data.createProject)
 	}
 
 	render() {
 		const { projects } = this.props
 		const { order, orderBy, page, filter, redirect } = this.state
 
-		const filteredProjects = projects.filter(
-			field => field.description.toLowerCase().indexOf(this.state.filter) > -1
-		)
+		const filteredProjects = projects.filter(project => {
+			if (project.description === null) return true
+			return project.description.toLowerCase().indexOf(this.state.filter) > -1
+		})
 
 		if (redirect) return <Redirect to={`editProject/${redirect}`} />
 

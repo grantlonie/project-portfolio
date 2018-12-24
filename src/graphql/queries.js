@@ -28,8 +28,8 @@ export const getProject = `query GetProject($id: ID!) {
   getProject(id: $id) {
     id
     userId
-    name
     date
+    name
     company
     description
     skills {
@@ -54,8 +54,8 @@ export const listProjects = `query ListProjects(
     items {
       id
       userId
-      name
       date
+      name
       company
       description
       skills {
@@ -80,8 +80,8 @@ export const getProjectSkill = `query GetProjectSkill($id: ID!) {
     project {
       id
       userId
-      name
       date
+      name
       company
       description
     }
@@ -103,8 +103,8 @@ export const listProjectSkills = `query ListProjectSkills(
       project {
         id
         userId
-        name
         date
+        name
         company
         description
       }
