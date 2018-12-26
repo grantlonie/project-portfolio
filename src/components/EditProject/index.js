@@ -5,6 +5,7 @@ import API, { graphqlOperation } from '@aws-amplify/api'
 
 import MainProps from './MainProps'
 import Skills from './Skills'
+import { getProject } from '../../graphql/queries'
 import { updateProject, updateProjectSkill, createProjectSkill } from '../../graphql/mutations'
 
 class Edit extends Component {
@@ -84,11 +85,12 @@ class Edit extends Component {
 		})
 	}
 
-	addTool(skillId, toolId) {
+	updateTools(skillId, tools) {
 		const skills = JSON.parse(JSON.stringify(this.state.skills)).map(skill => {
 			if (skill.id === skillId) {
-				if (!skill.hasOwnProperty('toolIds')) skill.toolIds = []
-				skill.toolIds.push(toolId)
+				skill.toolIds = tools.map(tool => tool.id)
+				skill.isUpdated = true
+				console.log('skill: ', skill)
 			}
 
 			return skill
@@ -99,7 +101,10 @@ class Edit extends Component {
 
 	handleSkillDescriptionChange(id, value) {
 		const newSkills = this.state.skills.map(skill => {
-			if (skill.id === id) skill.description = value
+			if (skill.id === id) {
+				skill.description = value
+				skill.isUpdated = true
+			}
 			return skill
 		})
 
@@ -130,17 +135,27 @@ class Edit extends Component {
 		}
 
 		if (skillsAreUpdated) {
+			// loop through each skill and for each one that has been updated update database and redux
 			skills.forEach(skill => {
-				API.graphql(
-					graphqlOperation(updateProjectSkill, {
-						input: { id: skill.id, projectSkillProjectId: id, description: skill.description },
+				const { id, description, toolIds, isUpdated } = skill
+
+				if (isUpdated) {
+					API.graphql(
+						graphqlOperation(updateProjectSkill, {
+							input: { id, description, toolIds },
+						})
+					).then(({ data: { updateProjectSkill } }) => {
+						const { id } = updateProjectSkill.project
+
+						API.graphql(graphqlOperation(getProject, { id })).then(({ data }) => {
+							updateProjectInStore(data.getProject)
+						})
 					})
-				).then(data => {
-					// updateProjectInStore(updateProject)
-				})
+				}
 			})
-		} else {
 		}
+
+		this.setState({ mainPropsAreUpdated: false, skillsAreUpdated: false })
 	}
 
 	render() {
@@ -168,7 +183,7 @@ class Edit extends Component {
 					<Skills
 						skills={skills}
 						addProjectSkill={this.addProjectSkill.bind(this)}
-						addTool={this.addTool.bind(this)}
+						updateTools={this.updateTools.bind(this)}
 						handleDescriptionChange={this.handleSkillDescriptionChange.bind(this)}
 					/>
 				</div>

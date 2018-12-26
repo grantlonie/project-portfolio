@@ -17,12 +17,24 @@ const rootReducer = (state = initialState, action) => {
 		case 'ADD_SKILL':
 			return { ...state, allSkills: [...state.allSkills, action.skill] }
 
+		case 'ADD_TOOL_TO_SKILL':
+			return addToolToSkill(state, action)
+
 		case 'UPDATE_PROJECT':
 			return updateProject(state, action)
 
 		default:
 			return state
 	}
+}
+
+function addToolToSkill(state, { skillId, tool }) {
+	const allSkills = state.allSkills.map(skill => {
+		if (skill.id === skillId) skill.tools.items.push(tool)
+		return skill
+	})
+
+	return { ...state, allSkills }
 }
 
 function updateProject(state, { project }) {

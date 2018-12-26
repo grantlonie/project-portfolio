@@ -35,9 +35,9 @@ class Skills extends Component {
 		this.typeaheadRef.current.instanceRef.clear()
 	}
 
-	handleUpdateTools(skillId, tools) {
-		const lastTool = tools[tools.length - 1]
-		const { userId, addTool } = this.props
+	handleUpdateTools(id, skillId, tools) {
+		const lastTool = tools[tools.length - 1] || {}
+		const { userId, updateTools, addToolToAllSkills } = this.props
 
 		// New tool created
 		if (lastTool.customOption) {
@@ -46,10 +46,15 @@ class Skills extends Component {
 					input: { userId, name: lastTool.name, toolSkillId: skillId },
 				})
 			).then(({ data: { createTool } }) => {
-				addTool(skillId, createTool.id)
+				const { id: toolId, name, userId } = createTool
+
+				const newTool = { id: toolId, name, userId }
+				tools[tools.length - 1] = newTool
+				updateTools(id, tools)
+				addToolToAllSkills(skillId, newTool)
 			})
 		} else {
-			addTool(skillId, lastTool.id)
+			updateTools(id, tools)
 		}
 	}
 
@@ -102,7 +107,9 @@ class Skills extends Component {
 											selected={selectedTools}
 											multiple
 											labelKey="name"
-											onChange={selected => this.handleUpdateTools(skill.id, selected)}
+											onChange={selected =>
+												this.handleUpdateTools(skill.id, skill.skillId, selected)
+											}
 											placeholder="Add a tool..."
 											allowNew
 											clearButton
@@ -158,6 +165,9 @@ const mapDispatchToProps = dispatch => {
 	return {
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })
+		},
+		addToolToAllSkills: (skillId, tool) => {
+			dispatch({ type: 'ADD_TOOL_TO_SKILL', skillId, tool })
 		},
 	}
 }
