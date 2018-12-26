@@ -38,7 +38,10 @@ class Edit extends Component {
 		} = this.props
 
 		let project
-		if (id) project = projects.find(i => i.id === id)
+		if (id) {
+			const foundProject = projects.find(i => i.id === id)
+			if (foundProject) project = JSON.parse(JSON.stringify(foundProject))
+		}
 
 		if (project) {
 			// adjust skills array structure

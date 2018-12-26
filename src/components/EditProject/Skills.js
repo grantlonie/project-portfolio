@@ -97,17 +97,6 @@ class Skills extends Component {
 									<div key={skill.id}>
 										<Typography variant="title">{skill.name}</Typography>
 
-										<TextField
-											fullWidth
-											multiline
-											variant="filled"
-											label="Description"
-											style={{ margin: '5px 0 20px 0' }}
-											name="description"
-											value={skill.description}
-											onChange={({ target: { value } }) => handleDescriptionChange(skill.id, value)}
-										/>
-
 										<Typeahead
 											options={unselectedTools}
 											selected={selectedTools}
@@ -117,6 +106,17 @@ class Skills extends Component {
 											placeholder="Add a tool..."
 											allowNew
 											clearButton
+										/>
+
+										<TextField
+											fullWidth
+											multiline
+											variant="filled"
+											label="Description"
+											style={{ margin: '5px 0 20px 0' }}
+											name="description"
+											value={skill.description}
+											onChange={({ target: { value } }) => handleDescriptionChange(skill.id, value)}
 										/>
 									</div>
 								)
