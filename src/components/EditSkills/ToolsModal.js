@@ -11,10 +11,11 @@ import {
 	TableRow,
 	TableCell,
 	TextField,
+	Button,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { updateTool, deleteTool, updateUser } from '../../graphql/mutations'
+import { createTool, updateTool, deleteTool, updateUser } from '../../graphql/mutations'
 
 class ToolsModal extends Component {
 	constructor(props) {
@@ -35,6 +36,13 @@ class ToolsModal extends Component {
 		}
 
 		this.state = { tools: props.skill.tools.items }
+	}
+
+	componentDidUpdate(prevProps) {
+		// if skills change in parent component, update state
+		if (prevProps.skill.tools.items.length !== this.props.skill.tools.items.length) {
+			this.setState({ skills: this.props.skill.tools.items })
+		}
 	}
 
 	handleNameChange(id, { target }) {
@@ -61,6 +69,23 @@ class ToolsModal extends Component {
 		})
 	}
 
+	handleNewTool() {
+		const { showSpinner, userId, skill, addToolToAllSkills } = this.props
+
+		showSpinner()
+
+		// API.graphql(
+		// 	graphqlOperation(createTool, {
+		// 		input: { userId, name: 'New Tool', toolSkillId: skill.id },
+		// 	})
+		// ).then(({ data: { createTool } }) => {
+		// 	const { id: toolId, name, userId } = createTool
+		// 	const newTool = { id: toolId, name, userId }
+
+		// 	addToolToAllSkills(skill.id, newTool)
+		// })
+	}
+
 	closeModal() {
 		const { close, updateToolInStore } = this.props
 
@@ -82,9 +107,14 @@ class ToolsModal extends Component {
 		return (
 			<Modal open onClose={this.closeModal.bind(this)}>
 				<Paper style={this.modalStyle} elevation={1}>
-					<Typography variant="h6" gutterBottom>
-						Tools
-					</Typography>
+					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+						<Typography variant="h6" gutterBottom>
+							Tools
+						</Typography>
+						<Button color="primary" onClick={this.handleNewTool.bind(this)}>
+							New
+						</Button>
+					</div>
 
 					<Table aria-labelledby="tableTitle">
 						<TableHead>
@@ -129,6 +159,12 @@ const mapDispatchToProps = dispatch => {
 		},
 		removeTool: toolId => {
 			dispatch({ type: 'REMOVE_TOOL', toolId })
+		},
+		showSpinner: () => {
+			dispatch({ type: 'SHOW_SPINNER', show: true })
+		},
+		addToolToAllSkills: (skillId, tool) => {
+			dispatch({ type: 'ADD_TOOL_TO_SKILL', skillId, tool })
 		},
 	}
 }
