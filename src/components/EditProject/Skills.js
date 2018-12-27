@@ -79,59 +79,68 @@ class Skills extends Component {
 		let skillsComponent = null
 		const categoryNames = Object.keys(skillData)
 		if (categoryNames.length > 0)
-			skillsComponent = categoryNames.map(categoryName => {
-				return (
-					<Paper key={categoryName} style={{ padding: '10px' }} elevation={1}>
-						<Typography color="primary" variant="h5">
-							{categoryName}
-						</Typography>
+			skillsComponent = (
+				<div style={{ marginBottom: '30px' }}>
+					{categoryNames.map(categoryName => {
+						return (
+							<Paper key={categoryName} style={{ padding: '10px' }} elevation={1}>
+								<Typography color="primary" variant="h5">
+									{categoryName}
+								</Typography>
 
-						<div>
-							{skillData[categoryName].map(skill => {
-								// Create lists of tools that are selected in skill and remaining unselected
-								const allTools = allSkills.find(i => i.id === skill.skillId).tools.items
-								let selectedTools = []
-								let unselectedTools = []
-								allTools.forEach(tool => {
-									if (skill.toolIds && skill.toolIds.findIndex(toolId => toolId === tool.id) > -1) {
-										selectedTools.push(tool)
-									} else unselectedTools.push(tool)
-								})
+								<div>
+									{skillData[categoryName].map(skill => {
+										// Create lists of tools that are selected in skill and remaining unselected
+										const allTools = allSkills.find(i => i.id === skill.skillId).tools.items
+										let selectedTools = []
+										let unselectedTools = []
+										allTools.forEach(tool => {
+											if (
+												skill.toolIds &&
+												skill.toolIds.findIndex(toolId => toolId === tool.id) > -1
+											) {
+												selectedTools.push(tool)
+											} else unselectedTools.push(tool)
+										})
 
-								return (
-									<div key={skill.id}>
-										<Typography variant="title">{skill.name}</Typography>
+										return (
+											<div key={skill.id}>
+												<Typography variant="title">{skill.name}</Typography>
 
-										<Typeahead
-											options={unselectedTools}
-											selected={selectedTools}
-											multiple
-											labelKey="name"
-											onChange={selected =>
-												this.handleUpdateTools(skill.id, skill.skillId, selected)
-											}
-											placeholder="Add a tool..."
-											allowNew
-											clearButton
-										/>
+												<Typeahead
+													options={unselectedTools}
+													selected={selectedTools}
+													multiple
+													labelKey="name"
+													onChange={selected =>
+														this.handleUpdateTools(skill.id, skill.skillId, selected)
+													}
+													placeholder="Add a tool..."
+													allowNew
+													clearButton
+												/>
 
-										<TextField
-											fullWidth
-											multiline
-											variant="filled"
-											label="Description"
-											style={{ margin: '5px 0 20px 0' }}
-											name="description"
-											value={skill.description}
-											onChange={({ target: { value } }) => handleDescriptionChange(skill.id, value)}
-										/>
-									</div>
-								)
-							})}
-						</div>
-					</Paper>
-				)
-			})
+												<TextField
+													fullWidth
+													multiline
+													variant="filled"
+													label="Description"
+													style={{ margin: '5px 0 20px 0' }}
+													name="description"
+													value={skill.description}
+													onChange={({ target: { value } }) =>
+														handleDescriptionChange(skill.id, value)
+													}
+												/>
+											</div>
+										)
+									})}
+								</div>
+							</Paper>
+						)
+					})}
+				</div>
+			)
 
 		return (
 			<div>

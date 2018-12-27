@@ -7,7 +7,7 @@ function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
 }
 
-export function getCategories(userId) {
+function getCategories(userId) {
 	return API.graphql(
 		graphqlOperation(listCategorys, {
 			filter: { userId: { eq: userId } },
@@ -43,6 +43,7 @@ export async function getAllData() {
 	const userId = await getUserId()
 	const projects = await getProjects(userId)
 	const allSkills = await getSkills(userId)
+	const allCategories = await getCategories(userId)
 
-	return { userId, projects, allSkills }
+	return { userId, projects, allSkills, allCategories }
 }

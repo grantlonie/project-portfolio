@@ -18,10 +18,15 @@ import MenuIcon from '@material-ui/icons/Menu'
 import ListProjects from './ListProjects'
 import Projects from './Projects'
 import EditProject from './EditProject'
+import EditSkills from './EditSkills'
 
 import { getAllData } from '../js/apiInterface'
 
-const drawerLinks = [{ link: '/', text: 'List Projects' }, { link: '/projects', text: 'Projects' }]
+const drawerLinks = [
+	{ link: '/', text: 'List Projects' },
+	{ link: '/projects', text: 'Projects' },
+	{ link: '/skills', text: 'Edit Skills' },
+]
 
 class App extends Component {
 	constructor(props) {
@@ -90,10 +95,9 @@ class App extends Component {
 					</Drawer>
 
 					<Route exact path="/" component={ListProjects} />
-
 					<Route path="/projects" component={Projects} />
-
 					<Route path="/editProject/:id" component={EditProject} />
+					<Route path="/skills" component={EditSkills} />
 				</div>
 			</Router>
 		)
