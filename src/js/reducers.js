@@ -23,6 +23,9 @@ const rootReducer = (state = initialState, action) => {
 		case 'REMOVE_SKILL_FROM_PROJECT':
 			return removeSkillFromProject(state, action)
 
+		case 'REMOVE_TOOL':
+			return removeTool(state, action)
+
 		case 'SHOW_SPINNER':
 			return { ...state, showSpinner: action.show }
 
@@ -42,6 +45,17 @@ const rootReducer = (state = initialState, action) => {
 		default:
 			return state
 	}
+}
+
+function removeTool(state, { toolId }) {
+	const allSkills = JSON.parse(JSON.stringify(state.allSkills)).map(skill => {
+		const toolIndex = skill.tools.items.findIndex(i => i.id === toolId)
+		if (toolIndex > -1) skill.tools.items.splice(toolIndex, 1)
+
+		return skill
+	})
+
+	return { ...state, allSkills }
 }
 
 function removeSkillFromProject(state, { skill }) {

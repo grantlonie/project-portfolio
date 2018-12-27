@@ -42,10 +42,8 @@ class EditSkills extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		const { allSkills } = this.props
-
-		// if projects list length changes, update project
-		if (prevProps.allSkills.length !== allSkills.length) {
+		// if skills change in redux, update state
+		if (JSON.stringify(prevProps.allSkills) !== JSON.stringify(this.props.allSkills)) {
 			this.setState({ skills: this.sortedSkills() })
 		}
 	}

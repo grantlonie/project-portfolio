@@ -14,19 +14,24 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { updateTool } from '../../graphql/mutations'
+import { updateTool, deleteTool } from '../../graphql/mutations'
 
 class ToolsModal extends Component {
 	constructor(props) {
 		super(props)
 
 		this.modalStyle = {
-			maxWidth: '600px',
 			position: 'absolute',
-			top: '20%',
-			left: '50%',
-			transform: 'translate(-50%, 50%)',
+			left: '0%',
+			right: '0%',
+			top: '0%',
+			bottom: '0%',
+			margin: 'auto',
+			width: '95%',
+			maxWidth: '600px',
+			maxHeight: '80vh',
 			padding: '20px',
+			overflowY: 'scroll',
 		}
 
 		this.state = { tools: props.skill.tools.items }
@@ -42,6 +47,15 @@ class ToolsModal extends Component {
 		})
 
 		this.setState({ tools })
+	}
+
+	handleRemoveTool(toolId) {
+		const tools = this.state.tools.filter(tool => tool.id !== toolId)
+		this.setState({ tools })
+
+		API.graphql(graphqlOperation(deleteTool, { input: { id: toolId } })).then(({ data }) => {
+			this.props.removeTool(data.deleteTool.id)
+		})
 	}
 
 	closeModal() {
@@ -83,7 +97,7 @@ class ToolsModal extends Component {
 								return (
 									<TableRow hover key={tool.id}>
 										<TableCell>
-											<DeleteIcon />
+											<DeleteIcon onClick={this.handleRemoveTool.bind(this, tool.id)} />
 										</TableCell>
 										<TableCell>{tool.id}</TableCell>
 										<TableCell>
@@ -103,15 +117,20 @@ class ToolsModal extends Component {
 	}
 }
 
+const mapStateToProps = ({ userId }) => ({ userId })
+
 const mapDispatchToProps = dispatch => {
 	return {
 		updateToolInStore: tool => {
 			dispatch({ type: 'UPDATE_TOOL', tool })
 		},
+		removeTool: toolId => {
+			dispatch({ type: 'REMOVE_TOOL', toolId })
+		},
 	}
 }
 
 export default connect(
-	null,
+	mapStateToProps,
 	mapDispatchToProps
 )(ToolsModal)
