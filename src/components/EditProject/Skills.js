@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Typography, TextField, Paper } from '@material-ui/core'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import 'react-bootstrap-typeahead/css/Typeahead.css'
 import API, { graphqlOperation } from '@aws-amplify/api'
+import { Typography, TextField, Paper } from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
 
 import { createSkill, createTool } from '../../graphql/mutations'
 
@@ -59,7 +60,7 @@ class Skills extends Component {
 	}
 
 	render() {
-		const { skills, allSkills, handleDescriptionChange } = this.props
+		const { skills, allSkills, handleDescriptionChange, removeProjectSkill } = this.props
 
 		// Create nested skills inside respective categories
 		let skillData = {}
@@ -80,10 +81,13 @@ class Skills extends Component {
 		const categoryNames = Object.keys(skillData)
 		if (categoryNames.length > 0)
 			skillsComponent = (
-				<div style={{ marginBottom: '30px' }}>
+				<div>
 					{categoryNames.map(categoryName => {
 						return (
-							<Paper key={categoryName} style={{ padding: '10px' }} elevation={1}>
+							<Paper
+								key={categoryName}
+								style={{ padding: '10px', marginBottom: '20px' }}
+								elevation={1}>
 								<Typography color="primary" variant="h5">
 									{categoryName}
 								</Typography>
@@ -105,7 +109,10 @@ class Skills extends Component {
 
 										return (
 											<div key={skill.id}>
-												<Typography variant="title">{skill.name}</Typography>
+												<div style={{ display: 'flex' }}>
+													<Typography variant="title">{skill.name}</Typography>
+													<DeleteIcon onClick={() => removeProjectSkill(skill.id)} />
+												</div>
 
 												<Typeahead
 													options={unselectedTools}
@@ -127,7 +134,7 @@ class Skills extends Component {
 													label="Description"
 													style={{ margin: '5px 0 20px 0' }}
 													name="description"
-													value={skill.description}
+													value={skill.description || ''}
 													onChange={({ target: { value } }) =>
 														handleDescriptionChange(skill.id, value)
 													}

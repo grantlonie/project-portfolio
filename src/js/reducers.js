@@ -17,8 +17,14 @@ const rootReducer = (state = initialState, action) => {
 		case 'ADD_SKILL':
 			return { ...state, allSkills: [...state.allSkills, action.skill] }
 
+		case 'ADD_SKILL_TO_PROJECT':
+			return addSkillToProject(state, action)
+
 		case 'ADD_TOOL_TO_SKILL':
 			return addToolToSkill(state, action)
+
+		case 'REMOVE_SKILL_FROM_PROJECT':
+			return removeSkillFromProject(state, action)
 
 		case 'UPDATE_PROJECT':
 			return updateProject(state, action)
@@ -32,6 +38,26 @@ const rootReducer = (state = initialState, action) => {
 		default:
 			return state
 	}
+}
+
+function removeSkillFromProject(state, { skill }) {
+	const projects = JSON.parse(JSON.stringify(state.projects)).map(project => {
+		if (project.id === skill.project.id) {
+			project.skills.items = project.skills.items.filter(item => item.id !== skill.id)
+		}
+		return project
+	})
+
+	return { ...state, projects }
+}
+
+function addSkillToProject(state, { skill }) {
+	const projects = JSON.parse(JSON.stringify(state.projects)).map(project => {
+		if (project.id === skill.project.id) project.skills.items.push(skill)
+		return project
+	})
+
+	return { ...state, projects }
 }
 
 function updateTool(state, { tool }) {

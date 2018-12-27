@@ -23,13 +23,15 @@ const headers = [
 	{ id: 'tools', label: 'Edit Tools' },
 ]
 
+let updateTimeout // used for timeout to edit project database and redux
+const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
+
 class EditSkills extends Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
 			skills: this.sortedSkills(),
-			updateSkills: false,
 		}
 	}
 
@@ -48,8 +50,8 @@ class EditSkills extends Component {
 		}
 	}
 
-	handleClickRow(id) {
-		this.setState({ redirect: id })
+	componentWillUnmount() {
+		this.updateSkills()
 	}
 
 	async handleAddSkill() {
@@ -61,11 +63,16 @@ class EditSkills extends Component {
 		// addSkill(data.createSkill)
 	}
 
-	handleUpdateSkills() {
-		this.state.skills.forEach(skill => {
-			const { id, name, skillCategoryId, shouldUpdate } = skill
+	updateSkills() {
+		clearTimeout(updateTimeout)
 
-			if (shouldUpdate) {
+		this.state.skills.forEach(skill => {
+			const { id, name, skillCategoryId, isUpdated } = skill
+
+			if (isUpdated) {
+				console.log('updating')
+				delete skill.isUpdated
+
 				const input = { id, name }
 				if (skillCategoryId) input.skillCategoryId = skillCategoryId
 
@@ -74,31 +81,36 @@ class EditSkills extends Component {
 				})
 			}
 		})
-
-		this.setState({ updateSkills: false })
 	}
 
 	handleChangeCategory(id, { target }) {
 		const skills = JSON.parse(JSON.stringify(this.state.skills)).map(skill => {
 			if (skill.id === id) {
 				skill.skillCategoryId = target.value
-				skill.shouldUpdate = true
+				skill.isUpdated = true
 			}
 			return skill
 		})
 
-		this.setState({ skills, updateSkills: true })
+		clearTimeout(updateTimeout)
+		updateTimeout = setTimeout(() => this.updateSkills(), updateCheckTime)
+
+		this.setState({ skills })
 	}
 
 	handleNameChange(id, { target }) {
 		const skills = JSON.parse(JSON.stringify(this.state.skills)).map(skill => {
 			if (skill.id === id) {
 				skill.name = target.value
-				skill.shouldUpdate = true
+				skill.isUpdated = true
 			}
 			return skill
 		})
-		this.setState({ skills, updateSkills: true })
+
+		clearTimeout(updateTimeout)
+		updateTimeout = setTimeout(() => this.updateSkills(), updateCheckTime)
+
+		this.setState({ skills })
 	}
 
 	handleEditTools(skill) {
@@ -111,25 +123,15 @@ class EditSkills extends Component {
 
 	render() {
 		const { allCategories } = this.props
-		const { skills, updateSkills, modalSkill } = this.state
+		const { skills, modalSkill } = this.state
 
 		return (
 			<div>
 				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
 
-				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-					<Typography variant="h4" gutterBottom>
-						Edit Skills
-					</Typography>
-
-					<Button
-						variant="contained"
-						color="secondary"
-						disabled={!updateSkills}
-						onClick={this.handleUpdateSkills.bind(this)}>
-						Update
-					</Button>
-				</div>
+				<Typography variant="h4" gutterBottom>
+					Edit Skills
+				</Typography>
 
 				<Table aria-labelledby="tableTitle">
 					<TableHead>
@@ -143,7 +145,7 @@ class EditSkills extends Component {
 					<TableBody>
 						{skills.map(skill => {
 							return (
-								<TableRow hover key={skill.id} onClick={this.handleClickRow.bind(this, skill.id)}>
+								<TableRow hover key={skill.id}>
 									<TableCell>{skill.id}</TableCell>
 									<TableCell>
 										<TextField
