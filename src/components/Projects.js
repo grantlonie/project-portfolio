@@ -116,7 +116,7 @@ class Projects extends Component {
 			return project.description.toLowerCase().indexOf(this.state.filter) > -1
 		})
 
-		if (redirect) return <Redirect to={`editProject/${redirect}`} />
+		if (redirect) return <Redirect push to={`editProject/${redirect}`} />
 
 		return (
 			<div>
