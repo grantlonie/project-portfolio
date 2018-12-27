@@ -2,6 +2,7 @@ type User @model {
 	id: String!
 	APIkey: String
 	email: String
+	dirtyTables: Boolean # if true, change made in one table needs to be updated across all tables (i.e. tool deleted Tools needs cooresponding toolId removed from ProjectSkills) during next page reload
 }
 
 # Dimension tables

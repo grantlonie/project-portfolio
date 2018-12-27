@@ -6,6 +6,7 @@ export const getUser = `query GetUser($id: ID!) {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;
@@ -19,6 +20,7 @@ export const listUsers = `query ListUsers(
       id
       APIkey
       email
+      dirtyTables
     }
     nextToken
   }

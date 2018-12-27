@@ -6,6 +6,7 @@ export const createUser = `mutation CreateUser($input: CreateUserInput!) {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;
@@ -14,6 +15,7 @@ export const updateUser = `mutation UpdateUser($input: UpdateUserInput!) {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;
@@ -22,6 +24,7 @@ export const deleteUser = `mutation DeleteUser($input: DeleteUserInput!) {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;

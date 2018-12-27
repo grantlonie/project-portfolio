@@ -2,6 +2,7 @@ type User {
   id: String!
   APIkey: String
   email: String
+  dirtyTables: Boolean
 }
 
 type Project {
@@ -114,6 +115,7 @@ input ModelUserFilterInput {
   id: ModelStringFilterInput
   APIkey: ModelStringFilterInput
   email: ModelStringFilterInput
+  dirtyTables: ModelBooleanFilterInput
   and: [ModelUserFilterInput]
   or: [ModelUserFilterInput]
   not: ModelUserFilterInput
@@ -138,12 +140,14 @@ input CreateUserInput {
   id: ID
   APIkey: String
   email: String
+  dirtyTables: Boolean
 }
 
 input UpdateUserInput {
   id: String!
   APIkey: String
   email: String
+  dirtyTables: Boolean
 }
 
 input DeleteUserInput {

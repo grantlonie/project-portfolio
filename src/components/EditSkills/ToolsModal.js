@@ -14,7 +14,7 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { updateTool, deleteTool } from '../../graphql/mutations'
+import { updateTool, deleteTool, updateUser } from '../../graphql/mutations'
 
 class ToolsModal extends Component {
 	constructor(props) {
@@ -55,6 +55,9 @@ class ToolsModal extends Component {
 
 		API.graphql(graphqlOperation(deleteTool, { input: { id: toolId } })).then(({ data }) => {
 			this.props.removeTool(data.deleteTool.id)
+			API.graphql(
+				graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
+			)
 		})
 	}
 

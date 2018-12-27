@@ -7,8 +7,9 @@ import {
 	listSkills,
 	listTools,
 	listProjectSkills,
+	getUser,
 } from '../graphql/queries'
-import { updateProjectSkill } from '../graphql/mutations'
+import { updateProjectSkill, updateUser } from '../graphql/mutations'
 
 function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
@@ -54,28 +55,43 @@ function getProjectSkills(userId) {
 	).then(data => data.data.listProjectSkills.items)
 }
 
-// This method goes through all ProjectSkills and removes any tool ids that no longer exist
-export async function cleanupToolIds(userId) {
-	const projectSkills = await getProjectSkills(userId)
-	const tools = await getTools(userId)
+function getUserData(id) {
+	return API.graphql(graphqlOperation(getUser, { id })).then(data => data.data.getUser)
+}
 
-	projectSkills.forEach(projectSkill => {
-		const { id, toolIds } = projectSkill
+// This method checks to see if dirty tables exist and cleans them
+async function cleanupDirtyTables(userId) {
+	const userData = await getUserData(userId)
 
-		if (Array.isArray(toolIds)) {
-			toolIds.forEach(toolId => {
-				if (tools.findIndex(tool => tool.id === toolId) === -1) {
-					const newToolIds = toolIds.filter(i => i !== toolId)
+	if (userData.dirtyTables) {
+		const projectSkills = await getProjectSkills(userId)
+		const tools = await getTools(userId)
 
-					API.graphql(
-						graphqlOperation(updateProjectSkill, {
-							input: { id, toolIds: newToolIds },
+		// Go through all ProjectSkills and remove all tool that no longer exists
+		projectSkills.forEach(projectSkill => {
+			const { id, toolIds } = projectSkill
+
+			if (Array.isArray(toolIds)) {
+				toolIds.forEach(toolId => {
+					if (tools.findIndex(tool => tool.id === toolId) === -1) {
+						const newToolIds = toolIds.filter(i => i !== toolId)
+
+						API.graphql(
+							graphqlOperation(updateProjectSkill, {
+								input: { id, toolIds: newToolIds },
+							})
+						).then(() => {
+							API.graphql(
+								graphqlOperation(updateUser, {
+									input: { id: userId, dirtyTables: false },
+								})
+							)
 						})
-					)
-				}
-			})
-		}
-	})
+					}
+				})
+			}
+		})
+	}
 }
 
 export async function getAllData() {
@@ -84,7 +100,7 @@ export async function getAllData() {
 	const allSkills = await getSkills(userId)
 	const allCategories = await getCategories(userId)
 
-	cleanupToolIds(userId)
+	cleanupDirtyTables(userId)
 
 	return { userId, projects, allSkills, allCategories }
 }

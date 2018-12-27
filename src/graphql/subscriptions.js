@@ -6,6 +6,7 @@ export const onCreateUser = `subscription OnCreateUser {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;
@@ -14,6 +15,7 @@ export const onUpdateUser = `subscription OnUpdateUser {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;
@@ -22,6 +24,7 @@ export const onDeleteUser = `subscription OnDeleteUser {
     id
     APIkey
     email
+    dirtyTables
   }
 }
 `;
