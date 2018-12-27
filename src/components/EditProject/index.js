@@ -14,12 +14,6 @@ class Edit extends Component {
 
 		const project = this.getProject()
 
-		this.bodyStyle = {
-			margin: 'auto',
-			maxWidth: '1000px',
-			padding: '20px',
-		}
-
 		this.contentStyle = {
 			display: 'grid',
 			justifyContent: 'center',
@@ -162,7 +156,7 @@ class Edit extends Component {
 		const { mainPropsAreUpdated, skillsAreUpdated, skills } = this.state
 
 		return (
-			<div style={this.bodyStyle}>
+			<div>
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Typography variant="h4" gutterBottom>
 						Edit Project

@@ -27,12 +27,6 @@ class EditSkills extends Component {
 	constructor(props) {
 		super(props)
 
-		this.bodyStyle = {
-			margin: 'auto',
-			maxWidth: '1000px',
-			padding: '20px',
-		}
-
 		this.state = {
 			skills: this.sortedSkills(),
 			updateSkills: false,
@@ -120,7 +114,7 @@ class EditSkills extends Component {
 		const { skills, updateSkills, modalSkill } = this.state
 
 		return (
-			<div style={this.bodyStyle}>
+			<div>
 				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
 
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>

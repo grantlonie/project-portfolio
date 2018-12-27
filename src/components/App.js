@@ -32,6 +32,12 @@ class App extends Component {
 	constructor(props) {
 		super(props)
 
+		this.bodyStyle = {
+			margin: 'auto',
+			maxWidth: '1000px',
+			padding: '20px',
+		}
+
 		// Get user and project data and update redux
 		getAllData().then(data => {
 			this.props.updateAllData(data)
@@ -94,10 +100,12 @@ class App extends Component {
 						</div>
 					</Drawer>
 
-					<Route exact path="/" component={ListProjects} />
-					<Route path="/projects" component={Projects} />
-					<Route path="/editProject/:id" component={EditProject} />
-					<Route path="/skills" component={EditSkills} />
+					<div style={this.bodyStyle}>
+						<Route exact path="/" component={ListProjects} />
+						<Route path="/projects" component={Projects} />
+						<Route path="/editProject/:id" component={EditProject} />
+						<Route path="/skills" component={EditSkills} />
+					</div>
 				</div>
 			</Router>
 		)
