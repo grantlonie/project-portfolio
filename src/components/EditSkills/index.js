@@ -9,17 +9,18 @@ import {
 	TableHead,
 	TableRow,
 	TextField,
-	Select,
 	MenuItem,
 	Button,
 } from '@material-ui/core'
 
-import { updateSkill } from '../graphql/mutations'
+import { updateSkill } from '../../graphql/mutations'
+import ToolsModal from './ToolsModal'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
 	{ id: 'name', label: 'Name' },
 	{ id: 'category', label: 'Category' },
+	{ id: 'tools', label: 'Edit Tools' },
 ]
 
 class EditSkills extends Component {
@@ -33,9 +34,15 @@ class EditSkills extends Component {
 		}
 
 		this.state = {
-			skills: props.allSkills,
+			skills: this.sortedSkills(),
 			updateSkills: false,
 		}
+	}
+
+	sortedSkills() {
+		return JSON.parse(JSON.stringify(this.props.allSkills)).sort((a, b) =>
+			a.category.name > b.category.name ? 1 : -1
+		)
 	}
 
 	componentDidUpdate(prevProps) {
@@ -43,7 +50,7 @@ class EditSkills extends Component {
 
 		// if projects list length changes, update project
 		if (prevProps.allSkills.length !== allSkills.length) {
-			this.setState({ skills: allSkills })
+			this.setState({ skills: this.sortedSkills() })
 		}
 	}
 
@@ -100,12 +107,22 @@ class EditSkills extends Component {
 		this.setState({ skills, updateSkills: true })
 	}
 
+	handleEditTools(skill) {
+		this.setState({ modalSkill: skill })
+	}
+
+	closeModal() {
+		this.setState({ modalSkill: null })
+	}
+
 	render() {
 		const { allCategories } = this.props
-		const { skills, updateSkills } = this.state
+		const { skills, updateSkills, modalSkill } = this.state
 
 		return (
 			<div style={this.bodyStyle}>
+				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
+
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Typography variant="h4" gutterBottom>
 						Edit Skills
@@ -155,6 +172,11 @@ class EditSkills extends Component {
 												)
 											})}
 										</TextField>
+									</TableCell>
+									<TableCell>
+										<Button color="primary" onClick={this.handleEditTools.bind(this, skill)}>
+											Tools
+										</Button>
 									</TableCell>
 								</TableRow>
 							)
