@@ -3,14 +3,11 @@ const initialState = {
 	projects: [],
 	allCategories: [],
 	allSkills: [],
+	showSpinner: false, // show the loading spinner
 }
 
 const rootReducer = (state = initialState, action) => {
 	switch (action.type) {
-		case 'UPDATE_ALL_DATA':
-			delete action.type
-			return { ...state, ...action }
-
 		case 'ADD_PROJECT':
 			return { ...state, projects: [...state.projects, action.project] }
 
@@ -25,6 +22,13 @@ const rootReducer = (state = initialState, action) => {
 
 		case 'REMOVE_SKILL_FROM_PROJECT':
 			return removeSkillFromProject(state, action)
+
+		case 'SHOW_SPINNER':
+			return { ...state, showSpinner: action.show }
+
+		case 'UPDATE_ALL_DATA':
+			delete action.type
+			return { ...state, ...action }
 
 		case 'UPDATE_PROJECT':
 			return updateProject(state, action)
@@ -48,7 +52,7 @@ function removeSkillFromProject(state, { skill }) {
 		return project
 	})
 
-	return { ...state, projects }
+	return { ...state, projects, showSpinner: false }
 }
 
 function addSkillToProject(state, { skill }) {
@@ -57,7 +61,7 @@ function addSkillToProject(state, { skill }) {
 		return project
 	})
 
-	return { ...state, projects }
+	return { ...state, projects, showSpinner: false }
 }
 
 function updateTool(state, { tool }) {
@@ -86,7 +90,7 @@ function addToolToSkill(state, { skillId, tool }) {
 		if (skill.id === skillId) skill.tools.items.push(tool)
 		return skill
 	})
-	return { ...state, allSkills }
+	return { ...state, allSkills, showSpinner: false }
 }
 
 function updateProject(state, { project }) {

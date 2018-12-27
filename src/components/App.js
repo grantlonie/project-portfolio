@@ -19,6 +19,7 @@ import ListProjects from './ListProjects'
 import Projects from './Projects'
 import EditProject from './EditProject'
 import EditSkills from './EditSkills'
+import Spinner from './Spinner'
 
 import { getAllData } from '../js/apiInterface'
 
@@ -59,8 +60,6 @@ class App extends Component {
 	}
 
 	render() {
-		const { showDrawer } = this.state
-
 		return (
 			<Router>
 				<div>
@@ -84,7 +83,7 @@ class App extends Component {
 						</Toolbar>
 					</AppBar>
 
-					<Drawer open={showDrawer} onClose={this.toggleDrawer.bind(this)}>
+					<Drawer open={this.state.showDrawer} onClose={this.toggleDrawer.bind(this)}>
 						<div
 							tabIndex={0}
 							role="button"
@@ -106,11 +105,15 @@ class App extends Component {
 						<Route path="/editProject/:id" component={EditProject} />
 						<Route path="/skills" component={EditSkills} />
 					</div>
+
+					<Spinner show={this.props.showSpinner} />
 				</div>
 			</Router>
 		)
 	}
 }
+
+const mapStateToProps = ({ showSpinner }) => ({ showSpinner })
 
 const mapDispatchToProps = dispatch => {
 	return {
@@ -122,7 +125,7 @@ const mapDispatchToProps = dispatch => {
 
 export default withAuthenticator(
 	connect(
-		null,
+		mapStateToProps,
 		mapDispatchToProps
 	)(App)
 )

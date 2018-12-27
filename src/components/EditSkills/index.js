@@ -70,7 +70,6 @@ class EditSkills extends Component {
 			const { id, name, skillCategoryId, isUpdated } = skill
 
 			if (isUpdated) {
-				console.log('updating')
 				delete skill.isUpdated
 
 				const input = { id, name }

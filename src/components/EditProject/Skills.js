@@ -16,7 +16,9 @@ class Skills extends Component {
 	}
 
 	handleSelectedSkill(skill) {
-		const { userId, addProjectSkill, addSkillToStore } = this.props
+		const { userId, addProjectSkill, addSkillToStore, showSpinner } = this.props
+
+		showSpinner()
 
 		// New skill created
 		if (skill[0].customOption) {
@@ -38,19 +40,21 @@ class Skills extends Component {
 
 	handleUpdateTools(id, skillId, tools) {
 		const lastTool = tools[tools.length - 1] || {}
-		const { userId, updateTools, addToolToAllSkills } = this.props
+		const { userId, updateTools, addToolToAllSkills, showSpinner } = this.props
 
 		// New tool created
 		if (lastTool.customOption) {
+			showSpinner()
+
 			API.graphql(
 				graphqlOperation(createTool, {
 					input: { userId, name: lastTool.name, toolSkillId: skillId },
 				})
 			).then(({ data: { createTool } }) => {
 				const { id: toolId, name, userId } = createTool
-
 				const newTool = { id: toolId, name, userId }
 				tools[tools.length - 1] = newTool
+
 				updateTools(id, tools)
 				addToolToAllSkills(skillId, newTool)
 			})
@@ -59,8 +63,15 @@ class Skills extends Component {
 		}
 	}
 
+	removeProjectSkill(skillId) {
+		const { removeProjectSkill, showSpinner } = this.props
+
+		showSpinner()
+		removeProjectSkill(skillId)
+	}
+
 	render() {
-		const { skills, allSkills, handleDescriptionChange, removeProjectSkill } = this.props
+		const { skills, allSkills, handleDescriptionChange } = this.props
 
 		// Create nested skills inside respective categories
 		let skillData = {}
@@ -111,7 +122,7 @@ class Skills extends Component {
 											<div key={skill.id}>
 												<div style={{ display: 'flex' }}>
 													<Typography variant="title">{skill.name}</Typography>
-													<DeleteIcon onClick={() => removeProjectSkill(skill.id)} />
+													<DeleteIcon onClick={this.removeProjectSkill.bind(this, skill.id)} />
 												</div>
 
 												<Typeahead
@@ -179,6 +190,9 @@ const mapStateToProps = ({ allCategories, allSkills, userId }) => ({
 
 const mapDispatchToProps = dispatch => {
 	return {
+		showSpinner: () => {
+			dispatch({ type: 'SHOW_SPINNER', show: true })
+		},
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })
 		},
