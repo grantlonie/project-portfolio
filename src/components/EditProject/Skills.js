@@ -24,7 +24,7 @@ class Skills extends Component {
 		if (skill[0].customOption) {
 			API.graphql(
 				graphqlOperation(createSkill, {
-					input: { userId, name: skill[0].label },
+					input: { userId, name: skill[0].name },
 				})
 			).then(({ data: { createSkill } }) => {
 				addSkillToStore(createSkill)
@@ -77,9 +77,10 @@ class Skills extends Component {
 		let skillData = {}
 		skills.forEach(skill => {
 			const { name, category } = allSkills.find(i => i.id === skill.skillId)
-			if (!skillData.hasOwnProperty(category.name)) skillData[category.name] = []
+			const categoryName = category ? category.name : 'General'
 
-			skillData[category.name].push({ ...skill, name })
+			if (!skillData.hasOwnProperty(categoryName)) skillData[categoryName] = []
+			skillData[categoryName].push({ ...skill, name })
 		})
 
 		// List of skills that are not in project that can be added

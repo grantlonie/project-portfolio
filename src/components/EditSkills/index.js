@@ -23,6 +23,8 @@ const headers = [
 	{ id: 'tools', label: 'Edit Tools' },
 ]
 
+const nullCategory = { id: '_null', name: 'General' }
+
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
 
@@ -36,9 +38,13 @@ class EditSkills extends Component {
 	}
 
 	sortedSkills() {
-		return JSON.parse(JSON.stringify(this.props.allSkills)).sort((a, b) =>
-			a.category.name > b.category.name ? 1 : -1
-		)
+		return JSON.parse(JSON.stringify(this.props.allSkills))
+			.map(skill => {
+				// add nullCategory if none
+				if (!skill.category) skill.category = nullCategory
+				return skill
+			})
+			.sort((a, b) => (a.category.name > b.category.name ? 1 : -1))
 	}
 
 	componentDidUpdate(prevProps) {
@@ -75,7 +81,9 @@ class EditSkills extends Component {
 				delete skill.isUpdated
 
 				const input = { id, name }
-				if (skillCategoryId) input.skillCategoryId = skillCategoryId
+				if (skillCategoryId) {
+					input.skillCategoryId = skillCategoryId === nullCategory.id ? null : skillCategoryId
+				}
 
 				API.graphql(graphqlOperation(updateSkill, { input })).then(({ data }) => {
 					this.props.updateSkillInStore(data.updateSkill)
@@ -126,6 +134,10 @@ class EditSkills extends Component {
 		const { allCategories } = this.props
 		const { skills, modalSkill } = this.state
 
+		// Add nullCategory to category list
+		const adjCategories = JSON.parse(JSON.stringify(allCategories))
+		adjCategories.push(nullCategory)
+
 		return (
 			<div>
 				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
@@ -161,7 +173,7 @@ class EditSkills extends Component {
 											onChange={this.handleChangeCategory.bind(this, skill.id)}
 											style={{ width: '100%' }}>
 											>
-											{allCategories.map(category => {
+											{adjCategories.map(category => {
 												return (
 													<MenuItem key={category.id} value={category.id}>
 														{category.name}
