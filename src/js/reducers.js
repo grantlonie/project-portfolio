@@ -8,6 +8,9 @@ const initialState = {
 
 const rootReducer = (state = initialState, action) => {
 	switch (action.type) {
+		case 'ADD_CATEGORY':
+			return addCategory(state, action)
+
 		case 'ADD_PROJECT':
 			return { ...state, projects: [...state.projects, action.project] }
 
@@ -23,6 +26,9 @@ const rootReducer = (state = initialState, action) => {
 		case 'REMOVE_SKILL_FROM_PROJECT':
 			return removeSkillFromProject(state, action)
 
+		case 'REMOVE_CATEGORY':
+			return removeCategory(state, action)
+
 		case 'REMOVE_TOOL':
 			return removeTool(state, action)
 
@@ -36,6 +42,9 @@ const rootReducer = (state = initialState, action) => {
 		case 'UPDATE_PROJECT':
 			return updateProject(state, action)
 
+		case 'UPDATE_CATEGORY':
+			return updateCategory(state, action)
+
 		case 'UPDATE_SKILL':
 			return updateSkill(state, action)
 
@@ -45,6 +54,45 @@ const rootReducer = (state = initialState, action) => {
 		default:
 			return state
 	}
+}
+
+function addCategory(state, { category }) {
+	return {
+		...state,
+		showSpinner: false,
+		allCategories: [...state.allCategories, category],
+	}
+}
+
+function updateCategory(state, { category }) {
+	const allCategories = JSON.parse(JSON.stringify(state.allCategories)).map(i => {
+		if (i.id === category.id) return category
+		return i
+	})
+
+	const allSkills = JSON.parse(JSON.stringify(state.allSkills)).map(skill => {
+		if (skill.category && skill.category.id === category.id) skill.category = category
+
+		return skill
+	})
+
+	return { ...state, allCategories, allSkills }
+}
+
+function removeCategory(state, { categoryId }) {
+	const allCategories = JSON.parse(JSON.stringify(state.allCategories))
+		.map(category => {
+			if (category.id === categoryId) return null
+			return category
+		})
+		.filter(category => category !== null)
+
+	const allSkills = JSON.parse(JSON.stringify(state.allSkills)).map(skill => {
+		if (skill.category && skill.category.id === categoryId) skill.category = null
+		return skill
+	})
+
+	return { ...state, allCategories, allSkills }
 }
 
 function removeTool(state, { toolId }) {

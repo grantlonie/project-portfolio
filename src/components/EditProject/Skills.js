@@ -183,11 +183,7 @@ class Skills extends Component {
 	}
 }
 
-const mapStateToProps = ({ allCategories, allSkills, userId }) => ({
-	allCategories,
-	allSkills,
-	userId,
-})
+const mapStateToProps = ({ allSkills, userId }) => ({ allSkills, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {

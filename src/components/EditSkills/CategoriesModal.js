@@ -61,11 +61,15 @@ class CategoriesModal extends Component {
 		const categories = this.state.categories.filter(category => category.id !== categoryId)
 		this.setState({ categories })
 
-		API.graphql(graphqlOperation(deleteCategory, { input: { id: categoryId } })).then(() => {
-			API.graphql(
-				graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
-			)
-		})
+		API.graphql(graphqlOperation(deleteCategory, { input: { id: categoryId } })).then(
+			({ data }) => {
+				this.props.removeCategory(data.deleteCategory.id)
+
+				API.graphql(
+					graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
+				)
+			}
+		)
 	}
 
 	handleNewCategory() {
@@ -155,6 +159,15 @@ const mapDispatchToProps = dispatch => {
 	return {
 		showSpinner: () => {
 			dispatch({ type: 'SHOW_SPINNER', show: true })
+		},
+		updateCategoryInStore: category => {
+			dispatch({ type: 'UPDATE_CATEGORY', category })
+		},
+		addCategoryToStore: category => {
+			dispatch({ type: 'ADD_CATEGORY', category })
+		},
+		removeCategory: categoryId => {
+			dispatch({ type: 'REMOVE_CATEGORY', categoryId })
 		},
 	}
 }
