@@ -15,6 +15,7 @@ import {
 
 import { updateSkill } from '../../graphql/mutations'
 import ToolsModal from './ToolsModal'
+import CategoriesModal from './CategoriesModal'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
@@ -127,12 +128,16 @@ class EditSkills extends Component {
 	}
 
 	closeModal() {
-		this.setState({ modalSkill: null })
+		this.setState({ modalSkill: null, showCategoryModal: null })
+	}
+
+	handleOpenCategoryModal() {
+		this.setState({ showCategoryModal: true })
 	}
 
 	render() {
 		const { allCategories } = this.props
-		const { skills, modalSkill } = this.state
+		const { skills, modalSkill, showCategoryModal } = this.state
 
 		// Add nullCategory to category list
 		const adjCategories = JSON.parse(JSON.stringify(allCategories))
@@ -142,9 +147,18 @@ class EditSkills extends Component {
 			<div>
 				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
 
-				<Typography variant="h4" gutterBottom>
-					Edit Skills
-				</Typography>
+				{showCategoryModal ? (
+					<CategoriesModal categories={allCategories} close={this.closeModal.bind(this)} />
+				) : null}
+
+				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+					<Typography variant="h4" gutterBottom>
+						Edit Skills
+					</Typography>
+					<Button color="primary" onClick={this.handleOpenCategoryModal.bind(this)}>
+						Update Categories
+					</Button>
+				</div>
 
 				<Table aria-labelledby="tableTitle">
 					<TableHead>
