@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { BarLoader } from 'react-spinners'
 import { Modal, Paper } from '@material-ui/core'
 
@@ -11,20 +12,16 @@ const modalStyle = {
 	padding: '20px',
 }
 
-const Spinner = ({ show }) => {
+const Spinner = ({ showSpinner }) => {
 	return (
-		<Modal open={show}>
+		<Modal open={showSpinner}>
 			<Paper style={modalStyle} elevation={1}>
-				<BarLoader
-					// className={override}
-					sizeUnit={'px'}
-					size={150}
-					color={'#123abc'}
-					loading={show}
-				/>
+				<BarLoader sizeUnit={'px'} size={150} color={'#123abc'} loading={showSpinner} />
 			</Paper>
 		</Modal>
 	)
 }
 
-export default Spinner
+const mapStateToProps = ({ showSpinner }) => ({ showSpinner })
+
+export default connect(mapStateToProps)(Spinner)

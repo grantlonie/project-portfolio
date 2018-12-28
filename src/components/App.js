@@ -106,14 +106,12 @@ class App extends Component {
 						<Route path="/skills" component={EditSkills} />
 					</div>
 
-					<Spinner show={this.props.showSpinner} />
+					<Spinner />
 				</div>
 			</Router>
 		)
 	}
 }
-
-const mapStateToProps = ({ showSpinner }) => ({ showSpinner })
 
 const mapDispatchToProps = dispatch => {
 	return {
@@ -125,7 +123,7 @@ const mapDispatchToProps = dispatch => {
 
 export default withAuthenticator(
 	connect(
-		mapStateToProps,
+		null,
 		mapDispatchToProps
 	)(App)
 )
