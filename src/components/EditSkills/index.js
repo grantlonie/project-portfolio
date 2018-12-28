@@ -44,7 +44,11 @@ class EditSkills extends Component {
 	componentDidUpdate(prevProps) {
 		// if skills change in redux, update state
 		if (JSON.stringify(prevProps.allSkills) !== JSON.stringify(this.props.allSkills)) {
-			this.setState({ skills: this.sortedSkills() })
+			let modalSkill = this.state.modalSkill
+				? this.props.allSkills.find(i => i.id === this.state.modalSkill.id)
+				: null
+
+			this.setState({ skills: this.sortedSkills(), modalSkill })
 		}
 	}
 

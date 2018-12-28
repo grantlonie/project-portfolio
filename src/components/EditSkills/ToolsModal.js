@@ -41,7 +41,7 @@ class ToolsModal extends Component {
 	componentDidUpdate(prevProps) {
 		// if skills change in parent component, update state
 		if (prevProps.skill.tools.items.length !== this.props.skill.tools.items.length) {
-			this.setState({ skills: this.props.skill.tools.items })
+			this.setState({ tools: this.props.skill.tools.items })
 		}
 	}
 
@@ -74,16 +74,16 @@ class ToolsModal extends Component {
 
 		showSpinner()
 
-		// API.graphql(
-		// 	graphqlOperation(createTool, {
-		// 		input: { userId, name: 'New Tool', toolSkillId: skill.id },
-		// 	})
-		// ).then(({ data: { createTool } }) => {
-		// 	const { id: toolId, name, userId } = createTool
-		// 	const newTool = { id: toolId, name, userId }
+		API.graphql(
+			graphqlOperation(createTool, {
+				input: { userId, name: 'New Tool', toolSkillId: skill.id },
+			})
+		).then(({ data: { createTool } }) => {
+			const { id: toolId, name, userId } = createTool
+			const newTool = { id: toolId, name, userId }
 
-		// 	addToolToAllSkills(skill.id, newTool)
-		// })
+			addToolToAllSkills(skill.id, newTool)
+		})
 	}
 
 	closeModal() {

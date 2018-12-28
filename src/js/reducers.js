@@ -100,7 +100,7 @@ function updateSkill(state, { updatedSkill }) {
 }
 
 function addToolToSkill(state, { skillId, tool }) {
-	const allSkills = state.allSkills.map(skill => {
+	const allSkills = JSON.parse(JSON.stringify(state.allSkills)).map(skill => {
 		if (skill.id === skillId) skill.tools.items.push(tool)
 		return skill
 	})
