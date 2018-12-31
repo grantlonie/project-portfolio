@@ -14,9 +14,10 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createSkill, updateSkill, deleteSkill, updateUser } from '../../graphql/mutations'
+import { createSkill, updateSkill } from '../../graphql/mutations'
 import ToolsModal from './ToolsModal'
 import CategoriesModal from './CategoriesModal'
+import DeleteSkillConfirmationModal from './DeleteSkillConfirmationModal'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
@@ -149,16 +150,13 @@ class EditSkills extends Component {
 		this.setState({ newSkill: target.value })
 	}
 
-	handleRemoveSkill(skillId) {
-		const { removeSkill, userId } = this.props
+	handleOpenDeleteModal(skill) {
+		this.setState({ modalSkill: skill, modal: 'delete' })
+	}
 
+	removeSkill(skillId) {
 		const skills = this.state.skills.filter(skill => skill.id !== skillId)
 		this.setState({ skills })
-
-		API.graphql(graphqlOperation(deleteSkill, { input: { id: skillId } })).then(({ data }) => {
-			removeSkill(data.deleteSkill.id)
-			API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
-		})
 	}
 
 	render() {
@@ -181,6 +179,17 @@ class EditSkills extends Component {
 					<CategoriesModal
 						categories={allCategories}
 						nullCategory={nullCategory}
+						close={this.closeModal.bind(this)}
+					/>
+				)
+				break
+
+			case 'delete':
+				renderedModal = (
+					<DeleteSkillConfirmationModal
+						skills={skills}
+						skill={modalSkill}
+						removeSkill={this.removeSkill.bind(this)}
 						close={this.closeModal.bind(this)}
 					/>
 				)
@@ -218,7 +227,7 @@ class EditSkills extends Component {
 							return (
 								<TableRow hover key={skill.id}>
 									<TableCell>
-										<DeleteIcon onClick={this.handleRemoveSkill.bind(this, skill.id)} />
+										<DeleteIcon onClick={this.handleOpenDeleteModal.bind(this, skill)} />
 									</TableCell>
 									<TableCell>{skill.id}</TableCell>
 									<TableCell>
@@ -293,9 +302,6 @@ const mapDispatchToProps = dispatch => {
 		},
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })
-		},
-		removeSkill: skillId => {
-			dispatch({ type: 'REMOVE_SKILL', skillId })
 		},
 		showSpinner: () => {
 			dispatch({ type: 'SHOW_SPINNER', show: true })
