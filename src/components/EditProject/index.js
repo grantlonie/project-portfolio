@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Typography, Button } from '@material-ui/core'
+import { Typography } from '@material-ui/core'
 import API, { graphqlOperation } from '@aws-amplify/api'
 
 import MainProps from './MainProps'

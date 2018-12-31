@@ -242,7 +242,11 @@ class EditSkills extends Component {
 							<TableCell />
 							<TableCell />
 							<TableCell>
-								<TextField value={newSkill} onChange={this.handleNewSkillChange.bind(this)} />
+								<TextField
+									value={newSkill}
+									placeholder="New Skill"
+									onChange={this.handleNewSkillChange.bind(this)}
+								/>
 							</TableCell>
 							<TableCell>
 								<Button

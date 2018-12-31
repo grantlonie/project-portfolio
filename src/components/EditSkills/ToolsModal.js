@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
+import ValidationPopover from './ValidationPopover'
 import { createTool, updateTool, deleteTool, updateUser } from '../../graphql/mutations'
 
 class ToolsModal extends Component {
@@ -35,7 +36,12 @@ class ToolsModal extends Component {
 			overflowY: 'scroll',
 		}
 
-		this.state = { tools: props.skill.tools.items, newTool: '' }
+		this.state = {
+			tools: props.skill.tools.items,
+			newTool: '',
+			popoverElement: null,
+			popoverContent: '',
+		}
 	}
 
 	componentDidUpdate(prevProps) {
@@ -69,22 +75,30 @@ class ToolsModal extends Component {
 		})
 	}
 
-	handleNewTool() {
+	handleNewTool(e) {
 		const { showSpinner, userId, skill, addToolToAllSkills } = this.props
+		const { tools, newTool } = this.state
 
-		showSpinner()
-
-		API.graphql(
-			graphqlOperation(createTool, {
-				input: { userId, name: this.state.newTool, toolSkillId: skill.id },
+		if (tools.findIndex(tool => tool.name === newTool) !== -1) {
+			this.setState({
+				popoverElement: e.currentTarget,
+				popoverContent: `Tool name ${newTool} is already used. Choose another..`,
 			})
-		).then(({ data: { createTool } }) => {
-			const { id: toolId, name, userId } = createTool
-			const newTool = { id: toolId, name, userId }
+		} else {
+			showSpinner()
 
-			addToolToAllSkills(skill.id, newTool)
-			this.setState({ newTool: '' })
-		})
+			API.graphql(
+				graphqlOperation(createTool, {
+					input: { userId, name: this.state.newTool, toolSkillId: skill.id },
+				})
+			).then(({ data: { createTool } }) => {
+				const { id: toolId, name, userId } = createTool
+				const newTool = { id: toolId, name, userId }
+
+				addToolToAllSkills(skill.id, newTool)
+				this.setState({ newTool: '' })
+			})
+		}
 	}
 
 	closeModal() {
@@ -106,13 +120,17 @@ class ToolsModal extends Component {
 		this.setState({ newTool: target.value })
 	}
 
-	handleNewToolKeyPress({ key }) {
+	handleNewToolKeyPress(e) {
 		// check for enter key
-		if (key === 'Enter') this.handleNewTool()
+		if (e.key === 'Enter') this.handleNewTool(e)
+	}
+
+	handleClosePopover() {
+		this.setState({ popoverElement: null })
 	}
 
 	render() {
-		const { tools, newTool } = this.state
+		const { tools, newTool, popoverElement, popoverContent } = this.state
 
 		return (
 			<Modal open onClose={this.closeModal.bind(this)}>
@@ -166,6 +184,7 @@ class ToolsModal extends Component {
 								<TableCell>
 									<TextField
 										value={newTool}
+										placeholder="New Tool"
 										onChange={this.handleNewToolChange.bind(this)}
 										onKeyUp={this.handleNewToolKeyPress.bind(this)}
 									/>
@@ -173,6 +192,12 @@ class ToolsModal extends Component {
 							</TableRow>
 						</TableBody>
 					</Table>
+
+					<ValidationPopover
+						element={popoverElement}
+						content={popoverContent}
+						close={this.handleClosePopover.bind(this)}
+					/>
 				</Paper>
 			</Modal>
 		)

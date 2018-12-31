@@ -16,22 +16,28 @@ class Skills extends Component {
 	}
 
 	handleSelectedSkill(skill) {
-		const { userId, addProjectSkill, addSkillToStore, showSpinner } = this.props
+		const { userId, allSkills, addProjectSkill, addSkillToStore, showSpinner } = this.props
 
-		showSpinner()
+		const { id, name, customOption } = skill[0]
 
-		// New skill created
-		if (skill[0].customOption) {
-			API.graphql(
-				graphqlOperation(createSkill, {
-					input: { userId, name: skill[0].name },
+		// Create new skill (only if existing skill name doesn't exist)
+		if (customOption) {
+			if (allSkills.findIndex(skill => skill.name === name) !== -1) {
+				this.forceUpdate() // HACK: prevents skills typeaway from adding already selected skill to list
+			} else {
+				showSpinner()
+
+				API.graphql(
+					graphqlOperation(createSkill, {
+						input: { userId, name: name },
+					})
+				).then(({ data: { createSkill } }) => {
+					addSkillToStore(createSkill)
+					addProjectSkill(createSkill.id)
 				})
-			).then(({ data: { createSkill } }) => {
-				addSkillToStore(createSkill)
-				addProjectSkill(createSkill.id)
-			})
+			}
 		} else {
-			addProjectSkill(skill[0].id)
+			addProjectSkill(id)
 		}
 
 		// clear typeahead input
@@ -39,25 +45,32 @@ class Skills extends Component {
 	}
 
 	handleUpdateTools(id, skillId, tools) {
+		const { userId, allSkills, updateTools, addToolToAllSkills, showSpinner } = this.props
+
 		const lastTool = tools[tools.length - 1] || {}
-		const { userId, updateTools, addToolToAllSkills, showSpinner } = this.props
+		const { name, customOption } = lastTool
 
-		// New tool created
-		if (lastTool.customOption) {
-			showSpinner()
+		// Create new tool (only if existing tool name doesn't exist)
+		if (customOption) {
+			const allTools = allSkills.find(i => i.id === skillId).tools.items
+			if (allTools.findIndex(tool => tool.name === name) !== -1) {
+				this.forceUpdate() // HACK: prevents tools typeaway from adding already selected tool to list
+			} else {
+				showSpinner()
 
-			API.graphql(
-				graphqlOperation(createTool, {
-					input: { userId, name: lastTool.name, toolSkillId: skillId },
+				API.graphql(
+					graphqlOperation(createTool, {
+						input: { userId, name: name, toolSkillId: skillId },
+					})
+				).then(({ data: { createTool } }) => {
+					const { id: toolId, name, userId } = createTool
+					const newTool = { id: toolId, name, userId }
+					tools[tools.length - 1] = newTool
+
+					updateTools(id, tools)
+					addToolToAllSkills(skillId, newTool)
 				})
-			).then(({ data: { createTool } }) => {
-				const { id: toolId, name, userId } = createTool
-				const newTool = { id: toolId, name, userId }
-				tools[tools.length - 1] = newTool
-
-				updateTools(id, tools)
-				addToolToAllSkills(skillId, newTool)
-			})
+			}
 		} else {
 			updateTools(id, tools)
 		}

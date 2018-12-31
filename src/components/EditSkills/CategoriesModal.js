@@ -80,13 +80,18 @@ class CategoriesModal extends Component {
 	}
 
 	handleNewCategory(e) {
-		const { showSpinner, userId, addCategoryToStore, nullCategory } = this.props
+		const { categories, showSpinner, userId, addCategoryToStore, nullCategory } = this.props
 		const { newCategory } = this.state
 
 		if (newCategory === nullCategory.name) {
 			this.setState({
 				popoverElement: e.currentTarget,
 				popoverContent: `Category cannot have the name: "${nullCategory.name}"`,
+			})
+		} else if (categories.findIndex(category => category.name === newCategory) !== -1) {
+			this.setState({
+				popoverElement: e.currentTarget,
+				popoverContent: `Category name ${newCategory} is already used. Choose another..`,
 			})
 		} else {
 			showSpinner()
@@ -124,9 +129,9 @@ class CategoriesModal extends Component {
 		this.setState({ newCategory: target.value })
 	}
 
-	handleNewCategoryKeyPress({ key }) {
+	handleNewCategoryKeyPress(e) {
 		// check for enter key
-		if (key === 'Enter') this.handleNewCategory()
+		if (e.key === 'Enter') this.handleNewCategory(e)
 	}
 
 	handleClosePopover() {
@@ -183,6 +188,7 @@ class CategoriesModal extends Component {
 								<TableCell>
 									<TextField
 										value={newCategory}
+										placeholder="New Category"
 										onChange={this.handleNewCategoryChange.bind(this)}
 										onKeyUp={this.handleNewCategoryKeyPress.bind(this)}
 									/>
