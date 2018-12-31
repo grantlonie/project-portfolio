@@ -13,7 +13,7 @@ import {
 	Button,
 } from '@material-ui/core'
 
-import { updateSkill } from '../../graphql/mutations'
+import { createSkill, updateSkill } from '../../graphql/mutations'
 import ToolsModal from './ToolsModal'
 import CategoriesModal from './CategoriesModal'
 
@@ -35,6 +35,7 @@ class EditSkills extends Component {
 
 		this.state = {
 			skills: this.sortedSkills(),
+			newSkill: '',
 		}
 	}
 
@@ -64,12 +65,19 @@ class EditSkills extends Component {
 	}
 
 	async handleAddSkill() {
-		const { userId, addSkill } = this.props
+		const { userId, showSpinner, addSkillToStore } = this.props
 
-		// const { data } = await API.graphql(
-		// 	graphqlOperation(createSkill, { input: {} })
-		// )
-		// addSkill(data.createSkill)
+		showSpinner()
+
+		API.graphql(
+			graphqlOperation(createSkill, {
+				input: { userId, name: this.state.newSkill },
+			})
+		).then(({ data: { createSkill } }) => {
+			addSkillToStore(createSkill)
+		})
+
+		this.setState({ newSkill: '' })
 	}
 
 	updateSkills() {
@@ -135,9 +143,13 @@ class EditSkills extends Component {
 		this.setState({ showCategoryModal: true })
 	}
 
+	handleNewSkillChange({ target }) {
+		this.setState({ newSkill: target.value })
+	}
+
 	render() {
 		const { allCategories } = this.props
-		const { skills, modalSkill, showCategoryModal } = this.state
+		const { skills, modalSkill, showCategoryModal, newSkill } = this.state
 
 		// Add nullCategory to category list
 		const adjCategories = JSON.parse(JSON.stringify(allCategories))
@@ -204,6 +216,23 @@ class EditSkills extends Component {
 								</TableRow>
 							)
 						})}
+
+						<TableRow>
+							<TableCell />
+							<TableCell>
+								<TextField value={newSkill} onChange={this.handleNewSkillChange.bind(this)} />
+							</TableCell>
+							<TableCell>
+								<Button
+									color="secondary"
+									variant="contained"
+									disabled={!Boolean(this.state.newSkill)}
+									onClick={this.handleAddSkill.bind(this)}>
+									Create
+								</Button>
+							</TableCell>
+							<TableCell />
+						</TableRow>
 					</TableBody>
 				</Table>
 			</div>
@@ -221,6 +250,12 @@ const mapDispatchToProps = dispatch => {
 	return {
 		updateSkillInStore: updatedSkill => {
 			dispatch({ type: 'UPDATE_SKILL', updatedSkill })
+		},
+		addSkillToStore: skill => {
+			dispatch({ type: 'ADD_SKILL', skill })
+		},
+		showSpinner: () => {
+			dispatch({ type: 'SHOW_SPINNER', show: true })
 		},
 	}
 }

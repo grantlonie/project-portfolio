@@ -15,7 +15,7 @@ const rootReducer = (state = initialState, action) => {
 			return { ...state, projects: [...state.projects, action.project] }
 
 		case 'ADD_SKILL':
-			return { ...state, allSkills: [...state.allSkills, action.skill] }
+			return addSkill(state, action)
 
 		case 'ADD_SKILL_TO_PROJECT':
 			return addSkillToProject(state, action)
@@ -54,6 +54,13 @@ const rootReducer = (state = initialState, action) => {
 		default:
 			return state
 	}
+}
+
+function addSkill(state, { skill }) {
+	const allSkills = JSON.parse(JSON.stringify(state.allSkills))
+	allSkills.push(skill)
+
+	return { ...state, allSkills, showSpinner: false }
 }
 
 function addCategory(state, { category }) {
