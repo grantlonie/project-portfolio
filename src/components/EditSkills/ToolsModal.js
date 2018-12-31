@@ -35,7 +35,7 @@ class ToolsModal extends Component {
 			overflowY: 'scroll',
 		}
 
-		this.state = { tools: props.skill.tools.items }
+		this.state = { tools: props.skill.tools.items, newTool: '' }
 	}
 
 	componentDidUpdate(prevProps) {
@@ -76,13 +76,14 @@ class ToolsModal extends Component {
 
 		API.graphql(
 			graphqlOperation(createTool, {
-				input: { userId, name: 'New Tool', toolSkillId: skill.id },
+				input: { userId, name: this.state.newTool, toolSkillId: skill.id },
 			})
 		).then(({ data: { createTool } }) => {
 			const { id: toolId, name, userId } = createTool
 			const newTool = { id: toolId, name, userId }
 
 			addToolToAllSkills(skill.id, newTool)
+			this.setState({ newTool: '' })
 		})
 	}
 
@@ -101,8 +102,17 @@ class ToolsModal extends Component {
 		close()
 	}
 
+	handleNewToolChange({ target }) {
+		this.setState({ newTool: target.value })
+	}
+
+	handleNewToolKeyPress({ key }) {
+		// check for enter key
+		if (key === 'Enter') this.handleNewTool()
+	}
+
 	render() {
-		const { tools } = this.state
+		const { tools, newTool } = this.state
 
 		return (
 			<Modal open onClose={this.closeModal.bind(this)}>
@@ -142,6 +152,25 @@ class ToolsModal extends Component {
 									</TableRow>
 								)
 							})}
+
+							<TableRow>
+								<TableCell />
+								<TableCell>
+									<Button
+										color="secondary"
+										disabled={!Boolean(newTool)}
+										onClick={this.handleNewTool.bind(this)}>
+										Create
+									</Button>
+								</TableCell>
+								<TableCell>
+									<TextField
+										value={newTool}
+										onChange={this.handleNewToolChange.bind(this)}
+										onKeyUp={this.handleNewToolKeyPress.bind(this)}
+									/>
+								</TableCell>
+							</TableRow>
 						</TableBody>
 					</Table>
 				</Paper>
