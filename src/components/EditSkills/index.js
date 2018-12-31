@@ -37,6 +37,7 @@ class EditSkills extends Component {
 		this.state = {
 			skills: this.sortedSkills(),
 			newSkill: '',
+			modal: '',
 		}
 	}
 
@@ -133,15 +134,15 @@ class EditSkills extends Component {
 	}
 
 	handleEditTools(skill) {
-		this.setState({ modalSkill: skill })
+		this.setState({ modalSkill: skill, modal: 'tools' })
 	}
 
 	closeModal() {
-		this.setState({ modalSkill: null, showCategoryModal: null })
+		this.setState({ modalSkill: null, modal: '' })
 	}
 
 	handleOpenCategoryModal() {
-		this.setState({ showCategoryModal: true })
+		this.setState({ modal: 'categories' })
 	}
 
 	handleNewSkillChange({ target }) {
@@ -162,23 +163,36 @@ class EditSkills extends Component {
 
 	render() {
 		const { allCategories } = this.props
-		const { skills, modalSkill, showCategoryModal, newSkill } = this.state
+		const { skills, modalSkill, modal, newSkill } = this.state
 
 		// Add nullCategory to category list
 		const adjCategories = JSON.parse(JSON.stringify(allCategories))
 		adjCategories.push(nullCategory)
 
-		return (
-			<div>
-				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
+		// Render a modal
+		let renderedModal
+		switch (modal) {
+			case 'tools':
+				renderedModal = <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} />
+				break
 
-				{showCategoryModal ? (
+			case 'categories':
+				renderedModal = (
 					<CategoriesModal
 						categories={allCategories}
 						nullCategory={nullCategory}
 						close={this.closeModal.bind(this)}
 					/>
-				) : null}
+				)
+				break
+
+			default:
+				renderedModal = null
+		}
+
+		return (
+			<div>
+				{renderedModal}
 
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Typography variant="h4" gutterBottom>
