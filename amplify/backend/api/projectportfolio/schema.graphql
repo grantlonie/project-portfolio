@@ -30,7 +30,7 @@ type Category @model {
 	id: ID!
 	userId: String!
 	name: String!
-	skills: [Skill]! @connection(name: "CategorySkills")
+	skills: [Skill] @connection(name: "CategorySkills")
 }
 
 type Skill @model {
@@ -44,6 +44,6 @@ type Skill @model {
 type Tool @model {
 	id: ID!
 	userId: String!
-	skill: Skill! @connection(name: "SkillTools")
+	skill: Skill @connection(name: "SkillTools")
 	name: String!
 }

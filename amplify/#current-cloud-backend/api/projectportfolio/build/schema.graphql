@@ -42,7 +42,7 @@ type Skill {
 type Tool {
   id: ID!
   userId: String!
-  skill: Skill!
+  skill: Skill
   name: String!
 }
 
@@ -353,7 +353,7 @@ input CreateToolInput {
   id: ID
   userId: String!
   name: String!
-  toolSkillId: ID!
+  toolSkillId: ID
 }
 
 input UpdateToolInput {
