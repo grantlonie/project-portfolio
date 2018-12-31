@@ -236,6 +236,7 @@ class EditSkills extends Component {
 
 						<TableRow>
 							<TableCell />
+							<TableCell />
 							<TableCell>
 								<TextField value={newSkill} onChange={this.handleNewSkillChange.bind(this)} />
 							</TableCell>

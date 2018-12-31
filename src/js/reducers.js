@@ -62,7 +62,18 @@ const rootReducer = (state = initialState, action) => {
 function removeSkill(state, { skillId }) {
 	const allSkills = state.allSkills.filter(skill => skill.id !== skillId)
 
-	return { ...state, allSkills }
+	const projects = JSON.parse(JSON.stringify(state.projects)).map(project => {
+		project.skills.items = project.skills.items
+			.map(skill => {
+				if (skill && skill.skillId === skillId) return null
+				return skill
+			})
+			.filter(skill => skill !== null)
+
+		return project
+	})
+
+	return { ...state, allSkills, projects }
 }
 
 function addSkill(state, { skill }) {
