@@ -173,7 +173,11 @@ class EditSkills extends Component {
 				{modalSkill ? <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} /> : null}
 
 				{showCategoryModal ? (
-					<CategoriesModal categories={allCategories} close={this.closeModal.bind(this)} />
+					<CategoriesModal
+						categories={allCategories}
+						nullCategory={nullCategory}
+						close={this.closeModal.bind(this)}
+					/>
 				) : null}
 
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>

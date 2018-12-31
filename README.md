@@ -17,7 +17,3 @@ AWS Amplify commands:
 
 - `amplify push` will push any changes made to the server and update local content accordingly
 - `amplify publish` to run a production build and upload hosted content to AWS S3
-
-### Todo
-
-- clean up ProjectSkills table after deleting category

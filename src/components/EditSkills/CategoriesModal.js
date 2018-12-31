@@ -15,6 +15,8 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
+import ValidationPopover from './ValidationPopover'
+
 import { createCategory, updateCategory, deleteCategory, updateUser } from '../../graphql/mutations'
 
 class CategoriesModal extends Component {
@@ -35,7 +37,12 @@ class CategoriesModal extends Component {
 			overflowY: 'scroll',
 		}
 
-		this.state = { categories: props.categories }
+		this.state = {
+			categories: props.categories,
+			newCategory: '',
+			popoverElement: null,
+			popoverContent: '',
+		}
 	}
 
 	componentDidUpdate(prevProps) {
@@ -72,21 +79,30 @@ class CategoriesModal extends Component {
 		)
 	}
 
-	handleNewCategory() {
-		const { showSpinner, userId, addCategoryToStore } = this.props
+	handleNewCategory(e) {
+		const { showSpinner, userId, addCategoryToStore, nullCategory } = this.props
+		const { newCategory } = this.state
 
-		showSpinner()
-
-		API.graphql(
-			graphqlOperation(createCategory, {
-				input: { userId, name: 'New Category' },
+		if (newCategory === nullCategory.name) {
+			this.setState({
+				popoverElement: e.currentTarget,
+				popoverContent: `Category cannot have the name: "${nullCategory.name}"`,
 			})
-		).then(({ data: { createCategory } }) => {
-			const { id, name, userId } = createCategory
-			const newCategory = { id, name, userId }
+		} else {
+			showSpinner()
 
-			addCategoryToStore(newCategory)
-		})
+			API.graphql(
+				graphqlOperation(createCategory, {
+					input: { userId, name: newCategory },
+				})
+			).then(({ data: { createCategory } }) => {
+				const { id, name, userId } = createCategory
+				const newCategory = { id, name, userId }
+
+				addCategoryToStore(newCategory)
+				this.setState({ newCategory: '' })
+			})
+		}
 	}
 
 	closeModal() {
@@ -104,20 +120,28 @@ class CategoriesModal extends Component {
 		close()
 	}
 
+	handleNewCategoryChange({ target }) {
+		this.setState({ newCategory: target.value })
+	}
+
+	handleNewCategoryKeyPress({ key }) {
+		// check for enter key
+		if (key === 'Enter') this.handleNewCategory()
+	}
+
+	handleClosePopover() {
+		this.setState({ popoverElement: null })
+	}
+
 	render() {
-		const { categories } = this.state
+		const { categories, newCategory, popoverElement, popoverContent } = this.state
 
 		return (
 			<Modal open onClose={this.closeModal.bind(this)}>
 				<Paper style={this.modalStyle} elevation={1}>
-					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Typography variant="h6" gutterBottom>
-							Categories
-						</Typography>
-						<Button color="primary" onClick={this.handleNewCategory.bind(this)}>
-							New
-						</Button>
-					</div>
+					<Typography variant="h6" gutterBottom>
+						Categories
+					</Typography>
 
 					<Table aria-labelledby="tableTitle">
 						<TableHead>
@@ -145,8 +169,33 @@ class CategoriesModal extends Component {
 									</TableRow>
 								)
 							})}
+
+							<TableRow>
+								<TableCell />
+								<TableCell>
+									<Button
+										color="secondary"
+										disabled={!Boolean(this.state.newCategory)}
+										onClick={this.handleNewCategory.bind(this)}>
+										Create
+									</Button>
+								</TableCell>
+								<TableCell>
+									<TextField
+										value={newCategory}
+										onChange={this.handleNewCategoryChange.bind(this)}
+										onKeyUp={this.handleNewCategoryKeyPress.bind(this)}
+									/>
+								</TableCell>
+							</TableRow>
 						</TableBody>
 					</Table>
+
+					<ValidationPopover
+						element={popoverElement}
+						content={popoverContent}
+						close={this.handleClosePopover.bind(this)}
+					/>
 				</Paper>
 			</Modal>
 		)
