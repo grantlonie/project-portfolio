@@ -23,6 +23,9 @@ const rootReducer = (state = initialState, action) => {
 		case 'ADD_TOOL_TO_SKILL':
 			return addToolToSkill(state, action)
 
+		case 'REMOVE_SKILL':
+			return removeSkill(state, action)
+
 		case 'REMOVE_SKILL_FROM_PROJECT':
 			return removeSkillFromProject(state, action)
 
@@ -54,6 +57,12 @@ const rootReducer = (state = initialState, action) => {
 		default:
 			return state
 	}
+}
+
+function removeSkill(state, { skillId }) {
+	const allSkills = state.allSkills.filter(skill => skill.id !== skillId)
+
+	return { ...state, allSkills }
 }
 
 function addSkill(state, { skill }) {

@@ -9,7 +9,12 @@ import {
 	listProjectSkills,
 	getUser,
 } from '../graphql/queries'
-import { updateProjectSkill, updateUser } from '../graphql/mutations'
+import {
+	updateProjectSkill,
+	deleteProjectSkill,
+	updateUser,
+	deleteTool,
+} from '../graphql/mutations'
 
 function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
@@ -60,47 +65,64 @@ function getUserData(id) {
 }
 
 // This method checks to see if dirty tables exist and cleans them
-async function cleanupDirtyTables(userId) {
+async function cleanupDirtyTables(userId, allSkills) {
 	const userData = await getUserData(userId)
 
 	if (userData.dirtyTables) {
 		const projectSkills = await getProjectSkills(userId)
 		const tools = await getTools(userId)
 
-		// Go through all ProjectSkills and remove all tool that no longer exists
-		projectSkills.forEach(projectSkill => {
+		// Go through all ProjectSkills
+		for (const projectSkill of projectSkills) {
 			const { id, toolIds } = projectSkill
 
-			if (Array.isArray(toolIds)) {
-				toolIds.forEach(toolId => {
+			// Remove any ProjectSkill that has a skillId that is not in Skills
+			if (allSkills.findIndex(skill => skill.id === projectSkill.skillId) === -1) {
+				await API.graphql(graphqlOperation(deleteProjectSkill, { input: { id } }))
+			}
+
+			// Remove any ProjectSkill tool that no longer exist in Tools
+			else if (Array.isArray(toolIds)) {
+				for (const toolId of toolIds) {
 					if (tools.findIndex(tool => tool.id === toolId) === -1) {
 						const newToolIds = toolIds.filter(i => i !== toolId)
 
-						API.graphql(
+						await API.graphql(
 							graphqlOperation(updateProjectSkill, {
 								input: { id, toolIds: newToolIds },
 							})
-						).then(() => {
-							API.graphql(
-								graphqlOperation(updateUser, {
-									input: { id: userId, dirtyTables: false },
-								})
-							)
-						})
+						)
 					}
-				})
+				}
 			}
-		})
+		}
+
+		// Delete any tool where parent skill no longer exists
+		for (const tool of tools) {
+			if (!tool.skill) {
+				await API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } }))
+			}
+		}
+
+		// No more dirty tables!
+		await API.graphql(
+			graphqlOperation(updateUser, {
+				input: { id: userId, dirtyTables: false },
+			})
+		)
+
+		console.log('Dirty tables cleaned')
 	}
 }
 
 export async function getAllData() {
 	const userId = await getUserId()
-	const projects = await getProjects(userId)
 	const allSkills = await getSkills(userId)
-	const allCategories = await getCategories(userId)
 
-	cleanupDirtyTables(userId)
+	await cleanupDirtyTables(userId, allSkills)
+
+	const projects = await getProjects(userId)
+	const allCategories = await getCategories(userId)
 
 	return { userId, projects, allSkills, allCategories }
 }
