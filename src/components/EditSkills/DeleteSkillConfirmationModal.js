@@ -33,8 +33,9 @@ class ConfirmationModal extends Component {
 
 		// Array of skills the user can merge existing skill with
 		this.mergeSkills = props.skills.filter(skill => skill.id !== props.skill.id)
+		const mergeSkillId = this.mergeSkills.length > 0 ? this.mergeSkills[0].id : null
 
-		this.state = { deleteTextValue: '', mergeSkillId: this.mergeSkills[0].id }
+		this.state = { deleteTextValue: '', mergeSkillId }
 	}
 
 	deleteSkill() {
