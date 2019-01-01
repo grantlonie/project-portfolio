@@ -94,7 +94,7 @@ class CategoriesModal extends Component {
 				popoverContent: `Category name ${newCategory} is already used. Choose another..`,
 			})
 		} else {
-			showSpinner()
+			showSpinner(true)
 
 			API.graphql(
 				graphqlOperation(createCategory, {
@@ -105,6 +105,7 @@ class CategoriesModal extends Component {
 				const newCategory = { id, name, userId }
 
 				addCategoryToStore(newCategory)
+				showSpinner(false)
 				this.setState({ newCategory: '' })
 			})
 		}
@@ -212,8 +213,8 @@ const mapStateToProps = ({ userId }) => ({ userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		showSpinner: () => {
-			dispatch({ type: 'SHOW_SPINNER', show: true })
+		showSpinner: show => {
+			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 		updateCategoryInStore: category => {
 			dispatch({ type: 'UPDATE_CATEGORY', category })

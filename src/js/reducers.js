@@ -80,15 +80,11 @@ function addSkill(state, { skill }) {
 	const allSkills = JSON.parse(JSON.stringify(state.allSkills))
 	allSkills.push(skill)
 
-	return { ...state, allSkills, showSpinner: false }
+	return { ...state, allSkills }
 }
 
 function addCategory(state, { category }) {
-	return {
-		...state,
-		showSpinner: false,
-		allCategories: [...state.allCategories, category],
-	}
+	return { ...state, allCategories: [...state.allCategories, category] }
 }
 
 function updateCategory(state, { category }) {
@@ -141,7 +137,7 @@ function removeSkillFromProject(state, { skill }) {
 		return project
 	})
 
-	return { ...state, projects, showSpinner: false }
+	return { ...state, projects }
 }
 
 function addSkillToProject(state, { skill }) {
@@ -150,7 +146,7 @@ function addSkillToProject(state, { skill }) {
 		return project
 	})
 
-	return { ...state, projects, showSpinner: false }
+	return { ...state, projects }
 }
 
 function updateTool(state, { tool }) {
@@ -179,7 +175,7 @@ function addToolToSkill(state, { skillId, tool }) {
 		if (skill.id === skillId) skill.tools.items.push(tool)
 		return skill
 	})
-	return { ...state, allSkills, showSpinner: false }
+	return { ...state, allSkills }
 }
 
 function updateProject(state, { project }) {

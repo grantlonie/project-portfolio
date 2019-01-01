@@ -25,7 +25,7 @@ class Skills extends Component {
 			if (allSkills.findIndex(skill => skill.name === name) !== -1) {
 				this.forceUpdate() // HACK: prevents skills typeaway from adding already selected skill to list
 			} else {
-				showSpinner()
+				showSpinner(true)
 
 				API.graphql(
 					graphqlOperation(createSkill, {
@@ -34,6 +34,7 @@ class Skills extends Component {
 				).then(({ data: { createSkill } }) => {
 					addSkillToStore(createSkill)
 					addProjectSkill(createSkill.id)
+					showSpinner(false)
 				})
 			}
 		} else {
@@ -56,7 +57,7 @@ class Skills extends Component {
 			if (allTools.findIndex(tool => tool.name === name) !== -1) {
 				this.forceUpdate() // HACK: prevents tools typeaway from adding already selected tool to list
 			} else {
-				showSpinner()
+				showSpinner(true)
 
 				API.graphql(
 					graphqlOperation(createTool, {
@@ -69,6 +70,7 @@ class Skills extends Component {
 
 					updateTools(id, tools)
 					addToolToAllSkills(skillId, newTool)
+					showSpinner(false)
 				})
 			}
 		} else {
@@ -77,9 +79,8 @@ class Skills extends Component {
 	}
 
 	removeProjectSkill(skillId) {
-		const { removeProjectSkill, showSpinner } = this.props
+		const { removeProjectSkill } = this.props
 
-		showSpinner()
 		removeProjectSkill(skillId)
 	}
 
@@ -200,8 +201,8 @@ const mapStateToProps = ({ allSkills, userId }) => ({ allSkills, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		showSpinner: () => {
-			dispatch({ type: 'SHOW_SPINNER', show: true })
+		showSpinner: show => {
+			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })

@@ -103,7 +103,7 @@ class Edit extends Component {
 		).then(({ data: { deleteProjectSkill } }) => {
 			const skills = [...this.state.skills].filter(skill => skill.id !== deleteProjectSkill.id)
 			this.setState({ skills })
-			this.props.removeProjectSkillToStore(deleteProjectSkill)
+			this.props.removeSkillFromProject(deleteProjectSkill)
 		})
 	}
 
@@ -228,7 +228,7 @@ const mapDispatchToProps = dispatch => {
 		addProjectSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
 		},
-		removeProjectSkillToStore: skill => {
+		removeSkillFromProject: skill => {
 			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
 		},
 	}

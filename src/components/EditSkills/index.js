@@ -70,7 +70,7 @@ class EditSkills extends Component {
 	handleAddSkill() {
 		const { userId, showSpinner, addSkillToStore } = this.props
 
-		showSpinner()
+		showSpinner(true)
 
 		API.graphql(
 			graphqlOperation(createSkill, {
@@ -78,6 +78,7 @@ class EditSkills extends Component {
 			})
 		).then(({ data: { createSkill } }) => {
 			addSkillToStore(createSkill)
+			showSpinner(false)
 		})
 
 		this.setState({ newSkill: '' })
@@ -303,8 +304,8 @@ const mapDispatchToProps = dispatch => {
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })
 		},
-		showSpinner: () => {
-			dispatch({ type: 'SHOW_SPINNER', show: true })
+		showSpinner: show => {
+			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 	}
 }

@@ -85,7 +85,7 @@ class ToolsModal extends Component {
 				popoverContent: `Tool name ${newTool} is already used. Choose another..`,
 			})
 		} else {
-			showSpinner()
+			showSpinner(true)
 
 			API.graphql(
 				graphqlOperation(createTool, {
@@ -96,6 +96,7 @@ class ToolsModal extends Component {
 				const newTool = { id: toolId, name, userId }
 
 				addToolToAllSkills(skill.id, newTool)
+				showSpinner(false)
 				this.setState({ newTool: '' })
 			})
 		}
@@ -214,8 +215,8 @@ const mapDispatchToProps = dispatch => {
 		removeTool: toolId => {
 			dispatch({ type: 'REMOVE_TOOL', toolId })
 		},
-		showSpinner: () => {
-			dispatch({ type: 'SHOW_SPINNER', show: true })
+		showSpinner: show => {
+			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 		addToolToAllSkills: (skillId, tool) => {
 			dispatch({ type: 'ADD_TOOL_TO_SKILL', skillId, tool })
