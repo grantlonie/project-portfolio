@@ -8,124 +8,126 @@ const initialState = {
 	showSpinner: false, // show the loading spinner
 }
 
-const rootReducer = produce((draft = initialState, action) => {
-	switch (action.type) {
-		case 'ADD_CATEGORY':
-			draft.allCategories.push(action.category)
-			return
+const rootReducer = (state = initialState, action) =>
+	produce(state, draft => {
+		switch (action.type) {
+			case 'ADD_CATEGORY':
+				draft.allCategories.push(action.category)
+				return
 
-		case 'ADD_PROJECT':
-			draft.projects.push(action.project)
-			return
+			case 'ADD_PROJECT':
+				draft.projects.push(action.project)
+				return
 
-		case 'ADD_SKILL':
-			draft.allSkills.push(action.skill)
-			return
+			case 'ADD_SKILL':
+				draft.allSkills.push(action.skill)
+				return
 
-		case 'ADD_SKILL_TO_PROJECT':
-			draft.projects = draft.projects.map(project => {
-				if (project.id === action.skill.project.id) project.skills.items.push(action.skill)
-				return project
-			})
-			return
-
-		case 'ADD_TOOL_TO_SKILL':
-			draft.allSkills = draft.allSkills.map(skill => {
-				if (skill.id === action.skillId) skill.tools.items.push(action.tool)
-				return skill
-			})
-			return
-
-		case 'REMOVE_CATEGORY':
-			draft.allCategories = draft.allCategories
-				.map(category => {
-					if (category.id === action.categoryId) return null
-					return category
+			case 'ADD_SKILL_TO_PROJECT':
+				draft.projects = draft.projects.map(project => {
+					if (project.id === action.skill.project.id) project.skills.items.push(action.skill)
+					return project
 				})
-				.filter(category => category !== null)
+				return
 
-			draft.allSkills = draft.allSkills.map(skill => {
-				if (skill.category && skill.category.id === action.categoryId) skill.category = null
-				return skill
-			})
-			return
+			case 'ADD_TOOL_TO_SKILL':
+				draft.allSkills = draft.allSkills.map(skill => {
+					if (skill.id === action.skillId) skill.tools.items.push(action.tool)
+					return skill
+				})
+				return
 
-		case 'REMOVE_SKILL':
-			draft.projects = draft.projects.map(project => {
-				project.skills.items = project.skills.items
-					.map(skill => {
-						if (skill && skill.skillId === action.skillId) return null
-						return skill
+			case 'REMOVE_CATEGORY':
+				draft.allCategories = draft.allCategories
+					.map(category => {
+						if (category.id === action.categoryId) return null
+						return category
 					})
-					.filter(skill => skill !== null)
+					.filter(category => category !== null)
 
-				return project
-			})
-			return
+				draft.allSkills = draft.allSkills.map(skill => {
+					if (skill.category && skill.category.id === action.categoryId) skill.category = null
+					return skill
+				})
+				return
 
-		case 'REMOVE_SKILL_FROM_PROJECT':
-			draft.projects = draft.projects.map(project => {
-				if (project.id === action.skill.project.id) {
-					project.skills.items = project.skills.items.filter(item => item.id !== action.skill.id)
-				}
-				return project
-			})
-			return
+			case 'REMOVE_SKILL':
+				draft.projects = draft.projects.map(project => {
+					project.skills.items = project.skills.items
+						.map(skill => {
+							if (skill && skill.skillId === action.skillId) return null
+							return skill
+						})
+						.filter(skill => skill !== null)
 
-		case 'REMOVE_TOOL':
-			draft.allSkills = draft.allSkills.map(skill => {
-				const toolIndex = skill.tools.items.findIndex(i => i.id === action.toolId)
-				if (toolIndex > -1) skill.tools.items.splice(toolIndex, 1)
-				return skill
-			})
-			return
+					return project
+				})
+				return
 
-		case 'SHOW_SPINNER':
-			return { ...draft, showSpinner: action.show }
+			case 'REMOVE_SKILL_FROM_PROJECT':
+				draft.projects = draft.projects.map(project => {
+					if (project.id === action.skill.project.id) {
+						project.skills.items = project.skills.items.filter(item => item.id !== action.skill.id)
+					}
+					return project
+				})
+				return
 
-		case 'UPDATE_ALL_DATA':
-			delete action.type
-			return { ...draft, ...action }
+			case 'REMOVE_TOOL':
+				draft.allSkills = draft.allSkills.map(skill => {
+					const toolIndex = skill.tools.items.findIndex(i => i.id === action.toolId)
+					if (toolIndex > -1) skill.tools.items.splice(toolIndex, 1)
+					return skill
+				})
+				return
 
-		case 'UPDATE_CATEGORY':
-			draft.allCategories = draft.allCategories.map(i => {
-				if (i.id === action.category.id) return action.category
-				return i
-			})
+			case 'SHOW_SPINNER':
+				draft.showSpinner = action.show
+				return
 
-			draft.allSkills = draft.allSkills.map(skill => {
-				if (skill.category && skill.category.id === action.category.id)
-					skill.category = action.category
-				return skill
-			})
-			return
+			case 'UPDATE_ALL_DATA':
+				delete action.type
+				return action
 
-		case 'UPDATE_PROJECT':
-			draft.projects = draft.projects.map(draftProject => {
-				if (draftProject.id === action.project.id) return action.project
-				else return draftProject
-			})
-			return
+			case 'UPDATE_CATEGORY':
+				draft.allCategories = draft.allCategories.map(i => {
+					if (i.id === action.category.id) return action.category
+					return i
+				})
 
-		case 'UPDATE_SKILL':
-			draft.allSkills = draft.allSkills.map(skill =>
-				skill.id === action.updatedSkill.id ? action.updatedSkill : skill
-			)
-			return
+				draft.allSkills = draft.allSkills.map(skill => {
+					if (skill.category && skill.category.id === action.category.id)
+						skill.category = action.category
+					return skill
+				})
+				return
 
-		case 'UPDATE_TOOL':
-			draft.allSkills = draft.allSkills.map(skill => {
-				if (skill.id === action.tool.skill.id) {
-					const items = skill.tools.items.map(i => (i.id === action.tool.id ? action.tool : i))
-					skill.tools.items = items
-				}
-				return skill
-			})
-			return
+			case 'UPDATE_PROJECT':
+				draft.projects = draft.projects.map(draftProject => {
+					if (draftProject.id === action.project.id) return action.project
+					else return draftProject
+				})
+				return
 
-		default:
-			return
-	}
-})
+			case 'UPDATE_SKILL':
+				draft.allSkills = draft.allSkills.map(skill =>
+					skill.id === action.updatedSkill.id ? action.updatedSkill : skill
+				)
+				return
+
+			case 'UPDATE_TOOL':
+				draft.allSkills = draft.allSkills.map(skill => {
+					if (skill.id === action.tool.skill.id) {
+						const items = skill.tools.items.map(i => (i.id === action.tool.id ? action.tool : i))
+						skill.tools.items = items
+					}
+					return skill
+				})
+				return
+
+			default:
+				return
+		}
+	})
 
 export default rootReducer
