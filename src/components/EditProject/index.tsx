@@ -12,22 +12,45 @@ import {
 	createProjectSkill,
 	deleteProjectSkill,
 } from '../../graphql/mutations'
+import { ProjectItems } from '../../types'
 
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
 
-class Edit extends Component {
+const contentStyle: any = {
+	display: 'grid',
+	justifyContent: 'center',
+	gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr)',
+	gridGap: '20px 20px',
+}
+
+interface Props {
+	match: any
+	projects: ProjectItems
+	userId: string
+	addProjectSkillToStore: (skill: any) => null
+	removeSkillFromProject: (skill: any) => null
+	updateProjectInStore: (project: any) => null
+}
+
+type SkillItem = ProjectItems[0]['skills']['items'][0] & { isUpdated?: boolean }
+
+interface State {
+	id: string
+	name: string
+	date: string
+	company: string
+	description: string
+	skills: SkillItem[]
+	mainPropsAreUpdated: boolean
+	skillsAreUpdated: boolean
+}
+
+class Edit extends Component<Props, State> {
 	constructor(props) {
 		super(props)
 
 		const project = this.getProject()
-
-		this.contentStyle = {
-			display: 'grid',
-			justifyContent: 'center',
-			gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr)',
-			gridGap: '20px 20px',
-		}
 
 		this.state = { ...project, mainPropsAreUpdated: false, skillsAreUpdated: false }
 	}
@@ -77,30 +100,31 @@ class Edit extends Component {
 	handleMainPropChange({ target: { name, value } }) {
 		clearTimeout(updateTimeout)
 		updateTimeout = setTimeout(() => this.updateProject(), updateCheckTime)
-
+		//@ts-ignore
 		this.setState({ [name]: value, mainPropsAreUpdated: true })
 	}
 
 	addProjectSkill(skillId) {
+		console.log('request')
 		const { userId, addProjectSkillToStore } = this.props
-
-		API.graphql(
+		;(API.graphql(
 			graphqlOperation(createProjectSkill, {
 				input: { userId, skillId, projectSkillProjectId: this.state.id },
 			})
-		).then(({ data: { createProjectSkill } }) => {
-			const skills = [...(this.state.skills || []), { id: createProjectSkill.id, skillId }]
+		) as Promise<any>).then(({ data: { createProjectSkill } }) => {
+			console.log('skill added')
+			const skills: any = [...(this.state.skills || []), { id: createProjectSkill.id, skillId }]
 			this.setState({ skills })
 			addProjectSkillToStore(createProjectSkill)
 		})
 	}
 
 	removeProjectSkill(id) {
-		API.graphql(
+		;(API.graphql(
 			graphqlOperation(deleteProjectSkill, {
 				input: { id },
 			})
-		).then(({ data: { deleteProjectSkill } }) => {
+		) as Promise<any>).then(({ data: { deleteProjectSkill } }) => {
 			const skills = [...this.state.skills].filter(skill => skill.id !== deleteProjectSkill.id)
 			this.setState({ skills })
 			this.props.removeSkillFromProject(deleteProjectSkill)
@@ -154,11 +178,11 @@ class Edit extends Component {
 		clearTimeout(updateTimeout)
 
 		if (mainPropsAreUpdated) {
-			API.graphql(
+			;(API.graphql(
 				graphqlOperation(updateProject, {
 					input: { id, userId, name, company, date, description },
 				})
-			).then(({ data: { updateProject } }) => {
+			) as Promise<any>).then(({ data: { updateProject } }) => {
 				updateProjectInStore(updateProject)
 			})
 
@@ -172,17 +196,17 @@ class Edit extends Component {
 
 				if (isUpdated) {
 					delete skill.isUpdated
-
-					API.graphql(
+					;(API.graphql(
 						graphqlOperation(updateProjectSkill, {
 							input: { id, description, toolIds },
 						})
-					).then(({ data: { updateProjectSkill } }) => {
+					) as Promise<any>).then(({ data: { updateProjectSkill } }) => {
 						const { id } = updateProjectSkill.project
-
-						API.graphql(graphqlOperation(getProject, { id })).then(({ data }) => {
-							updateProjectInStore(data.getProject)
-						})
+						;(API.graphql(graphqlOperation(getProject, { id })) as Promise<any>).then(
+							({ data }) => {
+								updateProjectInStore(data.getProject)
+							}
+						)
 					})
 				}
 
@@ -202,7 +226,7 @@ class Edit extends Component {
 					Edit Project
 				</Typography>
 
-				<div style={this.contentStyle}>
+				<div style={contentStyle}>
 					<MainProps project={this.state} handleChange={this.handleMainPropChange.bind(this)} />
 
 					<Skills

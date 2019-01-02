@@ -2,15 +2,12 @@ projects:
   projectportfolio:
     schemaPath: src\graphql\schema.json
     includes:
-      - src\graphql\**\*.js
+      - src\graphql\**\*.ts
     excludes:
       - amplify/**
     extensions:
       amplify:
-        codeGenTarget: javascript
-        generatedFileName: ''
+        codeGenTarget: typescript
+        generatedFileName: src\API.ts
         docsFilePath: src\graphql
         graphQLApiId: zd7pvslzkzcnvmectmjukmvfh4
-      endpoints:
-        prod: >-
-          https://c47p7t3csbf6zkm5f722jss36y.appsync-api.us-east-1.amazonaws.com/graphql
