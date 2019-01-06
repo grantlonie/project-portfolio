@@ -29,7 +29,17 @@ const drawerLinks = [
 	{ link: '/skills', text: 'Edit Skills' },
 ]
 
-class App extends Component {
+interface Props {
+	updateAllData: (data: any) => null
+}
+
+interface State {
+	showDrawer: boolean
+}
+
+class App extends Component<Props, State> {
+	private bodyStyle: any
+
 	constructor(props) {
 		super(props)
 

@@ -12,7 +12,7 @@ import {
 	createProjectSkill,
 	deleteProjectSkill,
 } from '../../graphql/mutations'
-import { ProjectItems } from '../../types'
+import { ProjectItem } from '../../types'
 
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
@@ -26,14 +26,14 @@ const contentStyle: any = {
 
 interface Props {
 	match: any
-	projects: ProjectItems
+	projects: ProjectItem[]
 	userId: string
 	addProjectSkillToStore: (skill: any) => null
 	removeSkillFromProject: (skill: any) => null
 	updateProjectInStore: (project: any) => null
 }
 
-type SkillItem = ProjectItems[0]['skills']['items'][0] & { isUpdated?: boolean }
+type SkillItem = ProjectItem['skills']['items'][0] & { isUpdated?: boolean }
 
 interface State {
 	id: string

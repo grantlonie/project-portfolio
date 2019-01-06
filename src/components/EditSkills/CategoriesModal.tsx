@@ -17,9 +17,30 @@ import DeleteIcon from '@material-ui/icons/Delete'
 
 import ValidationPopover from './ValidationPopover'
 
+import { CategoryItem } from '../../types'
 import { createCategory, updateCategory, deleteCategory, updateUser } from '../../graphql/mutations'
 
-class CategoriesModal extends Component {
+interface Props {
+	categories: CategoryItem[]
+	userId: string
+	nullCategory: CategoryItem
+	removeCategory: (categoryId: string) => null
+	showSpinner: (show: boolean) => null
+	updateCategoryInStore: (category: CategoryItem) => null
+	addCategoryToStore: (category: { id: string; name: string; userId: string }) => null
+	close: () => null
+}
+
+interface State {
+	categories: (CategoryItem & { isUpdated?: boolean })[]
+	newCategory: string
+	popoverElement: any
+	popoverContent: string
+}
+
+class CategoriesModal extends Component<Props, State> {
+	private modalStyle: React.CSSProperties
+
 	constructor(props) {
 		super(props)
 
@@ -67,16 +88,15 @@ class CategoriesModal extends Component {
 	handleRemoveCategory(categoryId) {
 		const categories = this.state.categories.filter(category => category.id !== categoryId)
 		this.setState({ categories })
+		;(API.graphql(graphqlOperation(deleteCategory, { input: { id: categoryId } })) as Promise<
+			any
+		>).then(({ data }) => {
+			this.props.removeCategory(data.deleteCategory.id)
 
-		API.graphql(graphqlOperation(deleteCategory, { input: { id: categoryId } })).then(
-			({ data }) => {
-				this.props.removeCategory(data.deleteCategory.id)
-
-				API.graphql(
-					graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
-				)
-			}
-		)
+			API.graphql(
+				graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
+			)
+		})
 	}
 
 	handleNewCategory(e) {
@@ -95,12 +115,11 @@ class CategoriesModal extends Component {
 			})
 		} else {
 			showSpinner(true)
-
-			API.graphql(
+			;(API.graphql(
 				graphqlOperation(createCategory, {
 					input: { userId, name: newCategory },
 				})
-			).then(({ data: { createCategory } }) => {
+			) as Promise<any>).then(({ data: { createCategory } }) => {
 				const { id, name, userId } = createCategory
 				const newCategory = { id, name, userId }
 
@@ -117,7 +136,9 @@ class CategoriesModal extends Component {
 		this.state.categories.forEach(category => {
 			if (category.isUpdated) {
 				const { id, name } = category
-				API.graphql(graphqlOperation(updateCategory, { input: { id, name } })).then(({ data }) => {
+				;(API.graphql(graphqlOperation(updateCategory, { input: { id, name } })) as Promise<
+					any
+				>).then(({ data }) => {
 					updateCategoryInStore(data.updateCategory)
 				})
 			}

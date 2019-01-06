@@ -13,8 +13,10 @@ import {
 	TableSortLabel,
 	TextField,
 } from '@material-ui/core'
+import { CreateProjectMutation } from '../API'
 
 import { createProject } from '../graphql/mutations'
+import { ProjectItem } from '../types'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
@@ -24,7 +26,24 @@ const headers = [
 	{ id: 'description', label: 'Description' },
 ]
 
-class Projects extends Component {
+interface Props {
+	userId: string
+	addProject: (project: ProjectItem) => null
+	projects: ProjectItem[]
+}
+
+interface State {
+	page: number
+	orderBy: string
+	order: 'asc' | 'desc'
+	filter: string
+	redirect: string
+}
+
+class Projects extends Component<Props, State> {
+	private rowsPerPage: number
+	private headerStyle: any
+
 	constructor(props) {
 		super(props)
 
@@ -49,7 +68,7 @@ class Projects extends Component {
 	}
 
 	handleRequestSort = orderBy => {
-		let order = 'desc'
+		let order: State['order'] = 'desc'
 		if (this.state.orderBy === orderBy && this.state.order === 'desc') {
 			order = 'asc'
 		}
@@ -101,10 +120,9 @@ class Projects extends Component {
 
 		const emptyProject = { userId, date: `${year}-${month}-${day}` }
 
-		const { data } = await API.graphql(
-			graphqlOperation(createProject, { input: { ...emptyProject } })
-		)
-		addProject(data.createProject)
+		const data = await API.graphql(graphqlOperation(createProject, { input: { ...emptyProject } }))
+
+		addProject(data['data']['createProject'])
 	}
 
 	render() {
@@ -134,7 +152,7 @@ class Projects extends Component {
 						style={{ margin: '0 10px 0 30px', height: '30px' }}
 						src="./assets/img/baseline-add_circle-24px.svg"
 						onClick={this.handleAddProject.bind(this)}
-						draggable="false"
+						draggable={false}
 						alt="Add Project"
 					/>
 					<em>Add Project</em>

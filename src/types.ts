@@ -1,5 +1,15 @@
-import { ListProjectsQuery, ListSkillsQuery, ListCategorysQuery } from './API'
+import {
+	ListProjectsQuery,
+	ListSkillsQuery,
+	ListCategorysQuery,
+	CreateProjectMutation,
+	ListToolsQuery,
+	ListProjectSkillsQuery,
+} from './API'
 
-export type ProjectItems = ListProjectsQuery['listProjects']['items']
-export type SkillItems = ListSkillsQuery['listSkills']['items']
-export type CategoryItems = ListCategorysQuery['listCategorys']['items']
+export type ProjectItem = ListProjectsQuery['listProjects']['items'][0]
+export type ProjectSkillItem = ListProjectSkillsQuery['listProjectSkills']['items'][0]
+export type SkillItem = ListSkillsQuery['listSkills']['items'][0]
+export type ToolItem = ListToolsQuery['listTools']['items'][0]
+export type CategoryItem = ListCategorysQuery['listCategorys']['items'][0]
+export type CreateProjectMutation = CreateProjectMutation

@@ -16,7 +16,31 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-class ConfirmationModal extends Component {
+import { SkillItem, ProjectItem, ToolItem } from '../../types'
+
+interface Props {
+	userId: string
+	skill: SkillItem
+	projects: ProjectItem[]
+	removeSkillFromStore: (skillId: string) => null
+	removeSkill: (skillId: string) => null
+	close: () => null
+	removeTool: (toolId: string) => null
+	showSpinner: (show: boolean) => null
+	addToolToAllSkills: (skillId: string, tool: ToolItem) => null
+	addProjectSkillToStore: (skill: SkillItem) => null
+	removeSkillFromProject: (skill: SkillItem) => null
+}
+
+interface State {
+	deleteTextValue: string
+	mergeSkillId: string
+}
+
+class ConfirmationModal extends Component<Props, State> {
+	private mergeSkills: SkillItem[]
+	private modalStyle: React.CSSProperties
+
 	constructor(props) {
 		super(props)
 
@@ -43,11 +67,12 @@ class ConfirmationModal extends Component {
 
 		removeSkill(skill.id)
 		close()
-
-		API.graphql(graphqlOperation(deleteSkill, { input: { id: skill.id } })).then(({ data }) => {
-			removeSkillFromStore(data.deleteSkill.id)
-			API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
-		})
+		;(API.graphql(graphqlOperation(deleteSkill, { input: { id: skill.id } })) as Promise<any>).then(
+			({ data }) => {
+				removeSkillFromStore(data.deleteSkill.id)
+				API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
+			}
+		)
 	}
 
 	// Method merges skill with the selected skill
@@ -67,34 +92,30 @@ class ConfirmationModal extends Component {
 
 		// Link tools to new skill
 		for (const tool of skill.tools.items) {
-			const {
-				data: { updateTool: updatedTool },
-			} = await API.graphql(
+			const data = await API.graphql(
 				graphqlOperation(updateTool, {
 					input: { id: tool.id, toolSkillId: mergeSkillId },
 				})
 			)
 
 			// Update redux
-			removeTool(updatedTool.id)
-			addToolToAllSkills(mergeSkillId, updatedTool)
+			removeTool(data['data']['updateTool'].id)
+			addToolToAllSkills(mergeSkillId, data['data']['updateTool'])
 		}
 
 		// Link ProjectSkill to new skillId
 		for (const project of projects) {
 			for (const projectSkill of project.skills.items) {
 				if (projectSkill.skillId === skill.id) {
-					const {
-						data: { updateProjectSkill: updatedSkill },
-					} = await API.graphql(
+					const data = await API.graphql(
 						graphqlOperation(updateProjectSkill, {
 							input: { id: projectSkill.id, skillId: mergeSkillId },
 						})
 					)
 
 					// Update redux
-					removeSkillFromProject(updatedSkill)
-					addProjectSkillToStore(updatedSkill)
+					removeSkillFromProject(data['data']['updateProjectSkill'])
+					addProjectSkillToStore(data['data']['updateProjectSkill'])
 				}
 			}
 		}

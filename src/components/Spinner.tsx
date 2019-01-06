@@ -10,13 +10,13 @@ const modalStyle = {
 	left: '50%',
 	transform: 'translate(-50%, 50%)',
 	padding: '20px',
-}
+} as React.CSSProperties
 
 const Spinner = ({ showSpinner }) => {
 	return (
 		<Modal open={showSpinner}>
 			<Paper style={modalStyle} elevation={1}>
-				<BarLoader sizeUnit={'px'} size={150} color={'#123abc'} loading={showSpinner} />
+				<BarLoader heightUnit={'px'} height={150} color={'#123abc'} loading={showSpinner} />
 			</Paper>
 		</Modal>
 	)

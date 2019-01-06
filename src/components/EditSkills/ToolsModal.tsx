@@ -17,8 +17,29 @@ import DeleteIcon from '@material-ui/icons/Delete'
 
 import ValidationPopover from './ValidationPopover'
 import { createTool, updateTool, deleteTool, updateUser } from '../../graphql/mutations'
+import { ToolItem, SkillItem } from '../../types'
 
-class ToolsModal extends Component {
+interface Props {
+	skill: SkillItem
+	tools: ToolItem[]
+	userId: string
+	updateToolInStore: (tool: ToolItem) => null
+	removeTool: (toolId: string) => null
+	showSpinner: (show: boolean) => null
+	addToolToAllSkills: (skillId: string, tool: ToolItem) => null
+	close: () => null
+}
+
+interface State {
+	tools: any
+	newTool: string
+	popoverElement: any
+	popoverContent: string
+}
+
+class ToolsModal extends Component<Props, State> {
+	private modalStyle: React.CSSProperties
+
 	constructor(props) {
 		super(props)
 
@@ -66,13 +87,14 @@ class ToolsModal extends Component {
 	handleRemoveTool(toolId) {
 		const tools = this.state.tools.filter(tool => tool.id !== toolId)
 		this.setState({ tools })
-
-		API.graphql(graphqlOperation(deleteTool, { input: { id: toolId } })).then(({ data }) => {
-			this.props.removeTool(data.deleteTool.id)
-			API.graphql(
-				graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
-			)
-		})
+		;(API.graphql(graphqlOperation(deleteTool, { input: { id: toolId } })) as Promise<any>).then(
+			({ data }) => {
+				this.props.removeTool(data.deleteTool.id)
+				API.graphql(
+					graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
+				)
+			}
+		)
 	}
 
 	handleNewTool(e) {
@@ -86,14 +108,13 @@ class ToolsModal extends Component {
 			})
 		} else {
 			showSpinner(true)
-
-			API.graphql(
+			;(API.graphql(
 				graphqlOperation(createTool, {
 					input: { userId, name: this.state.newTool, toolSkillId: skill.id },
 				})
-			).then(({ data: { createTool } }) => {
+			) as Promise<any>).then(({ data: { createTool } }) => {
 				const { id: toolId, name, userId } = createTool
-				const newTool = { id: toolId, name, userId }
+				const newTool: any = { id: toolId, name, userId }
 
 				addToolToAllSkills(skill.id, newTool)
 				showSpinner(false)
@@ -108,9 +129,11 @@ class ToolsModal extends Component {
 		this.state.tools.forEach(tool => {
 			if (tool.isUpdated) {
 				const { id, name } = tool
-				API.graphql(graphqlOperation(updateTool, { input: { id, name } })).then(({ data }) => {
-					updateToolInStore(data.updateTool)
-				})
+				;(API.graphql(graphqlOperation(updateTool, { input: { id, name } })) as Promise<any>).then(
+					({ data }) => {
+						updateToolInStore(data.updateTool)
+					}
+				)
 			}
 		})
 

@@ -18,6 +18,7 @@ import { createSkill, updateSkill } from '../../graphql/mutations'
 import ToolsModal from './ToolsModal'
 import CategoriesModal from './CategoriesModal'
 import DeleteSkillConfirmationModal from './DeleteSkillConfirmationModal'
+import { SkillItem, CategoryItem } from '../../types'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
@@ -31,7 +32,23 @@ const nullCategory = { id: '_null', name: 'General' }
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
 
-class EditSkills extends Component {
+interface Props {
+	allCategories: CategoryItem[]
+	allSkills: SkillItem[]
+	userId: string
+	showSpinner: (show: boolean) => null
+	addSkillToStore: (skill: SkillItem) => null
+	updateSkillInStore: (skill: SkillItem) => null
+}
+
+interface State {
+	modalSkill: SkillItem
+	skills: (SkillItem & { isUpdated?: boolean; skillCategoryId: '' })[]
+	newSkill: string
+	modal: string
+}
+
+class EditSkills extends Component<Props, State> {
 	constructor(props) {
 		super(props)
 
@@ -39,6 +56,7 @@ class EditSkills extends Component {
 			skills: this.sortedSkills(),
 			newSkill: '',
 			modal: '',
+			modalSkill: null,
 		}
 	}
 
@@ -71,12 +89,11 @@ class EditSkills extends Component {
 		const { userId, showSpinner, addSkillToStore } = this.props
 
 		showSpinner(true)
-
-		API.graphql(
+		;(API.graphql(
 			graphqlOperation(createSkill, {
 				input: { userId, name: this.state.newSkill },
 			})
-		).then(({ data: { createSkill } }) => {
+		) as Promise<any>).then(({ data: { createSkill } }) => {
 			addSkillToStore(createSkill)
 			showSpinner(false)
 		})
@@ -93,14 +110,16 @@ class EditSkills extends Component {
 			if (isUpdated) {
 				delete skill.isUpdated
 
-				const input = { id, name }
+				const input: any = { id, name }
 				if (skillCategoryId) {
 					input.skillCategoryId = skillCategoryId === nullCategory.id ? null : skillCategoryId
 				}
 
-				API.graphql(graphqlOperation(updateSkill, { input })).then(({ data }) => {
-					this.props.updateSkillInStore(data.updateSkill)
-				})
+				;(API.graphql(graphqlOperation(updateSkill, { input })) as Promise<any>).then(
+					({ data }) => {
+						this.props.updateSkillInStore(data.updateSkill)
+					}
+				)
 			}
 		})
 	}
@@ -135,7 +154,7 @@ class EditSkills extends Component {
 		this.setState({ skills })
 	}
 
-	handleEditTools(skill) {
+	handleEditTools(skill: SkillItem) {
 		this.setState({ modalSkill: skill, modal: 'tools' })
 	}
 

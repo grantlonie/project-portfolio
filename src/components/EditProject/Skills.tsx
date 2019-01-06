@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import 'react-bootstrap-typeahead/css/Typeahead.css'
@@ -7,12 +7,34 @@ import { Typography, TextField, Paper } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import { createSkill, createTool } from '../../graphql/mutations'
+import { SkillItem, ProjectSkillItem, CategoryItem, ToolItem } from '../../types'
 
-class Skills extends Component {
+interface Props {
+	allCategories: CategoryItem[]
+	allSkills: SkillItem[]
+	userId: string
+	skills: ProjectSkillItem[]
+	addProjectSkill: (skillId: string) => null
+	updateTools: (skillId: string, tools: ToolItem[]) => null
+	removeProjectSkill: (skillId: string) => null
+	handleDescriptionChange: (id: string, value: string) => null
+	showSpinner: (show: boolean) => null
+	addSkillToStore: (skill: SkillItem) => null
+	addToolToAllSkills: (skillId: string, tool: ToolItem) => null
+}
+
+interface State {
+	modalSkill: SkillItem
+	skills: (SkillItem & { isUpdated?: boolean; skillCategoryId: '' })[]
+	newSkill: string
+	modal: string
+}
+
+class Skills extends Component<Props, State> {
+	private typeaheadRef: any = createRef()
+
 	constructor(props) {
 		super(props)
-
-		this.typeaheadRef = React.createRef()
 	}
 
 	handleSelectedSkill(skill) {
@@ -26,12 +48,11 @@ class Skills extends Component {
 				this.forceUpdate() // HACK: prevents skills typeaway from adding already selected skill to list
 			} else {
 				showSpinner(true)
-
-				API.graphql(
+				;(API.graphql(
 					graphqlOperation(createSkill, {
 						input: { userId, name: name },
 					})
-				).then(({ data: { createSkill } }) => {
+				) as Promise<any>).then(({ data: { createSkill } }) => {
 					addSkillToStore(createSkill)
 					addProjectSkill(createSkill.id)
 					showSpinner(false)
@@ -58,14 +79,13 @@ class Skills extends Component {
 				this.forceUpdate() // HACK: prevents tools typeaway from adding already selected tool to list
 			} else {
 				showSpinner(true)
-
-				API.graphql(
+				;(API.graphql(
 					graphqlOperation(createTool, {
 						input: { userId, name: name, toolSkillId: skillId },
 					})
-				).then(({ data: { createTool } }) => {
+				) as Promise<any>).then(({ data: { createTool } }) => {
 					const { id: toolId, name, userId } = createTool
-					const newTool = { id: toolId, name, userId }
+					const newTool: any = { id: toolId, name, userId }
 					tools[tools.length - 1] = newTool
 
 					updateTools(id, tools)
@@ -79,13 +99,11 @@ class Skills extends Component {
 	}
 
 	removeProjectSkill(skillId) {
-		const { removeProjectSkill } = this.props
-
-		removeProjectSkill(skillId)
+		this.props.removeProjectSkill(skillId)
 	}
 
 	render() {
-		const { skills, allSkills, handleDescriptionChange } = this.props
+		const { skills, allSkills, handleDescriptionChange, removeProjectSkill } = this.props
 
 		// Create nested skills inside respective categories
 		let skillData = {}
@@ -137,7 +155,7 @@ class Skills extends Component {
 											<div key={skill.id}>
 												<div style={{ display: 'flex' }}>
 													<Typography variant="title">{skill.name}</Typography>
-													<DeleteIcon onClick={this.removeProjectSkill.bind(this, skill.id)} />
+													<DeleteIcon onClick={() => removeProjectSkill.bind(skill.id)} />
 												</div>
 
 												<Typeahead

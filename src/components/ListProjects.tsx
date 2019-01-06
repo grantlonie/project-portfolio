@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-
-class ListProjects extends Component {
+import { ProjectItem } from '../types'
+interface Props {
+	projects: ProjectItem[]
+}
+class ListProjects extends Component<Props> {
 	render() {
 		const { projects } = this.props
 
