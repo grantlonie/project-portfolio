@@ -64,6 +64,15 @@ const rootReducer = (state = initialState, action) =>
 				})
 				return
 
+			case 'REMOVE_PROJECT':
+				draft.projects = draft.projects
+					.map(project => {
+						if (project.id === action.projectId) return null
+						return project
+					})
+					.filter(project => project !== null)
+				return
+
 			case 'REMOVE_SKILL_FROM_PROJECT':
 				draft.projects = draft.projects.map(project => {
 					if (project.id === action.skill.project.id) {

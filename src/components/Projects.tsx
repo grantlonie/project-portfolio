@@ -13,9 +13,9 @@ import {
 	TableSortLabel,
 	TextField,
 } from '@material-ui/core'
-import { CreateProjectMutation } from '../API'
+import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createProject } from '../graphql/mutations'
+import { createProject, deleteProject } from '../graphql/mutations'
 import { ProjectItem } from '../types'
 
 const headers = [
@@ -29,6 +29,7 @@ const headers = [
 interface Props {
 	userId: string
 	addProject: (project: ProjectItem) => null
+	removeProjectFromStore: (projectId: string) => null
 	showSpinner: (show: boolean) => null
 	projects: ProjectItem[]
 }
@@ -131,13 +132,26 @@ class Projects extends Component<Props, State> {
 		this.setState({ redirect: data['data']['createProject']['id'] })
 	}
 
+	async handleRemoveProject(projectId, e) {
+		e.stopPropagation() // prevents bubbling to EditProject
+
+		const { showSpinner, removeProjectFromStore } = this.props
+
+		showSpinner(true)
+
+		const data = await API.graphql(graphqlOperation(deleteProject, { input: { id: projectId } }))
+		removeProjectFromStore(data['data']['deleteProject']['id'])
+
+		showSpinner(false)
+	}
+
 	render() {
 		const { projects } = this.props
 		const { order, orderBy, page, filter, redirect } = this.state
 
 		const filteredProjects = projects.filter(project => {
-			if (project.description === null) return true
-			return project.description.toLowerCase().indexOf(this.state.filter) > -1
+			if (project.name === null) return true
+			return project.name.toLowerCase().indexOf(this.state.filter) > -1
 		})
 
 		if (redirect) return <Redirect push to={`editProject/${redirect}`} />
@@ -167,6 +181,7 @@ class Projects extends Component<Props, State> {
 				<Table aria-labelledby="tableTitle">
 					<TableHead>
 						<TableRow>
+							<TableCell />
 							{headers.map(header => {
 								return (
 									<TableCell key={header.id} sortDirection={orderBy === header.id ? order : false}>
@@ -187,14 +202,20 @@ class Projects extends Component<Props, State> {
 					<TableBody>
 						{this.stableSort(filteredProjects, this.getSorting(order, orderBy))
 							.slice(page * this.rowsPerPage, page * this.rowsPerPage + this.rowsPerPage)
-							.map(field => {
+							.map(project => {
 								return (
-									<TableRow hover key={field.id} onClick={this.handleClickRow.bind(this, field.id)}>
-										<TableCell>{field.id}</TableCell>
-										<TableCell>{field.name}</TableCell>
-										<TableCell>{field.date}</TableCell>
-										<TableCell>{field.company}</TableCell>
-										<TableCell>{field.description}</TableCell>
+									<TableRow
+										hover
+										key={project.id}
+										onClick={this.handleClickRow.bind(this, project.id)}>
+										<TableCell>
+											<DeleteIcon onClick={this.handleRemoveProject.bind(this, project.id)} />
+										</TableCell>
+										<TableCell>{project.id}</TableCell>
+										<TableCell>{project.name}</TableCell>
+										<TableCell>{project.date}</TableCell>
+										<TableCell>{project.company}</TableCell>
+										<TableCell>{project.description}</TableCell>
 									</TableRow>
 								)
 							})}
@@ -229,6 +250,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
+		},
+		removeProjectFromStore: projectId => {
+			dispatch({ type: 'REMOVE_PROJECT', projectId })
 		},
 	}
 }
