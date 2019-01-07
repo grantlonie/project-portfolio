@@ -105,14 +105,12 @@ class Edit extends Component<Props, State> {
 	}
 
 	addProjectSkill(skillId) {
-		console.log('request')
 		const { userId, addProjectSkillToStore } = this.props
 		;(API.graphql(
 			graphqlOperation(createProjectSkill, {
 				input: { userId, skillId, projectSkillProjectId: this.state.id },
 			})
 		) as Promise<any>).then(({ data: { createProjectSkill } }) => {
-			console.log('skill added')
 			const skills: any = [...(this.state.skills || []), { id: createProjectSkill.id, skillId }]
 			this.setState({ skills })
 			addProjectSkillToStore(createProjectSkill)

@@ -29,7 +29,7 @@ const MainProps = ({ project, handleChange }) => {
 				label="Name"
 				margin="normal"
 				name="name"
-				value={name}
+				value={name === null ? '' : name}
 				onChange={e => handleChange(e)}
 			/>
 
@@ -50,7 +50,7 @@ const MainProps = ({ project, handleChange }) => {
 				label="Company"
 				margin="normal"
 				name="company"
-				value={company}
+				value={company === null ? '' : company}
 				onChange={e => handleChange(e)}
 			/>
 
@@ -61,7 +61,7 @@ const MainProps = ({ project, handleChange }) => {
 				label="Description"
 				margin="normal"
 				name="description"
-				value={description}
+				value={description === null ? '' : description}
 				onChange={e => handleChange(e)}
 			/>
 		</div>
