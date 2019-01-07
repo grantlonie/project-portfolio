@@ -118,8 +118,8 @@ class Projects extends Component<Props, State> {
 
 		const date = new Date()
 		const year = date.getFullYear()
-		const month = date.getMonth()
-		const day = date.getDate()
+		let month = ('0' + (date.getMonth() + 1)).slice(-2)
+		let day = ('0' + date.getDate()).slice(-2)
 
 		const emptyProject = { userId, date: `${year}-${month}-${day}` }
 
