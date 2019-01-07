@@ -16,7 +16,7 @@ const Spinner = ({ showSpinner }) => {
 	return (
 		<Modal open={showSpinner}>
 			<Paper style={modalStyle} elevation={1}>
-				<BarLoader heightUnit={'px'} height={150} color={'#123abc'} loading={showSpinner} />
+				<BarLoader heightUnit={'px'} height={10} color={'#123abc'} loading={showSpinner} />
 			</Paper>
 		</Modal>
 	)

@@ -29,6 +29,7 @@ const headers = [
 interface Props {
 	userId: string
 	addProject: (project: ProjectItem) => null
+	showSpinner: (show: boolean) => null
 	projects: ProjectItem[]
 }
 
@@ -111,7 +112,9 @@ class Projects extends Component<Props, State> {
 	}
 
 	async handleAddProject() {
-		const { userId, addProject } = this.props
+		const { userId, addProject, showSpinner } = this.props
+
+		showSpinner(true)
 
 		const date = new Date()
 		const year = date.getFullYear()
@@ -122,7 +125,10 @@ class Projects extends Component<Props, State> {
 
 		const data = await API.graphql(graphqlOperation(createProject, { input: { ...emptyProject } }))
 
+		showSpinner(false)
+
 		addProject(data['data']['createProject'])
+		this.setState({ redirect: data['data']['createProject']['id'] })
 	}
 
 	render() {
@@ -220,6 +226,9 @@ const mapDispatchToProps = dispatch => {
 	return {
 		addProject: project => {
 			dispatch({ type: 'ADD_PROJECT', project })
+		},
+		showSpinner: show => {
+			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 	}
 }
