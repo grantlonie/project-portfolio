@@ -86,8 +86,11 @@ const rootReducer = (state = initialState, action) =>
 				return
 
 			case 'UPDATE_ALL_DATA':
-				delete action.type
-				return action
+				draft.userId = action.userId
+				draft.projects = action.projects
+				draft.allSkills = action.allSkills
+				draft.allCategories = action.allCategories
+				return
 
 			case 'UPDATE_CATEGORY':
 				draft.allCategories = draft.allCategories.map(i => {
