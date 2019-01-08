@@ -33,10 +33,6 @@ interface State {
 class Skills extends Component<Props, State> {
 	private typeaheadRef: any = createRef()
 
-	constructor(props) {
-		super(props)
-	}
-
 	handleSelectedSkill(skill) {
 		const { userId, allSkills, addProjectSkill, addSkillToStore, showSpinner } = this.props
 
@@ -98,10 +94,6 @@ class Skills extends Component<Props, State> {
 		}
 	}
 
-	removeProjectSkill(skillId) {
-		this.props.removeProjectSkill(skillId)
-	}
-
 	render() {
 		const { skills, allSkills, handleDescriptionChange, removeProjectSkill } = this.props
 
@@ -155,7 +147,7 @@ class Skills extends Component<Props, State> {
 											<div key={skill.id}>
 												<div style={{ display: 'flex' }}>
 													<Typography variant="title">{skill.name}</Typography>
-													<DeleteIcon onClick={() => removeProjectSkill.bind(skill.id)} />
+													<DeleteIcon onClick={() => removeProjectSkill(skill.id)} />
 												</div>
 
 												<Typeahead

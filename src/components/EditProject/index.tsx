@@ -31,6 +31,7 @@ interface Props {
 	addProjectSkillToStore: (skill: any) => null
 	removeSkillFromProject: (skill: any) => null
 	updateProjectInStore: (project: any) => null
+	showSpinner: (show: boolean) => null
 }
 
 type SkillItem = ProjectItem['skills']['items'][0] & { isUpdated?: boolean }
@@ -47,13 +48,7 @@ interface State {
 }
 
 class Edit extends Component<Props, State> {
-	constructor(props) {
-		super(props)
-
-		const project = this.getProject()
-
-		this.state = { ...project, mainPropsAreUpdated: false, skillsAreUpdated: false }
-	}
+	state: State = { ...this.getProject(), mainPropsAreUpdated: false, skillsAreUpdated: false }
 
 	getProject() {
 		const {
@@ -118,14 +113,19 @@ class Edit extends Component<Props, State> {
 	}
 
 	removeProjectSkill(id) {
+		const { showSpinner, removeSkillFromProject } = this.props
+
+		showSpinner(true)
 		;(API.graphql(
 			graphqlOperation(deleteProjectSkill, {
 				input: { id },
 			})
 		) as Promise<any>).then(({ data: { deleteProjectSkill } }) => {
 			const skills = [...this.state.skills].filter(skill => skill.id !== deleteProjectSkill.id)
+
 			this.setState({ skills })
-			this.props.removeSkillFromProject(deleteProjectSkill)
+			removeSkillFromProject(deleteProjectSkill)
+			showSpinner(false)
 		})
 	}
 
@@ -252,6 +252,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		removeSkillFromProject: skill => {
 			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
+		},
+		showSpinner: show => {
+			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 	}
 }
