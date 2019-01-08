@@ -15,8 +15,9 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createProject, deleteProject } from '../graphql/mutations'
+import { createProject, deleteProject, deleteProjectSkill } from '../graphql/mutations'
 import { ProjectItem } from '../types'
+import DeleteProjectModal from './DeleteProjectModal'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
@@ -40,29 +41,24 @@ interface State {
 	order: 'asc' | 'desc'
 	filter: string
 	redirect: string
+	confirmDeleteModal: ProjectItem
 }
 
 class Projects extends Component<Props, State> {
-	private rowsPerPage: number
-	private headerStyle: any
+	private rowsPerPage: number = 10
 
-	constructor(props) {
-		super(props)
+	private headerStyle: any = {
+		display: 'flex',
+		alignItems: 'center',
+	}
 
-		this.rowsPerPage = 10
-
-		this.headerStyle = {
-			display: 'flex',
-			alignItems: 'center',
-		}
-
-		this.state = {
-			page: 0,
-			orderBy: 'id',
-			order: 'asc',
-			filter: '',
-			redirect: null,
-		}
+	state: State = {
+		page: 0,
+		orderBy: 'id',
+		order: 'asc',
+		filter: '',
+		redirect: null,
+		confirmDeleteModal: null,
 	}
 
 	handleClickRow(id) {
@@ -132,22 +128,40 @@ class Projects extends Component<Props, State> {
 		this.setState({ redirect: data['data']['createProject']['id'] })
 	}
 
-	async handleRemoveProject(projectId, e) {
+	async handleRemoveProject(confirm) {
+		const { showSpinner, removeProjectFromStore } = this.props
+		const { confirmDeleteModal } = this.state
+
+		if (confirm) {
+			showSpinner(true)
+
+			// Delete all ProjectSkills in the project
+			for (const skill of confirmDeleteModal.skills.items) {
+				await API.graphql(graphqlOperation(deleteProjectSkill, { input: { id: skill.id } }))
+			}
+
+			// Delete project once all related ProjectSkills are gone and update store
+			const data = await API.graphql(
+				graphqlOperation(deleteProject, { input: { id: confirmDeleteModal.id } })
+			)
+
+			removeProjectFromStore(data['data']['deleteProject']['id'])
+
+			showSpinner(false)
+		}
+
+		this.setState({ confirmDeleteModal: null })
+	}
+
+	handleRequestRemoveProject(project, e) {
 		e.stopPropagation() // prevents bubbling to EditProject
 
-		const { showSpinner, removeProjectFromStore } = this.props
-
-		showSpinner(true)
-
-		const data = await API.graphql(graphqlOperation(deleteProject, { input: { id: projectId } }))
-		removeProjectFromStore(data['data']['deleteProject']['id'])
-
-		showSpinner(false)
+		this.setState({ confirmDeleteModal: project })
 	}
 
 	render() {
 		const { projects } = this.props
-		const { order, orderBy, page, filter, redirect } = this.state
+		const { order, orderBy, page, filter, redirect, confirmDeleteModal } = this.state
 
 		const filteredProjects = projects.filter(project => {
 			if (project.name === null) return true
@@ -158,6 +172,13 @@ class Projects extends Component<Props, State> {
 
 		return (
 			<div>
+				{confirmDeleteModal ? (
+					<DeleteProjectModal
+						project={confirmDeleteModal}
+						close={this.handleRemoveProject.bind(this)}
+					/>
+				) : null}
+
 				<div style={this.headerStyle}>
 					<TextField
 						id="standard-search"
@@ -209,7 +230,7 @@ class Projects extends Component<Props, State> {
 										key={project.id}
 										onClick={this.handleClickRow.bind(this, project.id)}>
 										<TableCell>
-											<DeleteIcon onClick={this.handleRemoveProject.bind(this, project.id)} />
+											<DeleteIcon onClick={this.handleRequestRemoveProject.bind(this, project)} />
 										</TableCell>
 										<TableCell>{project.id}</TableCell>
 										<TableCell>{project.name}</TableCell>
