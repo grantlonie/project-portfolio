@@ -17,3 +17,9 @@ AWS Amplify commands:
 
 - `amplify push` will push any changes made to the server and update local content accordingly
 - `amplify publish` to run a production build and upload hosted content to AWS S3
+
+### Environment variables
+
+Create a .env file at the root of the project. The following variables are used in the project
+
+REACT_APP_TEST_USER=test # this override your AWS SAM id with "test"
