@@ -39,31 +39,25 @@ interface State {
 }
 
 class CategoriesModal extends Component<Props, State> {
-	private modalStyle: React.CSSProperties
+	private modalStyle: React.CSSProperties = {
+		position: 'absolute',
+		left: '0%',
+		right: '0%',
+		top: '0%',
+		bottom: '0%',
+		margin: 'auto',
+		width: '95%',
+		maxWidth: '600px',
+		maxHeight: '80vh',
+		padding: '20px',
+		overflow: 'auto',
+	}
 
-	constructor(props) {
-		super(props)
-
-		this.modalStyle = {
-			position: 'absolute',
-			left: '0%',
-			right: '0%',
-			top: '0%',
-			bottom: '0%',
-			margin: 'auto',
-			width: '95%',
-			maxWidth: '600px',
-			maxHeight: '80vh',
-			padding: '20px',
-			overflowY: 'scroll',
-		}
-
-		this.state = {
-			categories: props.categories,
-			newCategory: '',
-			popoverElement: null,
-			popoverContent: '',
-		}
+	state: State = {
+		categories: this.props.categories,
+		newCategory: '',
+		popoverElement: null,
+		popoverContent: '',
 	}
 
 	componentDidUpdate(prevProps) {
@@ -200,20 +194,20 @@ class CategoriesModal extends Component<Props, State> {
 							<TableRow>
 								<TableCell />
 								<TableCell>
-									<Button
-										color="secondary"
-										disabled={!Boolean(this.state.newCategory)}
-										onClick={this.handleNewCategory.bind(this)}>
-										Create
-									</Button>
-								</TableCell>
-								<TableCell>
 									<TextField
 										value={newCategory}
 										placeholder="New Category"
 										onChange={this.handleNewCategoryChange.bind(this)}
 										onKeyUp={this.handleNewCategoryKeyPress.bind(this)}
 									/>
+								</TableCell>
+								<TableCell>
+									<Button
+										color="secondary"
+										disabled={!Boolean(this.state.newCategory)}
+										onClick={this.handleNewCategory.bind(this)}>
+										Create
+									</Button>
 								</TableCell>
 							</TableRow>
 						</TableBody>

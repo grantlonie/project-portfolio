@@ -38,31 +38,25 @@ interface State {
 }
 
 class ToolsModal extends Component<Props, State> {
-	private modalStyle: React.CSSProperties
+	private modalStyle: React.CSSProperties = {
+		position: 'absolute',
+		left: '0%',
+		right: '0%',
+		top: '0%',
+		bottom: '0%',
+		margin: 'auto',
+		width: '95%',
+		maxWidth: '600px',
+		maxHeight: '80vh',
+		padding: '20px',
+		overflow: 'auto',
+	}
 
-	constructor(props) {
-		super(props)
-
-		this.modalStyle = {
-			position: 'absolute',
-			left: '0%',
-			right: '0%',
-			top: '0%',
-			bottom: '0%',
-			margin: 'auto',
-			width: '95%',
-			maxWidth: '600px',
-			maxHeight: '80vh',
-			padding: '20px',
-			overflowY: 'scroll',
-		}
-
-		this.state = {
-			tools: props.skill.tools.items,
-			newTool: '',
-			popoverElement: null,
-			popoverContent: '',
-		}
+	state: State = {
+		tools: this.props.skill.tools.items,
+		newTool: '',
+		popoverElement: null,
+		popoverContent: '',
 	}
 
 	componentDidUpdate(prevProps) {
@@ -159,14 +153,9 @@ class ToolsModal extends Component<Props, State> {
 		return (
 			<Modal open onClose={this.closeModal.bind(this)}>
 				<Paper style={this.modalStyle} elevation={1}>
-					<div style={{ display: 'flex', justifyContent: 'space-between' }}>
-						<Typography variant="h6" gutterBottom>
-							Tools
-						</Typography>
-						<Button color="primary" onClick={this.handleNewTool.bind(this)}>
-							New
-						</Button>
-					</div>
+					<Typography variant="h6" gutterBottom>
+						Tools
+					</Typography>
 
 					<Table aria-labelledby="tableTitle">
 						<TableHead>
@@ -198,20 +187,20 @@ class ToolsModal extends Component<Props, State> {
 							<TableRow>
 								<TableCell />
 								<TableCell>
-									<Button
-										color="secondary"
-										disabled={!Boolean(newTool)}
-										onClick={this.handleNewTool.bind(this)}>
-										Create
-									</Button>
-								</TableCell>
-								<TableCell>
 									<TextField
 										value={newTool}
 										placeholder="New Tool"
 										onChange={this.handleNewToolChange.bind(this)}
 										onKeyUp={this.handleNewToolKeyPress.bind(this)}
 									/>
+								</TableCell>
+								<TableCell>
+									<Button
+										color="secondary"
+										disabled={!Boolean(newTool)}
+										onClick={this.handleNewTool.bind(this)}>
+										Create
+									</Button>
 								</TableCell>
 							</TableRow>
 						</TableBody>
