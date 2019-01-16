@@ -26,6 +26,7 @@ function getCategories(userId) {
 	return API.graphql(
 		graphqlOperation(listCategorys, {
 			filter: { userId: { eq: userId } },
+			limit: 1000,
 		})
 	).then(data => data.data.listCategorys.items)
 }
@@ -34,6 +35,7 @@ function getSkills(userId) {
 	return API.graphql(
 		graphqlOperation(listSkills, {
 			filter: { userId: { eq: userId } },
+			limit: 1000,
 		})
 	).then(data => data.data.listSkills.items)
 }
@@ -42,6 +44,7 @@ export function getTools(userId) {
 	return API.graphql(
 		graphqlOperation(listTools, {
 			filter: { userId: { eq: userId } },
+			limit: 1000,
 		})
 	).then(data => data.data.listTools.items)
 }
@@ -50,6 +53,7 @@ function getProjects(userId) {
 	return API.graphql(
 		graphqlOperation(listProjects, {
 			filter: { userId: { eq: userId } },
+			limit: 1000,
 		})
 	).then(data => data.data.listProjects.items)
 }
@@ -58,6 +62,7 @@ function getProjectSkills(userId) {
 	return API.graphql(
 		graphqlOperation(listProjectSkills, {
 			filter: { userId: { eq: userId } },
+			limit: 1000,
 		})
 	).then(data => data.data.listProjectSkills.items)
 }
