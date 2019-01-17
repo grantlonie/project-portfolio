@@ -112,7 +112,7 @@ class App extends Component<Props, State> {
 					<div style={this.bodyStyle}>
 						<Route exact path="/" component={ListProjects} />
 						<Route path="/projects" component={Projects} />
-						<Route path="/editProject/:id" component={EditProject} />
+						<Route path="/editProject/:id/:isNew?" component={EditProject} />
 						<Route path="/skills" component={EditSkills} />
 					</div>
 

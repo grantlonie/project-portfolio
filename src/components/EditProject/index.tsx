@@ -59,13 +59,10 @@ class Edit extends Component<Props, State> {
 		} = this.props
 
 		let project
-		if (id) {
-			const foundProject = projects.find(i => i.id === id)
-			if (foundProject) project = JSON.parse(JSON.stringify(foundProject))
-		}
+		const foundProject = projects.find(i => i.id === id)
 
-		if (project) {
-			// adjust skills array structure
+		if (foundProject) {
+			project = JSON.parse(JSON.stringify(foundProject))
 			project.skills = project.skills.items
 		} else {
 			project = {
@@ -216,19 +213,31 @@ class Edit extends Component<Props, State> {
 	}
 
 	render() {
-		const { skills } = this.state
-
 		return (
 			<div>
-				<Typography variant="h3" gutterBottom>
-					Edit Project
-				</Typography>
+				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
+					<Typography variant="h3" gutterBottom>
+						Edit Project
+					</Typography>
+
+					{this.props.match.params.isNew ? (
+						<span onClick={this.getProject.bind(this)} style={{ cursor: 'pointer' }}>
+							<img
+								style={{ margin: '0 10px 0 30px', height: '30px' }}
+								src="/assets/img/baseline-add_circle-24px.svg"
+								draggable={false}
+								alt="Add another project"
+							/>
+							<em>Add another project</em>
+						</span>
+					) : null}
+				</div>
 
 				<div style={contentStyle}>
 					<MainProps project={this.state} handleChange={this.handleMainPropChange.bind(this)} />
 
 					<Skills
-						skills={skills}
+						skills={this.state.skills}
 						addProjectSkill={this.addProjectSkill.bind(this)}
 						removeProjectSkill={this.removeProjectSkill.bind(this)}
 						updateTools={this.updateTools.bind(this)}

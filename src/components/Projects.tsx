@@ -125,7 +125,7 @@ class Projects extends Component<Props, State> {
 		showSpinner(false)
 
 		addProject(data['data']['createProject'])
-		this.setState({ redirect: data['data']['createProject']['id'] })
+		this.setState({ redirect: `${data['data']['createProject']['id']}/true` })
 	}
 
 	async handleRemoveProject(confirm) {
