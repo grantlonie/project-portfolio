@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Redirect } from 'react-router-dom'
 import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Table,
@@ -15,9 +14,10 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createProject, deleteProject, deleteProjectSkill } from '../graphql/mutations'
+import { deleteProject, deleteProjectSkill } from '../graphql/mutations'
 import { ProjectItem } from '../types'
 import DeleteProjectModal from './DeleteProjectModal'
+import { addProject } from '../js/helpers'
 
 const headers = [
 	{ id: 'id', label: 'ID' },
@@ -28,8 +28,8 @@ const headers = [
 ]
 
 interface Props {
+	history: any
 	userId: string
-	addProject: (project: ProjectItem) => null
 	removeProjectFromStore: (projectId: string) => null
 	showSpinner: (show: boolean) => null
 	projects: ProjectItem[]
@@ -40,7 +40,6 @@ interface State {
 	orderBy: string
 	order: 'asc' | 'desc'
 	filter: string
-	redirect: string
 	confirmDeleteModal: ProjectItem
 }
 
@@ -57,12 +56,11 @@ class Projects extends Component<Props, State> {
 		orderBy: 'id',
 		order: 'asc',
 		filter: '',
-		redirect: null,
 		confirmDeleteModal: null,
 	}
 
 	handleClickRow(id) {
-		this.setState({ redirect: id })
+		this.props.history.push(`/editProject/${id}`)
 	}
 
 	handleRequestSort = orderBy => {
@@ -109,23 +107,8 @@ class Projects extends Component<Props, State> {
 	}
 
 	async handleAddProject() {
-		const { userId, addProject, showSpinner } = this.props
-
-		showSpinner(true)
-
-		const date = new Date()
-		const year = date.getFullYear()
-		let month = ('0' + (date.getMonth() + 1)).slice(-2)
-		let day = ('0' + date.getDate()).slice(-2)
-
-		const emptyProject = { userId, date: `${year}-${month}-${day}` }
-
-		const data = await API.graphql(graphqlOperation(createProject, { input: { ...emptyProject } }))
-
-		showSpinner(false)
-
-		addProject(data['data']['createProject'])
-		this.setState({ redirect: `${data['data']['createProject']['id']}/true` })
+		const projectId = await addProject()
+		this.props.history.push(`/editProject/${projectId}/true`)
 	}
 
 	async handleRemoveProject(confirm) {
@@ -161,14 +144,12 @@ class Projects extends Component<Props, State> {
 
 	render() {
 		const { projects } = this.props
-		const { order, orderBy, page, filter, redirect, confirmDeleteModal } = this.state
+		const { order, orderBy, page, filter, confirmDeleteModal } = this.state
 
 		const filteredProjects = projects.filter(project => {
 			if (project.name === null) return true
 			return project.name.toLowerCase().indexOf(this.state.filter) > -1
 		})
-
-		if (redirect) return <Redirect push to={`editProject/${redirect}`} />
 
 		return (
 			<div>
@@ -189,14 +170,15 @@ class Projects extends Component<Props, State> {
 						style={{ marginLeft: '20px' }}
 					/>
 
-					<img
-						style={{ margin: '0 10px 0 30px', height: '30px' }}
-						src="./assets/img/baseline-add_circle-24px.svg"
-						onClick={this.handleAddProject.bind(this)}
-						draggable={false}
-						alt="Add Project"
-					/>
-					<em>Add Project</em>
+					<div onClick={this.handleAddProject.bind(this)} style={{ cursor: 'pointer' }}>
+						<img
+							style={{ margin: '0 10px 0 30px', height: '30px' }}
+							src="./assets/img/baseline-add_circle-24px.svg"
+							draggable={false}
+							alt="Add Project"
+						/>
+						<em>Add Project</em>
+					</div>
 				</div>
 
 				<Table aria-labelledby="tableTitle">
@@ -266,9 +248,6 @@ const mapStateToProps = ({ projects, userId }) => ({ projects, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		addProject: project => {
-			dispatch({ type: 'ADD_PROJECT', project })
-		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
 		},

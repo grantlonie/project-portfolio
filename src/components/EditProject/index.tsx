@@ -13,6 +13,7 @@ import {
 	deleteProjectSkill,
 } from '../../graphql/mutations'
 import { ProjectItem } from '../../types'
+import { addProject } from '../../js/helpers'
 
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
@@ -26,6 +27,7 @@ const contentStyle: any = {
 
 interface Props {
 	match: any
+	history: any
 	projects: ProjectItem[]
 	userId: string
 	addProjectSkillToStore: (skill: any) => null
@@ -48,9 +50,9 @@ interface State {
 }
 
 class Edit extends Component<Props, State> {
-	state: State = { ...this.getProject(), mainPropsAreUpdated: false, skillsAreUpdated: false }
+	state: State = this.freshState()
 
-	getProject() {
+	freshState() {
 		const {
 			match: {
 				params: { id },
@@ -75,13 +77,20 @@ class Edit extends Component<Props, State> {
 			}
 		}
 
-		return project
+		return {
+			...project,
+			mainPropsAreUpdated: false,
+			skillsAreUpdated: false,
+		}
 	}
 
 	componentDidUpdate(prevProps) {
-		// if projects list length changes, update project
-		if (prevProps.projects.length !== this.props.projects.length) {
-			this.setState({ ...this.getProject() })
+		// if project data comes in or new id parameter, update state to the new project id
+		if (
+			prevProps.projects.length === 0 ||
+			prevProps.match.params.id !== this.props.match.params.id
+		) {
+			this.setState(this.freshState())
 		}
 	}
 
@@ -212,6 +221,11 @@ class Edit extends Component<Props, State> {
 		}
 	}
 
+	async addAnotherProject() {
+		const projectId = await addProject()
+		this.props.history.replace(`/editProject/${projectId}/true`)
+	}
+
 	render() {
 		return (
 			<div>
@@ -221,7 +235,7 @@ class Edit extends Component<Props, State> {
 					</Typography>
 
 					{this.props.match.params.isNew ? (
-						<span onClick={this.getProject.bind(this)} style={{ cursor: 'pointer' }}>
+						<span onClick={this.addAnotherProject.bind(this)} style={{ cursor: 'pointer' }}>
 							<img
 								style={{ margin: '0 10px 0 30px', height: '30px' }}
 								src="/assets/img/baseline-add_circle-24px.svg"
