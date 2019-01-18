@@ -58,9 +58,10 @@ class Edit extends Component<Props, State> {
 				params: { id },
 			},
 			projects,
+			history,
 		} = this.props
 
-		let project
+		let project: any = {}
 		const foundProject = projects.find(i => i.id === id)
 
 		if (foundProject) {
@@ -75,6 +76,9 @@ class Edit extends Component<Props, State> {
 				description: '',
 				skills: [],
 			}
+
+			// if project not found, go back to projects
+			if (projects.length > 0) history.replace('/projects')
 		}
 
 		return {
