@@ -20,7 +20,6 @@ import DeleteProjectModal from './DeleteProjectModal'
 import { addProject } from '../js/helpers'
 
 const headers = [
-	{ id: 'id', label: 'ID' },
 	{ id: 'name', label: 'Name' },
 	{ id: 'date', label: 'Date' },
 	{ id: 'company', label: 'Company' },
@@ -53,7 +52,7 @@ class Projects extends Component<Props, State> {
 
 	state: State = {
 		page: 0,
-		orderBy: 'id',
+		orderBy: 'name',
 		order: 'asc',
 		filter: '',
 		confirmDeleteModal: null,
@@ -214,7 +213,6 @@ class Projects extends Component<Props, State> {
 										<TableCell>
 											<DeleteIcon onClick={this.handleRequestRemoveProject.bind(this, project)} />
 										</TableCell>
-										<TableCell>{project.id}</TableCell>
 										<TableCell>{project.name}</TableCell>
 										<TableCell>{project.date}</TableCell>
 										<TableCell>{project.company}</TableCell>

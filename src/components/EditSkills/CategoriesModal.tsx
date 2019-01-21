@@ -11,7 +11,7 @@ import {
 	TableRow,
 	TableCell,
 	TextField,
-	Button,
+	Tooltip,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
@@ -168,7 +168,6 @@ class CategoriesModal extends Component<Props, State> {
 						<TableHead>
 							<TableRow>
 								<TableCell />
-								<TableCell>ID</TableCell>
 								<TableCell>Name</TableCell>
 							</TableRow>
 						</TableHead>
@@ -180,7 +179,6 @@ class CategoriesModal extends Component<Props, State> {
 										<TableCell>
 											<DeleteIcon onClick={this.handleRemoveCategory.bind(this, category.id)} />
 										</TableCell>
-										<TableCell>{category.id}</TableCell>
 										<TableCell>
 											<TextField
 												value={category.name}
@@ -194,20 +192,14 @@ class CategoriesModal extends Component<Props, State> {
 							<TableRow>
 								<TableCell />
 								<TableCell>
-									<TextField
-										value={newCategory}
-										placeholder="New Category"
-										onChange={this.handleNewCategoryChange.bind(this)}
-										onKeyUp={this.handleNewCategoryKeyPress.bind(this)}
-									/>
-								</TableCell>
-								<TableCell>
-									<Button
-										color="secondary"
-										disabled={!Boolean(this.state.newCategory)}
-										onClick={this.handleNewCategory.bind(this)}>
-										Create
-									</Button>
+									<Tooltip title="Press Enter when done">
+										<TextField
+											value={newCategory}
+											placeholder="New Category"
+											onChange={this.handleNewCategoryChange.bind(this)}
+											onKeyUp={this.handleNewCategoryKeyPress.bind(this)}
+										/>
+									</Tooltip>
 								</TableCell>
 							</TableRow>
 						</TableBody>

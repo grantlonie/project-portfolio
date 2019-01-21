@@ -21,7 +21,6 @@ import DeleteSkillConfirmationModal from './DeleteSkillConfirmationModal'
 import { SkillItem, CategoryItem } from '../../types'
 
 const headers = [
-	{ id: 'id', label: 'ID' },
 	{ id: 'name', label: 'Name' },
 	{ id: 'category', label: 'Category' },
 	{ id: 'tools', label: 'Edit Tools' },
@@ -249,7 +248,6 @@ class EditSkills extends Component<Props, State> {
 									<TableCell>
 										<DeleteIcon onClick={this.handleOpenDeleteModal.bind(this, skill)} />
 									</TableCell>
-									<TableCell>{skill.id}</TableCell>
 									<TableCell>
 										<TextField
 											value={skill.name}

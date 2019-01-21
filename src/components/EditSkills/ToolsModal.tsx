@@ -11,7 +11,7 @@ import {
 	TableRow,
 	TableCell,
 	TextField,
-	Button,
+	Tooltip,
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
@@ -161,7 +161,6 @@ class ToolsModal extends Component<Props, State> {
 						<TableHead>
 							<TableRow>
 								<TableCell />
-								<TableCell>ID</TableCell>
 								<TableCell>Name</TableCell>
 							</TableRow>
 						</TableHead>
@@ -173,7 +172,6 @@ class ToolsModal extends Component<Props, State> {
 										<TableCell>
 											<DeleteIcon onClick={this.handleRemoveTool.bind(this, tool.id)} />
 										</TableCell>
-										<TableCell>{tool.id}</TableCell>
 										<TableCell>
 											<TextField
 												value={tool.name}
@@ -187,20 +185,14 @@ class ToolsModal extends Component<Props, State> {
 							<TableRow>
 								<TableCell />
 								<TableCell>
-									<TextField
-										value={newTool}
-										placeholder="New Tool"
-										onChange={this.handleNewToolChange.bind(this)}
-										onKeyUp={this.handleNewToolKeyPress.bind(this)}
-									/>
-								</TableCell>
-								<TableCell>
-									<Button
-										color="secondary"
-										disabled={!Boolean(newTool)}
-										onClick={this.handleNewTool.bind(this)}>
-										Create
-									</Button>
+									<Tooltip title="Press Enter when done">
+										<TextField
+											value={newTool}
+											placeholder="New Tool"
+											onChange={this.handleNewToolChange.bind(this)}
+											onKeyUp={this.handleNewToolKeyPress.bind(this)}
+										/>
+									</Tooltip>
 								</TableCell>
 							</TableRow>
 						</TableBody>

@@ -11,18 +11,6 @@ const MainProps = ({ project, handleChange }) => {
 			</Typography>
 
 			<TextField
-				InputLabelProps={{
-					shrink: true,
-				}}
-				fullWidth
-				disabled
-				label="Id"
-				margin="normal"
-				name="id"
-				value={id}
-			/>
-
-			<TextField
 				required
 				fullWidth
 				placeholder="Id name"
