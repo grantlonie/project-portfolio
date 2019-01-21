@@ -20,8 +20,8 @@ import DeleteProjectModal from './DeleteProjectModal'
 import { addProject } from '../js/helpers'
 
 const headers = [
-	{ id: 'name', label: 'Name' },
 	{ id: 'date', label: 'Date' },
+	{ id: 'name', label: 'Name' },
 	{ id: 'company', label: 'Company' },
 	{ id: 'description', label: 'Description' },
 ]
@@ -52,8 +52,8 @@ class Projects extends Component<Props, State> {
 
 	state: State = {
 		page: 0,
-		orderBy: 'name',
-		order: 'asc',
+		orderBy: 'date',
+		order: 'desc',
 		filter: '',
 		confirmDeleteModal: null,
 	}
@@ -150,6 +150,8 @@ class Projects extends Component<Props, State> {
 			return project.name.toLowerCase().indexOf(this.state.filter) > -1
 		})
 
+		const viewPortWidth = window.innerWidth
+
 		return (
 			<div>
 				{confirmDeleteModal ? (
@@ -185,6 +187,8 @@ class Projects extends Component<Props, State> {
 						<TableRow>
 							<TableCell />
 							{headers.map(header => {
+								if (header.id === 'description' && viewPortWidth < 1000) return null
+
 								return (
 									<TableCell key={header.id} sortDirection={orderBy === header.id ? order : false}>
 										<Tooltip title="Sort" enterDelay={300}>
@@ -210,13 +214,15 @@ class Projects extends Component<Props, State> {
 										hover
 										key={project.id}
 										onClick={this.handleClickRow.bind(this, project.id)}>
-										<TableCell>
+										<TableCell padding="dense">
 											<DeleteIcon onClick={this.handleRequestRemoveProject.bind(this, project)} />
 										</TableCell>
-										<TableCell>{project.name}</TableCell>
-										<TableCell>{project.date}</TableCell>
-										<TableCell>{project.company}</TableCell>
-										<TableCell>{project.description}</TableCell>
+										<TableCell padding="dense">{project.date}</TableCell>
+										<TableCell padding="dense">{project.name}</TableCell>
+										<TableCell padding="dense">{project.company}</TableCell>
+										{viewPortWidth < 1000 ? null : (
+											<TableCell padding="dense">{project.description}</TableCell>
+										)}
 									</TableRow>
 								)
 							})}
