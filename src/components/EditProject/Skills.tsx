@@ -150,31 +150,33 @@ class Skills extends Component<Props, State> {
 													<DeleteIcon onClick={() => removeProjectSkill(skill.id)} />
 												</div>
 
-												<Typeahead
-													options={unselectedTools}
-													selected={selectedTools}
-													multiple
-													labelKey="name"
-													onChange={selected =>
-														this.handleUpdateTools(skill.id, skill.skillId, selected)
-													}
-													placeholder="Add a tool..."
-													allowNew
-													clearButton
-												/>
+												<div style={{ margin: '0 0 20px 5px' }}>
+													<TextField
+														fullWidth
+														style={{ margin: '5px 0 5px 0' }}
+														multiline
+														variant="filled"
+														label="Description"
+														name="description"
+														value={skill.description || ''}
+														onChange={({ target: { value } }) =>
+															handleDescriptionChange(skill.id, value)
+														}
+													/>
 
-												<TextField
-													fullWidth
-													multiline
-													variant="filled"
-													label="Description"
-													style={{ margin: '5px 0 20px 0' }}
-													name="description"
-													value={skill.description || ''}
-													onChange={({ target: { value } }) =>
-														handleDescriptionChange(skill.id, value)
-													}
-												/>
+													<Typeahead
+														options={unselectedTools}
+														selected={selectedTools}
+														multiple
+														labelKey="name"
+														onChange={selected =>
+															this.handleUpdateTools(skill.id, skill.skillId, selected)
+														}
+														placeholder="Add a tool..."
+														allowNew
+														clearButton
+													/>
+												</div>
 											</div>
 										)
 									})}

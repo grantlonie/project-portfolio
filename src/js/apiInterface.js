@@ -17,7 +17,9 @@ import {
 } from '../graphql/mutations'
 
 function getUserId() {
-	if (process.env.REACT_APP_TEST_USER) return process.env.REACT_APP_TEST_USER
+	const { NODE_ENV, REACT_APP_TEST_USER } = process.env
+
+	if (NODE_ENV === 'development' && REACT_APP_TEST_USER) return REACT_APP_TEST_USER
 
 	return Auth.currentUserInfo().then(data => data.id)
 }
