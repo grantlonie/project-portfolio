@@ -38,12 +38,11 @@ type Skill @model {
 	userId: String!
 	name: String!
 	category: Category @connection(name: "CategorySkills")
-	tools: [Tool] @connection(name: "SkillTools")
 }
 
 type Tool @model {
 	id: ID!
 	userId: String!
-	skill: Skill @connection(name: "SkillTools")
 	name: String!
+	website: String
 }
