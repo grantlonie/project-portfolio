@@ -12,6 +12,7 @@ import { SkillItem, ProjectSkillItem, CategoryItem, ToolItem } from '../../types
 interface Props {
 	allCategories: CategoryItem[]
 	allSkills: SkillItem[]
+	allTools: ToolItem[]
 	userId: string
 	skills: ProjectSkillItem[]
 	addProjectSkill: (skillId: string) => null
@@ -20,7 +21,6 @@ interface Props {
 	handleDescriptionChange: (id: string, value: string) => null
 	showSpinner: (show: boolean) => null
 	addSkillToStore: (skill: SkillItem) => null
-	addToolToAllSkills: (skillId: string, tool: ToolItem) => null
 }
 
 interface State {
@@ -63,14 +63,13 @@ class Skills extends Component<Props, State> {
 	}
 
 	handleUpdateTools(id, skillId, tools) {
-		const { userId, allSkills, updateTools, addToolToAllSkills, showSpinner } = this.props
+		const { userId, allTools, updateTools, showSpinner } = this.props
 
 		const lastTool = tools[tools.length - 1] || {}
 		const { name, customOption } = lastTool
 
 		// Create new tool (only if existing tool name doesn't exist)
 		if (customOption) {
-			const allTools = allSkills.find(i => i.id === skillId).tools.items
 			if (allTools.findIndex(tool => tool.name === name) !== -1) {
 				this.forceUpdate() // HACK: prevents tools typeaway from adding already selected tool to list
 			} else {
@@ -85,7 +84,6 @@ class Skills extends Component<Props, State> {
 					tools[tools.length - 1] = newTool
 
 					updateTools(id, tools)
-					addToolToAllSkills(skillId, newTool)
 					showSpinner(false)
 				})
 			}
@@ -95,7 +93,7 @@ class Skills extends Component<Props, State> {
 	}
 
 	render() {
-		const { skills, allSkills, handleDescriptionChange, removeProjectSkill } = this.props
+		const { skills, allSkills, allTools, handleDescriptionChange, removeProjectSkill } = this.props
 
 		// Create nested skills inside respective categories
 		let skillData = {}
@@ -131,7 +129,6 @@ class Skills extends Component<Props, State> {
 								<div>
 									{skillData[categoryName].map(skill => {
 										// Create lists of tools that are selected in skill and remaining unselected
-										const allTools = allSkills.find(i => i.id === skill.skillId).tools.items
 										let selectedTools = []
 										let unselectedTools = []
 										allTools.forEach(tool => {
@@ -209,7 +206,7 @@ class Skills extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allSkills, userId }) => ({ allSkills, userId })
+const mapStateToProps = ({ allSkills, allTools, userId }) => ({ allSkills, allTools, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
@@ -218,9 +215,6 @@ const mapDispatchToProps = dispatch => {
 		},
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })
-		},
-		addToolToAllSkills: (skillId, tool) => {
-			dispatch({ type: 'ADD_TOOL_TO_SKILL', skillId, tool })
 		},
 	}
 }

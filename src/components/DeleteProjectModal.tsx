@@ -88,14 +88,8 @@ const mapDispatchToProps = dispatch => {
 		removeSkillFromStore: skillId => {
 			dispatch({ type: 'REMOVE_SKILL', skillId })
 		},
-		removeTool: toolId => {
-			dispatch({ type: 'REMOVE_TOOL', toolId })
-		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		addToolToAllSkills: (skillId, tool) => {
-			dispatch({ type: 'ADD_TOOL_TO_SKILL', skillId, tool })
 		},
 		addProjectSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })

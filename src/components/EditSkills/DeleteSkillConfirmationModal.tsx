@@ -25,9 +25,7 @@ interface Props {
 	removeSkillFromStore: (skillId: string) => null
 	removeSkill: (skillId: string) => null
 	close: () => null
-	removeTool: (toolId: string) => null
 	showSpinner: (show: boolean) => null
-	addToolToAllSkills: (skillId: string, tool: ToolItem) => null
 	addProjectSkillToStore: (skill: SkillItem) => null
 	removeSkillFromProject: (skill: SkillItem) => null
 }
@@ -80,8 +78,6 @@ class ConfirmationModal extends Component<Props, State> {
 		const {
 			skill,
 			projects,
-			removeTool,
-			addToolToAllSkills,
 			removeSkillFromProject,
 			addProjectSkillToStore,
 			showSpinner,
@@ -89,19 +85,6 @@ class ConfirmationModal extends Component<Props, State> {
 		const { mergeSkillId } = this.state
 
 		showSpinner(true)
-
-		// Link tools to new skill
-		for (const tool of skill.tools.items) {
-			const data = await API.graphql(
-				graphqlOperation(updateTool, {
-					input: { id: tool.id, toolSkillId: mergeSkillId },
-				})
-			)
-
-			// Update redux
-			removeTool(data['data']['updateTool'].id)
-			addToolToAllSkills(mergeSkillId, data['data']['updateTool'])
-		}
 
 		// Link ProjectSkill to new skillId
 		for (const project of projects) {
@@ -214,14 +197,8 @@ const mapDispatchToProps = dispatch => {
 		removeSkillFromStore: skillId => {
 			dispatch({ type: 'REMOVE_SKILL', skillId })
 		},
-		removeTool: toolId => {
-			dispatch({ type: 'REMOVE_TOOL', toolId })
-		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		addToolToAllSkills: (skillId, tool) => {
-			dispatch({ type: 'ADD_TOOL_TO_SKILL', skillId, tool })
 		},
 		addProjectSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })

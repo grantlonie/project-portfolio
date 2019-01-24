@@ -74,12 +74,11 @@ function getUserData(id) {
 }
 
 // This method checks to see if dirty tables exist and cleans them
-async function cleanupDirtyTables(userId, allSkills) {
+async function cleanupDirtyTables(userId, allSkills, allTools) {
 	const userData = await getUserData(userId)
 
 	if (userData.dirtyTables) {
 		const projectSkills = await getProjectSkills(userId)
-		const tools = await getTools(userId)
 
 		// Go through all ProjectSkills
 		for (const projectSkill of projectSkills) {
@@ -93,7 +92,7 @@ async function cleanupDirtyTables(userId, allSkills) {
 			// Remove any ProjectSkill tool that no longer exist in Tools
 			else if (Array.isArray(toolIds)) {
 				for (const toolId of toolIds) {
-					if (tools.findIndex(tool => tool.id === toolId) === -1) {
+					if (allTools.findIndex(tool => tool.id === toolId) === -1) {
 						const newToolIds = toolIds.filter(i => i !== toolId)
 
 						await API.graphql(
@@ -107,7 +106,7 @@ async function cleanupDirtyTables(userId, allSkills) {
 		}
 
 		// Delete any tool where parent skill no longer exists
-		for (const tool of tools) {
+		for (const tool of allTools) {
 			if (!tool.skill) {
 				await API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } }))
 			}
@@ -127,11 +126,13 @@ async function cleanupDirtyTables(userId, allSkills) {
 export async function getAllData() {
 	const userId = await getUserId()
 	const allSkills = await getSkills(userId)
+	console.log('allSkills: ', allSkills)
+	const allTools = await getTools(userId)
 
-	await cleanupDirtyTables(userId, allSkills)
+	await cleanupDirtyTables(userId, allSkills, allTools)
 
 	const projects = await getProjects(userId)
 	const allCategories = await getCategories(userId)
 
-	return { userId, projects, allSkills, allCategories }
+	return { userId, projects, allSkills, allTools, allCategories }
 }

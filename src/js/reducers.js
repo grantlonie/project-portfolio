@@ -5,6 +5,7 @@ const initialState = {
 	projects: [],
 	allCategories: [],
 	allSkills: [],
+	allTools: [],
 	showSpinner: false, // show the loading spinner
 }
 
@@ -27,13 +28,6 @@ const rootReducer = (state = initialState, action) =>
 				draft.projects = draft.projects.map(project => {
 					if (project.id === action.skill.project.id) project.skills.items.push(action.skill)
 					return project
-				})
-				return
-
-			case 'ADD_TOOL_TO_SKILL':
-				draft.allSkills = draft.allSkills.map(skill => {
-					if (skill.id === action.skillId) skill.tools.items.push(action.tool)
-					return skill
 				})
 				return
 
@@ -82,14 +76,6 @@ const rootReducer = (state = initialState, action) =>
 				})
 				return
 
-			case 'REMOVE_TOOL':
-				draft.allSkills = draft.allSkills.map(skill => {
-					const toolIndex = skill.tools.items.findIndex(i => i.id === action.toolId)
-					if (toolIndex > -1) skill.tools.items.splice(toolIndex, 1)
-					return skill
-				})
-				return
-
 			case 'SHOW_SPINNER':
 				draft.showSpinner = action.show
 				return
@@ -99,6 +85,7 @@ const rootReducer = (state = initialState, action) =>
 				draft.projects = action.projects
 				draft.allSkills = action.allSkills
 				draft.allCategories = action.allCategories
+				draft.allTools = action.allTools
 				return
 
 			case 'UPDATE_CATEGORY':
@@ -108,8 +95,9 @@ const rootReducer = (state = initialState, action) =>
 				})
 
 				draft.allSkills = draft.allSkills.map(skill => {
-					if (skill.category && skill.category.id === action.category.id)
+					if (skill.category && skill.category.id === action.category.id) {
 						skill.category = action.category
+					}
 					return skill
 				})
 				return

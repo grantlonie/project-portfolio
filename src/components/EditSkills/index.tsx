@@ -15,16 +15,11 @@ import {
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import { createSkill, updateSkill } from '../../graphql/mutations'
-import ToolsModal from './ToolsModal'
 import CategoriesModal from './CategoriesModal'
 import DeleteSkillConfirmationModal from './DeleteSkillConfirmationModal'
 import { SkillItem, CategoryItem } from '../../types'
 
-const headers = [
-	{ id: 'name', label: 'Name' },
-	{ id: 'category', label: 'Category' },
-	{ id: 'tools', label: 'Edit Tools' },
-]
+const headers = [{ id: 'name', label: 'Name' }, { id: 'category', label: 'Category' }]
 
 const nullCategory = { id: '_null', name: 'General' }
 
@@ -189,10 +184,6 @@ class EditSkills extends Component<Props, State> {
 		// Render a modal
 		let renderedModal
 		switch (modal) {
-			case 'tools':
-				renderedModal = <ToolsModal skill={modalSkill} close={this.closeModal.bind(this)} />
-				break
-
 			case 'categories':
 				renderedModal = (
 					<CategoriesModal
@@ -254,6 +245,7 @@ class EditSkills extends Component<Props, State> {
 											onChange={this.handleNameChange.bind(this, skill.id)}
 										/>
 									</TableCell>
+
 									<TableCell padding="dense">
 										<TextField
 											select
@@ -269,11 +261,6 @@ class EditSkills extends Component<Props, State> {
 												)
 											})}
 										</TextField>
-									</TableCell>
-									<TableCell padding="dense">
-										<Button color="primary" onClick={this.handleEditTools.bind(this, skill)}>
-											Tools
-										</Button>
 									</TableCell>
 								</TableRow>
 							)
@@ -298,7 +285,6 @@ class EditSkills extends Component<Props, State> {
 									Create
 								</Button>
 							</TableCell>
-							<TableCell />
 						</TableRow>
 					</TableBody>
 				</Table>
