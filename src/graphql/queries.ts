@@ -167,14 +167,6 @@ export const getSkill = `query GetSkill($id: ID!) {
       userId
       name
     }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
-    }
   }
 }
 `;
@@ -193,14 +185,6 @@ export const listSkills = `query ListSkills(
         userId
         name
       }
-      tools {
-        items {
-          id
-          userId
-          name
-        }
-        nextToken
-      }
     }
     nextToken
   }
@@ -210,12 +194,8 @@ export const getTool = `query GetTool($id: ID!) {
   getTool(id: $id) {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;
@@ -228,12 +208,8 @@ export const listTools = `query ListTools(
     items {
       id
       userId
-      skill {
-        id
-        userId
-        name
-      }
       name
+      website
     }
     nextToken
   }

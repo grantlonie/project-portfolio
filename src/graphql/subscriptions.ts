@@ -203,14 +203,6 @@ export const onCreateSkill = `subscription OnCreateSkill {
       userId
       name
     }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
-    }
   }
 }
 `;
@@ -223,14 +215,6 @@ export const onUpdateSkill = `subscription OnUpdateSkill {
       id
       userId
       name
-    }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
     }
   }
 }
@@ -245,14 +229,6 @@ export const onDeleteSkill = `subscription OnDeleteSkill {
       userId
       name
     }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
-    }
   }
 }
 `;
@@ -260,12 +236,8 @@ export const onCreateTool = `subscription OnCreateTool {
   onCreateTool {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;
@@ -273,12 +245,8 @@ export const onUpdateTool = `subscription OnUpdateTool {
   onUpdateTool {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;
@@ -286,12 +254,8 @@ export const onDeleteTool = `subscription OnDeleteTool {
   onDeleteTool {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;

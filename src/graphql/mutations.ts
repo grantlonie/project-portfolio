@@ -203,14 +203,6 @@ export const createSkill = `mutation CreateSkill($input: CreateSkillInput!) {
       userId
       name
     }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
-    }
   }
 }
 `;
@@ -223,14 +215,6 @@ export const updateSkill = `mutation UpdateSkill($input: UpdateSkillInput!) {
       id
       userId
       name
-    }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
     }
   }
 }
@@ -245,14 +229,6 @@ export const deleteSkill = `mutation DeleteSkill($input: DeleteSkillInput!) {
       userId
       name
     }
-    tools {
-      items {
-        id
-        userId
-        name
-      }
-      nextToken
-    }
   }
 }
 `;
@@ -260,12 +236,8 @@ export const createTool = `mutation CreateTool($input: CreateToolInput!) {
   createTool(input: $input) {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;
@@ -273,12 +245,8 @@ export const updateTool = `mutation UpdateTool($input: UpdateToolInput!) {
   updateTool(input: $input) {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;
@@ -286,12 +254,8 @@ export const deleteTool = `mutation DeleteTool($input: DeleteToolInput!) {
   deleteTool(input: $input) {
     id
     userId
-    skill {
-      id
-      userId
-      name
-    }
     name
+    website
   }
 }
 `;

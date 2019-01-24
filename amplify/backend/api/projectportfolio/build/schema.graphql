@@ -36,14 +36,13 @@ type Skill {
   userId: String!
   name: String!
   category: Category
-  tools(filter: ModelToolFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelToolConnection
 }
 
 type Tool {
   id: ID!
   userId: String!
-  skill: Skill
   name: String!
+  website: String
 }
 
 enum ModelSortDirection {
@@ -344,6 +343,7 @@ input ModelToolFilterInput {
   id: ModelIDFilterInput
   userId: ModelStringFilterInput
   name: ModelStringFilterInput
+  website: ModelStringFilterInput
   and: [ModelToolFilterInput]
   or: [ModelToolFilterInput]
   not: ModelToolFilterInput
@@ -353,14 +353,14 @@ input CreateToolInput {
   id: ID
   userId: String!
   name: String!
-  toolSkillId: ID
+  website: String
 }
 
 input UpdateToolInput {
   id: ID!
   userId: String
   name: String
-  toolSkillId: ID
+  website: String
 }
 
 input DeleteToolInput {

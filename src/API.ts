@@ -101,14 +101,14 @@ export type CreateToolInput = {
   id?: string | null,
   userId: string,
   name: string,
-  toolSkillId?: string | null,
+  website?: string | null,
 };
 
 export type UpdateToolInput = {
   id: string,
   userId?: string | null,
   name?: string | null,
-  toolSkillId?: string | null,
+  website?: string | null,
 };
 
 export type DeleteToolInput = {
@@ -201,6 +201,7 @@ export type ModelToolFilterInput = {
   id?: ModelIDFilterInput | null,
   userId?: ModelStringFilterInput | null,
   name?: ModelStringFilterInput | null,
+  website?: ModelStringFilterInput | null,
   and?: Array< ModelToolFilterInput | null > | null,
   or?: Array< ModelToolFilterInput | null > | null,
   not?: ModelToolFilterInput | null,
@@ -489,16 +490,6 @@ export type CreateSkillMutation = {
       userId: string,
       name: string,
     } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
   } | null,
 };
 
@@ -517,16 +508,6 @@ export type UpdateSkillMutation = {
       id: string,
       userId: string,
       name: string,
-    } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
     } | null,
   } | null,
 };
@@ -547,16 +528,6 @@ export type DeleteSkillMutation = {
       userId: string,
       name: string,
     } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
   } | null,
 };
 
@@ -569,13 +540,8 @@ export type CreateToolMutation = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
 
@@ -588,13 +554,8 @@ export type UpdateToolMutation = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
 
@@ -607,13 +568,8 @@ export type DeleteToolMutation = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
 
@@ -835,16 +791,6 @@ export type GetSkillQuery = {
       userId: string,
       name: string,
     } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
   } | null,
 };
 
@@ -868,16 +814,6 @@ export type ListSkillsQuery = {
         userId: string,
         name: string,
       } | null,
-      tools:  {
-        __typename: "ModelToolConnection",
-        items:  Array< {
-          __typename: "Tool",
-          id: string,
-          userId: string,
-          name: string,
-        } | null > | null,
-        nextToken: string | null,
-      } | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -892,13 +828,8 @@ export type GetToolQuery = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
 
@@ -915,13 +846,8 @@ export type ListToolsQuery = {
       __typename: "Tool",
       id: string,
       userId: string,
-      skill:  {
-        __typename: "Skill",
-        id: string,
-        userId: string,
-        name: string,
-      } | null,
       name: string,
+      website: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1158,16 +1084,6 @@ export type OnCreateSkillSubscription = {
       userId: string,
       name: string,
     } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
   } | null,
 };
 
@@ -1182,16 +1098,6 @@ export type OnUpdateSkillSubscription = {
       id: string,
       userId: string,
       name: string,
-    } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
     } | null,
   } | null,
 };
@@ -1208,16 +1114,6 @@ export type OnDeleteSkillSubscription = {
       userId: string,
       name: string,
     } | null,
-    tools:  {
-      __typename: "ModelToolConnection",
-      items:  Array< {
-        __typename: "Tool",
-        id: string,
-        userId: string,
-        name: string,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
   } | null,
 };
 
@@ -1226,13 +1122,8 @@ export type OnCreateToolSubscription = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
 
@@ -1241,13 +1132,8 @@ export type OnUpdateToolSubscription = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
 
@@ -1256,12 +1142,7 @@ export type OnDeleteToolSubscription = {
     __typename: "Tool",
     id: string,
     userId: string,
-    skill:  {
-      __typename: "Skill",
-      id: string,
-      userId: string,
-      name: string,
-    } | null,
     name: string,
+    website: string | null,
   } | null,
 };
