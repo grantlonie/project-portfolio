@@ -9,12 +9,7 @@ import {
 	listProjectSkills,
 	getUser,
 } from '../graphql/queries'
-import {
-	updateProjectSkill,
-	deleteProjectSkill,
-	updateUser,
-	deleteTool,
-} from '../graphql/mutations'
+import { updateProjectSkill, deleteProjectSkill, updateUser } from '../graphql/mutations'
 
 function getUserId() {
 	const { NODE_ENV, REACT_APP_TEST_USER } = process.env
@@ -105,13 +100,6 @@ async function cleanupDirtyTables(userId, allSkills, allTools) {
 			}
 		}
 
-		// Delete any tool where parent skill no longer exists
-		for (const tool of allTools) {
-			if (!tool.skill) {
-				await API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } }))
-			}
-		}
-
 		// No more dirty tables!
 		await API.graphql(
 			graphqlOperation(updateUser, {
@@ -126,7 +114,6 @@ async function cleanupDirtyTables(userId, allSkills, allTools) {
 export async function getAllData() {
 	const userId = await getUserId()
 	const allSkills = await getSkills(userId)
-	console.log('allSkills: ', allSkills)
 	const allTools = await getTools(userId)
 
 	await cleanupDirtyTables(userId, allSkills, allTools)

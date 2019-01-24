@@ -19,6 +19,7 @@ import ListProjects from './ListProjects'
 import Projects from './Projects'
 import EditProject from './EditProject'
 import EditSkills from './EditSkills'
+import EditTools from './EditTools'
 import Spinner from './Spinner'
 
 import { getAllData } from '../js/apiInterface'
@@ -27,6 +28,7 @@ const drawerLinks = [
 	{ link: '/', text: 'List Projects' },
 	{ link: '/projects', text: 'Projects' },
 	{ link: '/skills', text: 'Edit Skills' },
+	{ link: '/tools', text: 'Edit Tools' },
 ]
 
 interface Props {
@@ -114,6 +116,7 @@ class App extends Component<Props, State> {
 						<Route path="/projects" component={Projects} />
 						<Route path="/editProject/:id/:isNew?" component={EditProject} />
 						<Route path="/skills" component={EditSkills} />
+						<Route path="/tools" component={EditTools} />
 					</div>
 
 					<Spinner />
