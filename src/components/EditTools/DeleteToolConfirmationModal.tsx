@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { updateTool, updateProjectSkill, deleteSkill, updateUser } from '../../graphql/mutations'
+import { updateTool, deleteTool, updateUser } from '../../graphql/mutations'
 import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Modal,
@@ -16,27 +16,27 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { SkillItem, ProjectItem, ToolItem } from '../../types'
+import { ToolItem, ProjectItem } from '../../types'
 
 interface Props {
 	userId: string
-	skill: SkillItem
+	tool: ToolItem
 	projects: ProjectItem[]
-	removeSkillFromStore: (skillId: string) => null
-	removeSkill: (skillId: string) => null
+	removeToolFromStore: (toolId: string) => null
+	removeTool: (toolId: string) => null
 	close: () => null
 	showSpinner: (show: boolean) => null
-	addProjectSkillToStore: (skill: SkillItem) => null
-	removeSkillFromProject: (skill: SkillItem) => null
+	addProjectToolToStore: (tool: ToolItem) => null
+	removeToolFromProject: (tool: ToolItem) => null
 }
 
 interface State {
 	deleteTextValue: string
-	mergeSkillId: string
+	mergeToolId: string
 }
 
 class ConfirmationModal extends Component<Props, State> {
-	private mergeSkills: SkillItem[]
+	private mergeTools: ToolItem[]
 	private modalStyle: React.CSSProperties
 
 	constructor(props) {
@@ -53,96 +53,91 @@ class ConfirmationModal extends Component<Props, State> {
 			margin: '20px',
 		}
 
-		// Array of skills the user can merge existing skill with
-		this.mergeSkills = props.skills.filter(skill => skill.id !== props.skill.id)
-		const mergeSkillId = this.mergeSkills.length > 0 ? this.mergeSkills[0].id : null
+		// Array of tools the user can merge existing tool with
+		this.mergeTools = props.tools.filter(tool => tool.id !== props.tool.id)
+		const mergeToolId = this.mergeTools.length > 0 ? this.mergeTools[0].id : null
 
-		this.state = { deleteTextValue: '', mergeSkillId }
+		this.state = { deleteTextValue: '', mergeToolId }
 	}
 
-	deleteSkill() {
-		const { removeSkillFromStore, removeSkill, userId, skill, close } = this.props
+	deleteTool() {
+		const { removeToolFromStore, removeTool, userId, tool, close } = this.props
 
-		removeSkill(skill.id)
+		removeTool(tool.id)
 		close()
-		;(API.graphql(graphqlOperation(deleteSkill, { input: { id: skill.id } })) as Promise<any>).then(
+		;(API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } })) as Promise<any>).then(
 			({ data }) => {
-				removeSkillFromStore(data.deleteSkill.id)
+				removeToolFromStore(data.deleteTool.id)
 				API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
 			}
 		)
 	}
 
-	// Method merges skill with the selected skill
-	async mergeSkill() {
-		const {
-			skill,
-			projects,
-			removeSkillFromProject,
-			addProjectSkillToStore,
-			showSpinner,
-		} = this.props
-		const { mergeSkillId } = this.state
+	// Method merges tool with the selected tool
+	async mergeTool() {
+		const { tool, projects, removeToolFromProject, addProjectToolToStore, showSpinner } = this.props
+		const { mergeToolId } = this.state
 
 		showSpinner(true)
 
-		// Link ProjectSkill to new skillId
-		for (const project of projects) {
-			for (const projectSkill of project.skills.items) {
-				if (projectSkill.skillId === skill.id) {
-					const data = await API.graphql(
-						graphqlOperation(updateProjectSkill, {
-							input: { id: projectSkill.id, skillId: mergeSkillId },
-						})
-					)
+		// TODO - add logic and update redux
 
-					// Update redux
-					removeSkillFromProject(data['data']['updateProjectSkill'])
-					addProjectSkillToStore(data['data']['updateProjectSkill'])
-				}
-			}
-		}
+		// for (const project of projects) {
+		// 	for (const projectTool of project.tools.items) {
+		// 		if (projectTool.toolId === tool.id) {
+		// 			const data = await API.graphql(
+		// 				graphqlOperation(updateTool, {
+		// 					input: { id: projectTool.id, toolId: mergeToolId },
+		// 				})
+		// 			)
+
+		// 			// Update redux
+		// 			removeToolFromProject(data['data']['updateTool'])
+		// 			addProjectToolToStore(data['data']['updateTool'])
+		// 		}
+		// 	}
+		// }
 
 		showSpinner(false)
 
-		// Delete Skill
-		this.deleteSkill()
+		// Delete Tool
+		this.deleteTool()
 	}
 
 	handleDeleteTextChange({ target }) {
 		this.setState({ deleteTextValue: target.value })
 	}
 
-	handleMergeSkillChange({ target }) {
+	handleMergeToolChange({ target }) {
 		this.setState({
-			mergeSkillId: this.mergeSkills.find(skill => skill.id === target.value).id,
+			mergeToolId: this.mergeTools.find(tool => tool.id === target.value).id,
 		})
 	}
 
 	render() {
-		const { close, skill } = this.props
-		const { deleteTextValue, mergeSkillId } = this.state
+		const { close, tool } = this.props
+		const { deleteTextValue, mergeToolId } = this.state
 
 		return (
 			<Modal open onClose={() => close()}>
 				<Paper style={this.modalStyle} elevation={1}>
 					<Typography variant="h6" gutterBottom>
-						What would you like to do with <em>{skill.name}</em>?
+						What would you like to do with <em>{tool.name}</em>?
 					</Typography>
 
 					<ExpansionPanel>
 						<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
 							<Typography>
-								Merge <em>{skill.name}</em> with another skill
+								Merge <em>{tool.name}</em> with another tool
 							</Typography>
 						</ExpansionPanelSummary>
 						<ExpansionPanelDetails>
-							{mergeSkillId ? (
+							{mergeToolId ? (
 								<div>
-									<Select value={mergeSkillId} onChange={this.handleMergeSkillChange.bind(this)}>
-										{this.mergeSkills.map(skill => (
-											<MenuItem key={skill.id} value={skill.id}>
-												{skill.name}
+									<Select value={mergeToolId} onChange={this.handleMergeToolChange.bind(this)}>
+										{this.mergeTools.map(tool => (
+											<MenuItem key={tool.id} value={tool.id}>
+												{tool.name}
 											</MenuItem>
 										))}
 									</Select>
@@ -150,12 +145,12 @@ class ConfirmationModal extends Component<Props, State> {
 									<Button
 										color="primary"
 										style={{ marginLeft: '20px' }}
-										onClick={this.mergeSkill.bind(this)}>
+										onClick={this.mergeTool.bind(this)}>
 										Merge
 									</Button>
 								</div>
 							) : (
-								<Typography>No other skills to merge with</Typography>
+								<Typography>No other tools to merge with</Typography>
 							)}
 						</ExpansionPanelDetails>
 					</ExpansionPanel>
@@ -163,13 +158,13 @@ class ConfirmationModal extends Component<Props, State> {
 					<ExpansionPanel>
 						<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
 							<Typography>
-								Delete <em>{skill.name}</em> and all associated tools and relations within a project
+								Delete <em>{tool.name}</em> and all associated tools and relations within a project
 								(not recommended)
 							</Typography>
 						</ExpansionPanelSummary>
 						<ExpansionPanelDetails style={{ display: 'block' }}>
 							<Typography>
-								Type <em>{skill.name}</em> and delete.
+								Type <em>{tool.name}</em> and delete.
 							</Typography>
 							<TextField
 								value={deleteTextValue}
@@ -178,8 +173,8 @@ class ConfirmationModal extends Component<Props, State> {
 							<Button
 								color="primary"
 								style={{ marginLeft: '20px' }}
-								disabled={deleteTextValue !== skill.name}
-								onClick={this.deleteSkill.bind(this)}>
+								disabled={deleteTextValue !== tool.name}
+								onClick={this.deleteTool.bind(this)}>
 								Delete
 							</Button>
 						</ExpansionPanelDetails>
@@ -190,21 +185,21 @@ class ConfirmationModal extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allSkills, projects, userId }) => ({ allSkills, projects, userId })
+const mapStateToProps = ({ allTools, projects, userId }) => ({ allTools, projects, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		removeSkillFromStore: skillId => {
-			dispatch({ type: 'REMOVE_SKILL', skillId })
+		removeToolFromStore: toolId => {
+			dispatch({ type: 'REMOVE_SKILL', toolId })
 		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
 		},
-		addProjectSkillToStore: skill => {
-			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
+		addProjectToolToStore: tool => {
+			dispatch({ type: 'ADD_SKILL_TO_PROJECT', tool })
 		},
-		removeSkillFromProject: skill => {
-			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
+		removeToolFromProject: tool => {
+			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', tool })
 		},
 	}
 }
