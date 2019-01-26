@@ -98,7 +98,11 @@ class Skills extends Component<Props, State> {
 		// Create nested skills inside respective categories
 		let skillData = {}
 		skills.forEach(skill => {
-			const { name, category } = allSkills.find(i => i.id === skill.skillId)
+			const foundSkill = allSkills.find(i => i.id === skill.skillId)
+
+			if (!foundSkill) return // skip if skill no longer exists
+
+			const { name, category } = foundSkill
 			const categoryName = category ? category.name : 'General'
 
 			if (!skillData.hasOwnProperty(categoryName)) skillData[categoryName] = []
