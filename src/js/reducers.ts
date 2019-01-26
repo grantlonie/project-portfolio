@@ -1,5 +1,7 @@
 import produce from 'immer'
 
+import { ProjectItem, CategoryItem, SkillItem, ToolItem } from '../types'
+
 const initialState = {
 	userId: null,
 	projects: [],
@@ -9,8 +11,17 @@ const initialState = {
 	showSpinner: false, // show the loading spinner
 }
 
-const rootReducer = (state = initialState, action) =>
-	produce(state, draft => {
+interface State {
+	userId: string
+	projects: ProjectItem[]
+	allCategories: CategoryItem[]
+	allSkills: SkillItem[]
+	allTools: ToolItem[]
+	showSpinner: boolean
+}
+
+const rootReducer = (state: State = initialState, action) =>
+	produce(state, (draft: State) => {
 		switch (action.type) {
 			case 'ADD_CATEGORY':
 				draft.allCategories.push(action.category)
