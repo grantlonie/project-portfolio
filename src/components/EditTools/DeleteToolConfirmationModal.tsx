@@ -80,8 +80,7 @@ class ConfirmationModal extends Component<Props, State> {
 
 		showSpinner(true)
 
-		// TODO - add logic and update redux
-
+		// Find and merge old with new tool in each project
 		for (const project of projects) {
 			for (const projectSkill of project.skills.items) {
 				let { toolIds } = projectSkill

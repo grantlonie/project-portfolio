@@ -112,13 +112,15 @@ const rootReducer = (state: State = initialState, action) =>
 				return
 
 			case 'UPDATE_PROJECT_SKILL':
-				// draft.projects = draft.projects.map(project => {
-				// 	if (project.id === action.projectSkill.project.id) {
-				// 		project.skills =
-				// 	}
-
-				// 	return project
-				// })
+				draft.projects = draft.projects.map(project => {
+					if (project.id === action.projectSkill.project.id) {
+						project.skills.items = project.skills.items.map(projectSkill => {
+							if (projectSkill.id === action.projectSkill.id) projectSkill = action.projectSkill
+							return projectSkill
+						})
+					}
+					return project
+				})
 				return
 
 			case 'UPDATE_SKILL':
