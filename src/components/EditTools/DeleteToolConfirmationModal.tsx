@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { updateTool, deleteTool, updateUser } from '../../graphql/mutations'
+import { uniq } from 'lodash-es'
 import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Modal,
@@ -16,7 +16,8 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { ToolItem, ProjectItem } from '../../types'
+import { updateProjectSkill, deleteTool, updateUser } from '../../graphql/mutations'
+import { ToolItem, ProjectItem, ProjectSkillItem } from '../../types'
 
 interface Props {
 	userId: string
@@ -26,8 +27,7 @@ interface Props {
 	removeTool: (toolId: string) => null
 	close: () => null
 	showSpinner: (show: boolean) => null
-	addProjectToolToStore: (tool: ToolItem) => null
-	removeToolFromProject: (tool: ToolItem) => null
+	updateProjectSkillInStore: (ProjectSkill: ProjectSkillItem) => null
 }
 
 interface State {
@@ -75,28 +75,34 @@ class ConfirmationModal extends Component<Props, State> {
 
 	// Method merges tool with the selected tool
 	async mergeTool() {
-		const { tool, projects, removeToolFromProject, addProjectToolToStore, showSpinner } = this.props
+		const { tool, projects, updateProjectSkillInStore, showSpinner } = this.props
 		const { mergeToolId } = this.state
 
 		showSpinner(true)
 
 		// TODO - add logic and update redux
 
-		// for (const project of projects) {
-		// 	for (const projectTool of project.tools.items) {
-		// 		if (projectTool.toolId === tool.id) {
-		// 			const data = await API.graphql(
-		// 				graphqlOperation(updateTool, {
-		// 					input: { id: projectTool.id, toolId: mergeToolId },
-		// 				})
-		// 			)
+		for (const project of projects) {
+			for (const projectSkill of project.skills.items) {
+				let { toolIds } = projectSkill
+				for (let i = 0; i < toolIds.length; i++) {
+					if (toolIds[i] === tool.id) {
+						// Change tool id to match merge and remove duplicates
+						toolIds[i] = mergeToolId
+						toolIds = uniq(toolIds)
 
-		// 			// Update redux
-		// 			removeToolFromProject(data['data']['updateTool'])
-		// 			addProjectToolToStore(data['data']['updateTool'])
-		// 		}
-		// 	}
-		// }
+						const data = await API.graphql(
+							graphqlOperation(updateProjectSkill, {
+								input: { id: projectSkill.id, toolIds },
+							})
+						)
+
+						// Update redux
+						updateProjectSkillInStore(data['data']['updateProjectSkill'])
+					}
+				}
+			}
+		}
 
 		showSpinner(false)
 
@@ -194,11 +200,8 @@ const mapDispatchToProps = dispatch => {
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
 		},
-		addProjectToolToStore: tool => {
-			dispatch({ type: 'ADD_TOOL_TO_PROJECT', tool })
-		},
-		removeToolFromProject: tool => {
-			dispatch({ type: 'REMOVE_TOOL_FROM_PROJECT', tool })
+		updateProjectSkillInStore: projectSkill => {
+			dispatch({ type: 'UPDATE_PROJECT_SKILL', projectSkill })
 		},
 	}
 }
