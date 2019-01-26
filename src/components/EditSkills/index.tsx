@@ -94,7 +94,7 @@ class EditSkills extends Component<Props, State> {
 			showSpinner(false)
 		})
 
-		this.setState({ newSkill: '' })
+		this.setState({ newSkill: '', hideAddSkillButton: true })
 	}
 
 	updateSkills() {

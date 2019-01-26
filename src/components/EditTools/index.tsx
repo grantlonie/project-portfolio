@@ -77,7 +77,7 @@ class EditTools extends Component<Props, State> {
 			showSpinner(false)
 		})
 
-		this.setState({ newTool: '' })
+		this.setState({ newTool: '', hideAddToolButton: true })
 	}
 
 	updateTools() {

@@ -84,6 +84,8 @@ class ConfirmationModal extends Component<Props, State> {
 		for (const project of projects) {
 			for (const projectSkill of project.skills.items) {
 				let { toolIds } = projectSkill
+				if (!toolIds) continue
+
 				for (let i = 0; i < toolIds.length; i++) {
 					if (toolIds[i] === tool.id) {
 						// Change tool id to match merge and remove duplicates
