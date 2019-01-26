@@ -24,6 +24,10 @@ const rootReducer = (state = initialState, action) =>
 				draft.allSkills.push(action.skill)
 				return
 
+			case 'ADD_TOOL':
+				draft.allTools.push(action.tool)
+				return
+
 			case 'ADD_SKILL_TO_PROJECT':
 				draft.projects = draft.projects.map(project => {
 					if (project.id === action.skill.project.id) project.skills.items.push(action.skill)
@@ -32,12 +36,9 @@ const rootReducer = (state = initialState, action) =>
 				return
 
 			case 'REMOVE_CATEGORY':
-				draft.allCategories = draft.allCategories
-					.map(category => {
-						if (category.id === action.categoryId) return null
-						return category
-					})
-					.filter(category => category !== null)
+				draft.allCategories = draft.allCategories.filter(
+					category => category.id !== action.categoryId
+				)
 
 				draft.allSkills = draft.allSkills.map(skill => {
 					if (skill.category && skill.category.id === action.categoryId) skill.category = null
@@ -45,26 +46,12 @@ const rootReducer = (state = initialState, action) =>
 				})
 				return
 
-			case 'REMOVE_SKILL':
-				draft.projects = draft.projects.map(project => {
-					project.skills.items = project.skills.items
-						.map(skill => {
-							if (skill && skill.skillId === action.skillId) return null
-							return skill
-						})
-						.filter(skill => skill !== null)
-
-					return project
-				})
+			case 'REMOVE_PROJECT':
+				draft.projects = draft.projects.filter(project => project.id !== action.projectId)
 				return
 
-			case 'REMOVE_PROJECT':
-				draft.projects = draft.projects
-					.map(project => {
-						if (project.id === action.projectId) return null
-						return project
-					})
-					.filter(project => project !== null)
+			case 'REMOVE_SKILL':
+				draft.allSkills = draft.allSkills.filter(skill => skill.id !== action.skillId)
 				return
 
 			case 'REMOVE_SKILL_FROM_PROJECT':
@@ -76,6 +63,10 @@ const rootReducer = (state = initialState, action) =>
 				})
 				return
 
+			case 'REMOVE_TOOL':
+				draft.allTools = draft.allTools.filter(tool => tool.id !== action.toolId)
+				return
+
 			case 'SHOW_SPINNER':
 				draft.showSpinner = action.show
 				return
@@ -85,7 +76,7 @@ const rootReducer = (state = initialState, action) =>
 				draft.projects = action.projects
 				draft.allSkills = action.allSkills
 				draft.allCategories = action.allCategories
-				draft.allTools = action.allTools
+				draft.allTools = action.allTools.sort((a, b) => (a.name > b.name ? 1 : -1))
 				return
 
 			case 'UPDATE_CATEGORY':
@@ -116,13 +107,9 @@ const rootReducer = (state = initialState, action) =>
 				return
 
 			case 'UPDATE_TOOL':
-				draft.allSkills = draft.allSkills.map(skill => {
-					if (skill.id === action.tool.skill.id) {
-						const items = skill.tools.items.map(i => (i.id === action.tool.id ? action.tool : i))
-						skill.tools.items = items
-					}
-					return skill
-				})
+				draft.allTools = draft.allTools.map(tool =>
+					tool.id === action.tool.id ? action.tool : tool
+				)
 				return
 
 			default:

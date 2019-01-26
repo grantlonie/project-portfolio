@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import { Modal, Typography, TextField, Paper, Button } from '@material-ui/core'
 
 import { ProjectItem } from '../types'
@@ -81,26 +80,4 @@ class ConfirmationModal extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allSkills, projects, userId }) => ({ allSkills, projects, userId })
-
-const mapDispatchToProps = dispatch => {
-	return {
-		removeSkillFromStore: skillId => {
-			dispatch({ type: 'REMOVE_SKILL', skillId })
-		},
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		addProjectSkillToStore: skill => {
-			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
-		},
-		removeSkillFromProject: skill => {
-			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
-		},
-	}
-}
-
-export default connect(
-	mapStateToProps,
-	mapDispatchToProps
-)(ConfirmationModal)
+export default ConfirmationModal

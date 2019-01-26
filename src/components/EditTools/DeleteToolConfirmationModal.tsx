@@ -158,8 +158,7 @@ class ConfirmationModal extends Component<Props, State> {
 					<ExpansionPanel>
 						<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
 							<Typography>
-								Delete <em>{tool.name}</em> and all associated tools and relations within a project
-								(not recommended)
+								Delete <em>{tool.name}</em> and all relations within a project (not recommended)
 							</Typography>
 						</ExpansionPanelSummary>
 						<ExpansionPanelDetails style={{ display: 'block' }}>
@@ -190,16 +189,16 @@ const mapStateToProps = ({ allTools, projects, userId }) => ({ allTools, project
 const mapDispatchToProps = dispatch => {
 	return {
 		removeToolFromStore: toolId => {
-			dispatch({ type: 'REMOVE_SKILL', toolId })
+			dispatch({ type: 'REMOVE_TOOL', toolId })
 		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
 		},
 		addProjectToolToStore: tool => {
-			dispatch({ type: 'ADD_SKILL_TO_PROJECT', tool })
+			dispatch({ type: 'ADD_TOOL_TO_PROJECT', tool })
 		},
 		removeToolFromProject: tool => {
-			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', tool })
+			dispatch({ type: 'REMOVE_TOOL_FROM_PROJECT', tool })
 		},
 	}
 }

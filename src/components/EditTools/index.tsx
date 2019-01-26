@@ -34,7 +34,6 @@ interface State {
 	modalTool: ToolItem
 	tools: (ToolItem & { isUpdated?: boolean })[]
 	newTool: string
-	modal: string
 }
 
 class EditTools extends Component<Props, State> {
@@ -44,7 +43,6 @@ class EditTools extends Component<Props, State> {
 		this.state = {
 			tools: this.props.allTools,
 			newTool: '',
-			modal: '',
 			modalTool: null,
 		}
 	}
@@ -84,23 +82,21 @@ class EditTools extends Component<Props, State> {
 		clearTimeout(updateTimeout)
 
 		this.state.tools.forEach(tool => {
-			const { id, name, isUpdated } = tool
-
-			if (isUpdated) {
+			if (tool.isUpdated) {
 				delete tool.isUpdated
-
-				const input: any = { id, name }
-				;(API.graphql(graphqlOperation(updateTool, { input })) as Promise<any>).then(({ data }) => {
-					this.props.updateToolInStore(data.updateTool)
-				})
+				;(API.graphql(graphqlOperation(updateTool, { input: tool })) as Promise<any>).then(
+					({ data }) => {
+						this.props.updateToolInStore(data.updateTool)
+					}
+				)
 			}
 		})
 	}
 
-	handleNameChange(id, { target }) {
+	handlePropChange(id, { target }) {
 		const tools = JSON.parse(JSON.stringify(this.state.tools)).map(tool => {
 			if (tool.id === id) {
-				tool.name = target.value
+				tool[target.name] = target.value
 				tool.isUpdated = true
 			}
 			return tool
@@ -112,20 +108,16 @@ class EditTools extends Component<Props, State> {
 		this.setState({ tools })
 	}
 
-	handleEditTools(tool: ToolItem) {
-		this.setState({ modalTool: tool, modal: 'tools' })
-	}
-
 	closeModal() {
-		this.setState({ modalTool: null, modal: '' })
+		this.setState({ modalTool: null })
 	}
 
 	handleNewToolChange({ target }) {
 		this.setState({ newTool: target.value })
 	}
 
-	handleOpenDeleteModal(tool) {
-		this.setState({ modalTool: tool, modal: 'delete' })
+	handleOpenDeleteModal(modalTool) {
+		this.setState({ modalTool })
 	}
 
 	removeTool(toolId) {
@@ -134,29 +126,18 @@ class EditTools extends Component<Props, State> {
 	}
 
 	render() {
-		const { tools, modalTool, modal, newTool } = this.state
+		const { tools, modalTool, newTool } = this.state
 
-		// Render a modal
-		let renderedModal
-		switch (modal) {
-			case 'delete':
-				renderedModal = (
+		return (
+			<div>
+				{modalTool ? (
 					<DeleteToolConfirmationModal
 						tools={tools}
 						tool={modalTool}
 						removeTool={this.removeTool.bind(this)}
 						close={this.closeModal.bind(this)}
 					/>
-				)
-				break
-
-			default:
-				renderedModal = null
-		}
-
-		return (
-			<div>
-				{renderedModal}
+				) : null}
 
 				<div style={{ display: 'flex', justifyContent: 'space-between' }}>
 					<Typography variant="h4" gutterBottom>
@@ -181,10 +162,20 @@ class EditTools extends Component<Props, State> {
 									<TableCell padding="dense">
 										<DeleteIcon onClick={this.handleOpenDeleteModal.bind(this, tool)} />
 									</TableCell>
+
 									<TableCell padding="dense">
 										<TextField
+											name="name"
 											value={tool.name}
-											onChange={this.handleNameChange.bind(this, tool.id)}
+											onChange={this.handlePropChange.bind(this, tool.id)}
+										/>
+									</TableCell>
+
+									<TableCell padding="dense">
+										<TextField
+											name="website"
+											value={tool.website || ''}
+											onChange={this.handlePropChange.bind(this, tool.id)}
 										/>
 									</TableCell>
 								</TableRow>
@@ -221,11 +212,11 @@ const mapStateToProps = ({ allTools, userId }) => ({ allTools, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		updateToolInStore: updatedTool => {
-			dispatch({ type: 'UPDATE_SKILL', updatedTool })
+		updateToolInStore: tool => {
+			dispatch({ type: 'UPDATE_TOOL', tool })
 		},
 		addToolToStore: tool => {
-			dispatch({ type: 'ADD_SKILL', tool })
+			dispatch({ type: 'ADD_TOOL', tool })
 		},
 		showSpinner: show => {
 			dispatch({ type: 'SHOW_SPINNER', show })
