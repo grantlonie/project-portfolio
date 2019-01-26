@@ -40,6 +40,7 @@ interface State {
 	skills: (SkillItem & { isUpdated?: boolean; skillCategoryId: '' })[]
 	newSkill: string
 	modal: string
+	hideAddSkillButton: boolean
 }
 
 class EditSkills extends Component<Props, State> {
@@ -51,6 +52,7 @@ class EditSkills extends Component<Props, State> {
 			newSkill: '',
 			modal: '',
 			modalSkill: null,
+			hideAddSkillButton: true,
 		}
 	}
 
@@ -161,7 +163,15 @@ class EditSkills extends Component<Props, State> {
 	}
 
 	handleNewSkillChange({ target }) {
-		this.setState({ newSkill: target.value })
+		let hideAddSkillButton = true
+
+		if (target.value) {
+			// prevent creating skill with same name
+			const alreadyASkill = this.props.allSkills.findIndex(skill => skill.name === target.value)
+			if (alreadyASkill === -1) hideAddSkillButton = false
+		}
+
+		this.setState({ newSkill: target.value, hideAddSkillButton })
 	}
 
 	handleOpenDeleteModal(skill) {
@@ -268,7 +278,6 @@ class EditSkills extends Component<Props, State> {
 
 						<TableRow>
 							<TableCell />
-							<TableCell />
 							<TableCell padding="dense">
 								<TextField
 									value={newSkill}
@@ -280,7 +289,7 @@ class EditSkills extends Component<Props, State> {
 								<Button
 									color="secondary"
 									variant="contained"
-									disabled={!Boolean(this.state.newSkill)}
+									disabled={this.state.hideAddSkillButton}
 									onClick={this.handleAddSkill.bind(this)}>
 									Create
 								</Button>

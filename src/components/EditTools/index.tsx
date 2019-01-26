@@ -34,6 +34,7 @@ interface State {
 	modalTool: ToolItem
 	tools: (ToolItem & { isUpdated?: boolean })[]
 	newTool: string
+	hideAddToolButton: boolean
 }
 
 class EditTools extends Component<Props, State> {
@@ -44,6 +45,7 @@ class EditTools extends Component<Props, State> {
 			tools: this.props.allTools,
 			newTool: '',
 			modalTool: null,
+			hideAddToolButton: true,
 		}
 	}
 
@@ -113,7 +115,15 @@ class EditTools extends Component<Props, State> {
 	}
 
 	handleNewToolChange({ target }) {
-		this.setState({ newTool: target.value })
+		let hideAddToolButton = true
+
+		if (target.value) {
+			// prevent creating skill with same name
+			const alreadyASkill = this.props.allTools.findIndex(skill => skill.name === target.value)
+			if (alreadyASkill === -1) hideAddToolButton = false
+		}
+
+		this.setState({ newTool: target.value, hideAddToolButton })
 	}
 
 	handleOpenDeleteModal(modalTool) {
@@ -126,7 +136,7 @@ class EditTools extends Component<Props, State> {
 	}
 
 	render() {
-		const { tools, modalTool, newTool } = this.state
+		const { tools, modalTool, newTool, hideAddToolButton } = this.state
 
 		return (
 			<div>
@@ -195,7 +205,7 @@ class EditTools extends Component<Props, State> {
 								<Button
 									color="secondary"
 									variant="contained"
-									disabled={!Boolean(this.state.newTool)}
+									disabled={hideAddToolButton}
 									onClick={this.handleAddTool.bind(this)}>
 									Create
 								</Button>
