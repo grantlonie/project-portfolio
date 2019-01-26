@@ -21,6 +21,7 @@ interface Props {
 	handleDescriptionChange: (id: string, value: string) => null
 	showSpinner: (show: boolean) => null
 	addSkillToStore: (skill: SkillItem) => null
+	addToolToStore: (tool: ToolItem) => null
 }
 
 interface State {
@@ -62,8 +63,8 @@ class Skills extends Component<Props, State> {
 		this.typeaheadRef.current.instanceRef.clear()
 	}
 
-	handleUpdateTools(id, skillId, tools) {
-		const { userId, allTools, updateTools, showSpinner } = this.props
+	handleUpdateTools(id, tools) {
+		const { userId, allTools, addToolToStore, updateTools, showSpinner } = this.props
 
 		const lastTool = tools[tools.length - 1] || {}
 		const { name, customOption } = lastTool
@@ -76,13 +77,14 @@ class Skills extends Component<Props, State> {
 				showSpinner(true)
 				;(API.graphql(
 					graphqlOperation(createTool, {
-						input: { userId, name: name, toolSkillId: skillId },
+						input: { userId, name: name },
 					})
 				) as Promise<any>).then(({ data: { createTool } }) => {
 					const { id: toolId, name, userId } = createTool
 					const newTool: any = { id: toolId, name, userId }
 					tools[tools.length - 1] = newTool
 
+					addToolToStore(createTool)
 					updateTools(id, tools)
 					showSpinner(false)
 				})
@@ -170,9 +172,7 @@ class Skills extends Component<Props, State> {
 														selected={selectedTools}
 														multiple
 														labelKey="name"
-														onChange={selected =>
-															this.handleUpdateTools(skill.id, skill.skillId, selected)
-														}
+														onChange={selected => this.handleUpdateTools(skill.id, selected)}
 														placeholder="Add a tool..."
 														allowNew
 														clearButton
@@ -219,6 +219,9 @@ const mapDispatchToProps = dispatch => {
 		},
 		addSkillToStore: skill => {
 			dispatch({ type: 'ADD_SKILL', skill })
+		},
+		addToolToStore: tool => {
+			dispatch({ type: 'ADD_TOOL', tool })
 		},
 	}
 }
