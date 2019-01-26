@@ -88,10 +88,10 @@ class Edit extends Component<Props, State> {
 		}
 	}
 
-	componentDidUpdate(prevProps) {
+	componentDidUpdate(prevProps: Props) {
 		// if project data comes in or new id parameter, update state to the new project id
 		if (
-			prevProps.projects.length === 0 ||
+			prevProps.userId !== this.props.userId ||
 			prevProps.match.params.id !== this.props.match.params.id
 		) {
 			this.setState(this.freshState())
