@@ -1,6 +1,6 @@
 projects:
   projectportfolio:
-    schemaPath: src\js\src\graphql\schema.json
+    schemaPath: src\graphql\schema.json
     includes:
       - src\graphql\**\*.ts
     excludes:
