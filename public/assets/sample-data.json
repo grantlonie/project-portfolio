@@ -1,0 +1,2028 @@
+{
+	"projects": [
+		{
+			"id": "6c4f8ece-abb1-4356-8d6d-7c9c06565259",
+
+			"date": "2017-09-01",
+			"name": "Canari digital instrument cluster",
+			"company": "ARi",
+			"description": "Touch screen vehicle data dashboard capable of handling different data streams and allowing the customer to design and configure the instrument gauges on custom screens",
+			"skills": {
+				"items": [
+					{
+						"id": "2000ca18-1e1b-4921-ae8c-6ff310631110",
+
+						"description": "Led two other front-end developers using Scrum and worked with the server team to align websocket API",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					},
+					{
+						"id": "4db6b0fd-1e76-4b6d-b8fe-28607b9732b4",
+
+						"description": "Architected the Canari web framework minimizing build-time changes required by the end user by creating a configuration flat-file structure for easy, dynamic run-time changes including - adding screens, widget layout, and theme configuring",
+						"skillId": "44de4a6e-b125-4af6-b5bf-adf0a31a4825",
+						"toolIds": [
+							"f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb",
+							"0645ecbf-7f01-4341-bdfe-10ab227ee2ac"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "7a429660-5672-4143-a630-9d95d6e0aafb",
+
+			"date": "2014-02-01",
+			"name": "Obeya room",
+			"company": "CGN",
+			"description": "Set up room with business strategy, supply chain, operations, people, quality and finance metrics for a customer's engine manufacturing plant",
+			"skills": {
+				"items": [
+					{
+						"id": "9647e5cc-a5fb-49d6-b978-d9c7b1ca50e8",
+
+						"description": "Created multiple slides showcasing data in the various core areas",
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "7afd610f-a515-4682-a99f-4461670b1062",
+
+			"date": "2010-04-01",
+			"name": "Instrument Database",
+			"company": "ARi",
+			"description": "Database to hold all the calibrated sensors used for testing",
+			"skills": {
+				"items": [
+					{
+						"id": "b109af9b-518b-432a-9aab-9e8b400400aa",
+
+						"description": "Created an excel-based database to house the records and created visual cues for upcoming calibration and maintenance and external links to documentation",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "7c75ddfb-5a8c-445b-ab67-47066ad0d945",
+
+			"date": "2016-09-01",
+			"name": "Wifi Garage",
+			"company": "Personal",
+			"description": "Modified garage door to be controlled using Wifi",
+			"skills": {
+				"items": [
+					{
+						"id": "9b410a25-4bca-47ef-b366-8ffb0ee8e65a",
+
+						"description": "Hosted the interface site on my Raspberry Pi",
+						"skillId": "d03cffd0-fb29-4900-94b8-f21c686b079f",
+						"toolIds": ["2ff9417c-3c4d-47f6-ae82-6a09624c45fa"]
+					},
+					{
+						"id": "a02ec9ca-b223-4dfd-81bd-f3bdc26a03a1",
+
+						"description": "Created a simple web site to see the status of the garage door and allow me to trigger it remotely",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": null
+					},
+					{
+						"id": "eb856709-ae60-4569-a946-22dd759e4f4f",
+
+						"description": "Using Particle Electron Wifi MCU and reverse-engineering the garage door remote circuit and position sensing, designed a way to trigger the garage to open and close",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"62c619bc-0200-4958-957f-b6fccc1eb569",
+							"00a02e31-6709-4f4a-b2ea-428bb252b88f",
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1"
+						]
+					},
+					{
+						"id": "d2587374-1148-49a3-b531-b49e553e2cae",
+
+						"description": "Wrote embedded application in Particle's toolkit to periodically check for door state and track the times that the door was last opened and closed. Also set up IFTTT to handle voice-controlled operation",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": ["d373d23b-ead6-4604-a531-ba435e565882"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "0aa9cc94-8b2a-4bcb-ad5b-78a4b55efc33",
+
+			"date": "2013-05-01",
+			"name": "Construction data integration",
+			"company": "CGN",
+			"description": "Data from multiple customer business units in construction was combined to create a holistic business view",
+			"skills": {
+				"items": [
+					{
+						"id": "11bcfc05-374a-49ae-8459-30975f90c173",
+
+						"description": "Create a database to house part-level data from three different business units. The data was organized differently, so multiple queries and aggregations were required to consolidate the data",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": ["c9dacabe-9081-4c07-b3de-fc1ccac1274e"]
+					},
+					{
+						"id": "786abc3d-b1cb-4c04-bcd7-75e0b2d293dd",
+
+						"description": "Created multiple views from the data including network flow maps and supplier/customer/facility footprint maps",
+						"skillId": "cb381058-cc32-40e4-bc0c-f8d168e2dd51",
+						"toolIds": ["4d887646-74cb-4c58-bef4-cde3c8db1dc2"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "3167cd46-9a8a-4ac5-a4c1-f0fda6dc1b58",
+
+			"date": "2008-05-01",
+			"name": "Piston ring face chipping",
+			"company": "Caterpillar",
+			"description": "Engine piston ring chipping occurring during operation",
+			"skills": {
+				"items": [
+					{
+						"id": "9470d7eb-dde1-485c-b57a-e8548b5e2384",
+
+						"description": "Analyzed several piston rings that had chips to determine the potential causes - operating, material handling or installation",
+						"skillId": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+						"toolIds": null
+					},
+					{
+						"id": "7e04d911-fddc-4cbf-aaf6-6f7e273366dc",
+
+						"description": "Compiled a complete report of all piston rings that were found to have chipping after running them. The report was delivered to the piston ring supplier as evidence of the faulty parts and management recognized my efforts in tracking down the cause of the ring chipping",
+						"skillId": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
+						"toolIds": ["d80827cb-daa3-4c11-9ac5-0c907ed365ee"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "b22b64fc-e625-487d-a7ac-dd30174696f0",
+
+			"date": "2009-01-01",
+			"name": "Piston groove wear",
+			"company": "Caterpillar",
+			"description": "Piston ring grooves were wearing during testing faster than expected",
+			"skills": {
+				"items": [
+					{
+						"id": "45a44de0-6d71-49a7-979f-b0d96365ccf5",
+
+						"description": "Reviewed ",
+						"skillId": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "084fb29b-d89a-418e-890a-56907f926e80",
+
+			"date": "2012-07-10",
+			"name": "Manufacturing and design cost reduction",
+			"company": "CGN",
+			"description": "Investigated ways to reduce a customer's manufacturing cost by looking for part similarities and flow of material through the plant",
+			"skills": {
+				"items": [
+					{
+						"id": "a49db4b7-d80e-46e8-b78f-dc4b9bded0f0",
+
+						"description": "Created flow of parts from suppliers to the manufacturing plant",
+						"skillId": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+						"toolIds": ["5a298540-df2e-4d88-b3e6-a7d10ef5350b"]
+					},
+					{
+						"id": "fdf1e594-9765-473b-8fb6-cdb64c3ce45d",
+
+						"description": "Used a VBA macro to auto generate family part tables in Excel from a raw data set.",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["cefe0f3b-4b84-48d9-b5c6-1fbd9bcfd911"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "6e83a2af-b527-4593-ad37-3c3660bcbab3",
+
+			"date": "2018-10-01",
+			"name": "Mining vehicle navigation",
+			"company": "ARi",
+			"description": "Worked along-side our customer to modernize their current touch-screen navigation-based application. Updated the C++ communication libraries and migrated the UI from an older technology to HTML5",
+			"skills": {
+				"items": [
+					{
+						"id": "d5477ac1-40cb-48a6-95da-15a0569964ea",
+
+						"description": "Led two member scrum team prioritizing feature deployment and assisting technically and as customer liaison",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					},
+					{
+						"id": "fc6b94a0-c88b-437a-a91c-346f43f6940e",
+
+						"description": "Architected the application focusing on the screen, vehicle and map transformations to properly update the screen contents to reflect changes in mine-site vehicle and object position changes.",
+						"skillId": "44de4a6e-b125-4af6-b5bf-adf0a31a4825",
+						"toolIds": [
+							"a97a2dd9-738f-400e-9c1e-9e0c930a7b7c",
+							"714c5d2c-ac61-4814-aba7-9474c3b6e5a2",
+							"0645ecbf-7f01-4341-bdfe-10ab227ee2ac"
+						]
+					},
+					{
+						"id": "1253b918-eb71-4081-a1bb-d125a8439461",
+
+						"description": "Created advanced zooming exponential decay algorithm to control zooming between user zoom clicks",
+						"skillId": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "9230a95e-66d8-49b5-88fd-28756537280b",
+
+			"date": "2013-11-01",
+			"name": "Supply chain network modeling",
+			"company": "CGN",
+			"description": "Network model used to show flow of parts throughout the supply chain",
+			"skills": {
+				"items": [
+					{
+						"id": "0c621f34-171a-47a7-9436-defbd9040902",
+
+						"description": "Created a tree-traverse script to generate sourcing policies and BoM inputs for Supply Chain Guru from the customer's BoM",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["cefe0f3b-4b84-48d9-b5c6-1fbd9bcfd911"]
+					},
+					{
+						"id": "b2b06300-37ca-4d4c-a58e-c74888987cae",
+
+						"description": "Generated facility footprint and material flow from the processed BoM data",
+						"skillId": "cb381058-cc32-40e4-bc0c-f8d168e2dd51",
+						"toolIds": ["1a08deab-f0d7-409c-83f1-c366d056f8b9"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "2fed59c2-ccdc-4999-8f1f-a7db607e8c52",
+
+			"date": "2010-04-01",
+			"name": "Engine Data Analysis Tool",
+			"company": "ARi",
+			"description": "Tool to read, plot and analyze engine data",
+			"skills": {
+				"items": [
+					{
+						"id": "3096e4c7-a69d-4759-a86d-4882c55e9099",
+
+						"description": "Developed a Matlab UI to: read csv test data, plot the time-series data, add calculated channels and time-align lagging channels. The interface also allowed users to run emissions calculations from the collected data to determine cycle PM, smoke and NOx numbers.",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["9e76bc01-465e-45c2-bb93-4a71ffc44fe4"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "42645c1b-3099-431f-9094-753955f895c4",
+
+			"date": "2016-11-01",
+			"name": "Wifi Outlet",
+			"company": "Personal",
+			"description": "Wifi-controlled outlet with custom electronics and website interface",
+			"skills": {
+				"items": [
+					{
+						"id": "9a37fd93-ee7f-4fac-8293-1dfe5d6ed139",
+
+						"description": "Designed the Particle circuit including an AC-DC converter, 120V relay and an LED circuit in EAGLE and ordered the PCB and soldered",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"00a02e31-6709-4f4a-b2ea-428bb252b88f",
+							"672ef347-820d-4fe6-84c6-760a466e8e8f",
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1"
+						]
+					},
+					{
+						"id": "7a8823a5-6a43-47e7-8a6c-4f20aa1891fe",
+
+						"description": "Basic website used to show the state of the outlet and to toggle it on and off",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": null
+					},
+					{
+						"id": "dad14758-8c70-4fa0-bb59-9831fa0b77f3",
+
+						"description": "Printed the enclosure and packaged it together with the electronics",
+						"skillId": "7b272cf5-ff69-47ce-b6fe-7bf35fa211d8",
+						"toolIds": null
+					},
+					{
+						"id": "f463793a-d195-46c0-ba6c-6f45bd800ed1",
+
+						"description": "Wrote the Particle SW to switch the 120V relay in addition to showing different LED states including on, off and pulsing",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": ["d373d23b-ead6-4604-a531-ba435e565882"]
+					},
+					{
+						"id": "97a1a804-653f-46c6-8513-6089912a7cdf",
+
+						"description": "Designed the enclosure in Fusion360 making sure it would be safe to handle the 120V-powered device",
+						"skillId": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+						"toolIds": ["0a943d5c-3647-464c-8ba1-71b8383e2c92"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "64fd899d-d154-42f4-a189-b0828d3f55d2",
+
+			"date": "2016-01-01",
+			"name": "Oil consumption meter",
+			"company": "ARi",
+			"description": "Device used to measure how fast the oil is burned in an engine during testing",
+			"skills": {
+				"items": [
+					{
+						"id": "0dc1e256-8735-4070-b886-923b1c3ada66",
+
+						"description": "Designed the circuit board with Atmega32U4, ADC, DAC, MAX232 and pressure sensor ICs and did all SMT soldering",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"672ef347-820d-4fe6-84c6-760a466e8e8f",
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1",
+							"62c619bc-0200-4958-957f-b6fccc1eb569"
+						]
+					},
+					{
+						"id": "27d51372-6bcc-48bb-bc92-64e0be107f7e",
+
+						"description": "Wrote the core algorithms to convert ultrasonic level sensor data to oil mass and adding a coefficient to compensate for temperature fluctuations. Supported offshore team to implement other IC communication libraries",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": [
+							"c3808037-1520-4134-9a8f-f1725dbf5559",
+							"d373d23b-ead6-4604-a531-ba435e565882"
+						]
+					},
+					{
+						"id": "e3839f86-12dd-41f9-8291-590422b17ea6",
+
+						"description": "Created the business case to start the project and project plan. Acted as PM tracking action items and keeping deliverables on track. Worked with overseas team to develop C#.NET UI to communicate with meter, graph and log data asynchronously. Worked with design engineer and fabricators to design and build unit and BoM structure",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": [
+							"7e3d0302-528c-4051-864b-ffe9f04d5425",
+							"cb58efb9-0fa0-421c-be6c-ebb86e0a28a0"
+						]
+					},
+					{
+						"id": "ccfbceb2-a77f-4d1e-9bde-0e0e6b4f9763",
+
+						"description": "Create marketing material to showcase the specs of the product and key features",
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					},
+					{
+						"id": "dd9f45b4-e5c7-40f5-b8ab-c8bb0507385c",
+
+						"description": "Wrote a white paper discussing the multiple methods used in the engine testing to collect oil consumption data, the pitfalls and what makes ARi's meter stand out",
+						"skillId": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
+						"toolIds": ["d80827cb-daa3-4c11-9ac5-0c907ed365ee"]
+					},
+					{
+						"id": "d4bc9fc9-b472-494f-95fc-b7c26cea63f2",
+
+						"description": "Field requests from potential customers to use our product to collect oil data and visit customer sites to showcase the product",
+						"skillId": "0713a424-b6c3-4530-a0d4-69c15d037a99",
+						"toolIds": null
+					},
+					{
+						"id": "e47da1ed-a152-46eb-b786-dbdee7ee6369",
+
+						"description": "Created a test plan of to validate multiple features of the system collecting data with data acquisition systems, validating voltages with multimeters, and performing mechanical robustness tests including drop and pressure checking. Visit a customer site to collect oil consumption data on their engine with our product",
+						"skillId": "ab485dd6-c50b-47d2-949c-a4200bd656db",
+						"toolIds": [
+							"35a36a49-b8a7-4af9-956c-c53d3fcafe0e",
+							"ce53c38f-62b6-4863-8ac9-e2a855849cbc"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "36a4847d-4198-42a9-9fb0-184baa7aa951",
+
+			"date": "2010-04-01",
+			"name": "Truck Competitive Analysis",
+			"company": "ARi",
+			"description": "Customer approached us to benchmark a competitor's semi truck's EPA Tier IV emissions performance and strategies",
+			"skills": {
+				"items": [
+					{
+						"id": "990d520c-477d-42d0-b12e-baa96106da0c",
+
+						"description": "Compiled the findings from the testing and data analysis into a 100-page report",
+						"skillId": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
+						"toolIds": ["d80827cb-daa3-4c11-9ac5-0c907ed365ee"]
+					},
+					{
+						"id": "f25ae179-f8df-478f-b2bd-ead2bde9073a",
+
+						"description": "Develop list and location of sensors to instrument truck and connect to data acquisition system. Collect data while riding in the truck around the Midwest and to Colorado for high altitude. Analyze data to understand various emissions strategies.",
+						"skillId": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "ecd37fea-1ddd-485b-baa9-f9b06566a437",
+
+			"date": "2018-12-01",
+			"name": "Generator desktop configuration tool",
+			"company": "ARi",
+			"description": "Tool used to view and configure generators using Modbus TCP",
+			"skills": {
+				"items": [
+					{
+						"id": "e67833f8-437e-4685-978a-c829db5dfa45",
+
+						"description": "Designed app as a demo to show customer. Completed it within one week to showcase to customer",
+						"skillId": "0713a424-b6c3-4530-a0d4-69c15d037a99",
+						"toolIds": null
+					},
+					{
+						"id": "fcab2802-0e16-47ff-ab1d-9440c8a2a5c5",
+
+						"description": "Created multiple slides showing the need for the product, the key features of the app, and the proposed development roadmap. Presented twice to different customer audiences",
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					},
+					{
+						"id": "43f64bac-14b9-4db5-a867-288177486a01",
+
+						"description": "Designed UI using React incorporating multiple Material UI components and ran inside of an Electron app with Express routing logic for saving and opening configuration files.",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": [
+							"f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb",
+							"0645ecbf-7f01-4341-bdfe-10ab227ee2ac",
+							"bbbae607-a669-4723-8729-194bd14be0a9",
+							"11c3f874-fc5c-4578-b246-c58cde0bedc0"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "b19b4703-9f09-44cc-84f7-fad7b34c000e",
+
+			"date": "2016-09-01",
+			"name": "GL Renovations",
+			"company": "Personal",
+			"description": "Construction contracting website",
+			"skills": {
+				"items": [
+					{
+						"id": "ba42c31d-1578-4809-b600-755028050303",
+
+						"description": "Designed a MongoDB noSQL database to house the pictures and other content for the website",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": ["e1079e67-a658-49ba-bd15-7c3b3ad4e46c"]
+					},
+					{
+						"id": "5b4a16b7-809b-476b-b952-1157b332ff50",
+
+						"description": "Hosted the website at home on a headless Raspberry Pi",
+						"skillId": "d03cffd0-fb29-4900-94b8-f21c686b079f",
+						"toolIds": ["2ff9417c-3c4d-47f6-ae82-6a09624c45fa"]
+					},
+					{
+						"id": "292f6e4f-787e-431d-8135-d733d21b159a",
+
+						"description": "Mobile-responsive website utilizing a custom React-based CMS tool for the owner to add pictures and update content, and a Node with Express server for file system interaction and serving content",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": [
+							"f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb",
+							"3c62c28d-1c9c-4ef3-83d1-f9e31d323ee6",
+							"fe8c4fb9-8319-4590-95ee-cd4351182562"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "2d61e661-fa64-4a76-804a-317225416294",
+
+			"date": "2017-01-01",
+			"name": "Piano table",
+			"company": "Personal",
+			"description": "Console table in our home that has three false drawers that conceal a slide-out music keyboard",
+			"skills": {
+				"items": [
+					{
+						"id": "b2e6959c-8631-4340-bdad-c2109c6394f9",
+
+						"description": "Developed a complete 3D CAD model in Fusion 360, created all of the drawings and BoM in order to purchase components",
+						"skillId": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+						"toolIds": ["0a943d5c-3647-464c-8ba1-71b8383e2c92"]
+					},
+					{
+						"id": "41699e8b-6f31-4842-9096-6bddf6114108",
+
+						"description": null,
+						"skillId": "7ce44979-9b8b-4fae-a19f-80e64d3bdd7e",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "1e56cebb-6ed7-41ee-99bf-712866440fb9",
+
+			"date": "2008-01-01",
+			"name": "Engine Test Procedures",
+			"company": "Caterpillar",
+			"description": "Detailed documents listing requirements, steps and outcomes of various heavy-duty engine tests",
+			"skills": {
+				"items": [
+					{
+						"id": "d10972ae-df53-46b1-9da2-84c19ace74b8",
+
+						"description": "Gather facility engine test experts to capture knowledge validation best practices that differs from current documentation",
+						"skillId": "a68a28c0-7822-4061-b646-cf20e976d149",
+						"toolIds": null
+					},
+					{
+						"id": "b75dadc2-f0f8-4169-b038-90f319febaec",
+
+						"description": "Organize notes from discussions and make modifications to the documents",
+						"skillId": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
+						"toolIds": ["d80827cb-daa3-4c11-9ac5-0c907ed365ee"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "1cf7c9bc-5074-4816-8071-06313f812b1c",
+
+			"date": "2018-12-17",
+			"name": "Project portfolio",
+			"company": "Personal",
+			"description": "What you're looking at now! Visual project portfolio tool for tracking and displaying project work",
+			"skills": {
+				"items": [
+					{
+						"id": "cb65d2f4-2fb1-42bd-a8ab-a5b6d971c945",
+
+						"description": "Designed SaaS tool to allow users to enter their project work assigning skills and tools. Created visualizations from the data and a CDN API to allow the user to embed the visualization into another website",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": [
+							"f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb",
+							"0645ecbf-7f01-4341-bdfe-10ab227ee2ac",
+							"28cbca20-d190-48c2-8e7a-eab6ec09edeb",
+							"28b734ee-d59b-4205-88c4-870f630445f1"
+						]
+					},
+					{
+						"id": "89d3331a-0d58-44dc-89d1-5c3e310d2826",
+
+						"description": "Designed a GraphQL database to house all the records with one-to-many relationships for the project skills and skill categories",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": ["5c68dc24-5c91-483b-ada7-b6bdfc466bec"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "30cf239f-e16e-4629-b4bc-7793f32113c8",
+
+			"date": "2016-09-01",
+			"name": "Satellite images in mining and construction",
+			"company": "ARi",
+			"description": "Using satellite images to improve site visibility and calculate production for mines and construction industries",
+			"skills": {
+				"items": [
+					{
+						"id": "5a1d6731-cc54-42cd-a07e-f359e68b2144",
+
+						"description": "With help from manager, created strategy for using images of various quality at different places within the industry and compiled into information to communicate with the customer",
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					},
+					{
+						"id": "7fea1f90-8f0b-4de1-b7c9-a86296717dbe",
+
+						"description": "Processed GIS images and performed 3D rendering of images",
+						"skillId": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "ce2a7e3f-c662-48cd-a6dc-b5529d35e70c",
+
+			"date": "2008-05-01",
+			"name": "Engine cold start testing",
+			"company": "Caterpillar",
+			"description": "Cold soak an engine for several hours and test the performance on start-up",
+			"skills": {
+				"items": [
+					{
+						"id": "941e3378-9110-481c-bd2c-12c740d75148",
+
+						"description": "Start the engine monitoring the starter performance and excess smoking. Also tweaked performance maps to improve starting",
+						"skillId": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "38a0a04c-ee93-43f9-a543-8c493010f2e1",
+
+			"date": "2017-09-01",
+			"name": "Canari swipe",
+			"company": "ARi",
+			"description": "100% React-based swiping library",
+			"skills": {
+				"items": [
+					{
+						"id": "e098cb01-88ed-4c5d-9539-2c7855369560",
+
+						"description": "To support the Canari instrument cluster project, created a swiping library to handle click and touch events to seemlessly move between screens. Considered multiple scenarios including swiping back, deceleration, multiple selections, etc.",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": ["f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "c4e67524-681b-4c11-be75-dc91961e289e",
+
+			"date": "2016-01-01",
+			"name": "Product Development Process",
+			"company": "ARi",
+			"description": "Develop ARi's PDP to more effectively streamline the activities required to develop products and solutions in preparation for the market",
+			"skills": {
+				"items": [
+					{
+						"id": "b8d975e7-0d92-4fd5-aad3-50bf0ba4a27b",
+
+						"description": "Working with our global team, documented all the current steps we follow. Comparing with other industry best practices and looking for ways to make it more efficient, simplified and listed all the steps with required participants and dependencies",
+						"skillId": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+						"toolIds": ["ee660582-fe89-4110-9632-feaf917acfd1"]
+					},
+					{
+						"id": "6938be78-ee70-4029-bb7d-136d1977cad2",
+
+						"description": "With the documented PDP and PLM processes, communicated with the global products team the process and helped engineers follow the process",
+						"skillId": "7be9c752-7409-4b6c-b9fb-8b2470257cd4",
+						"toolIds": null
+					},
+					{
+						"id": "79a83717-2e1d-478b-bf72-875b1e328cce",
+
+						"description": "Developed a Part Lifecycle Management (PLM) process including how to name part numbers, and a simply part database to store unique parts globally.",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "8ac6f288-8585-4db7-a43a-d74e9f84c786",
+
+			"date": "2016-05-01",
+			"name": "C3PO CRM Tool",
+			"company": "ARi",
+			"description": "Internal Customer Relationship Management tool",
+			"skills": {
+				"items": [
+					{
+						"id": "4fb51935-9362-4f31-bcef-895d85e9f963",
+
+						"description": "Created 'Customers, Proposals, Projects and Purchase Orders) database using an Access web app connecting the tables together and creating forms for data entry",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": ["c9dacabe-9081-4c07-b3de-fc1ccac1274e"]
+					},
+					{
+						"id": "a2cc1b8b-20fb-4b59-b9df-28e177707bbf",
+
+						"description": "Explained to the lead managers how to use the tool for inputting their data and how to pull reports",
+						"skillId": "7be9c752-7409-4b6c-b9fb-8b2470257cd4",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "1064ec8e-9d5a-4491-847b-f6c87a357eb7",
+
+			"date": "2015-07-01",
+			"name": "Motor test bench",
+			"company": "ARi",
+			"description": "Test bench used to select and validate the DC motor used in the electric actuator project",
+			"skills": {
+				"items": [
+					{
+						"id": "e96e9c86-7a55-4726-ac36-fdcf8008a47d",
+
+						"description": "Worked with fabrication to build the testing bench to the design.",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					},
+					{
+						"id": "b8f75e7b-5777-4b75-9a4b-b9e2fa33f2da",
+
+						"description": "Collected motor speed and load data at various temperatures and created performance charts of various motors",
+						"skillId": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					},
+					{
+						"id": "d391eba8-866d-49a5-bb52-e784954a54b8",
+
+						"description": "Designed the test bench including how the motor is mounted, the drive shaft connected to the hysteresis brake and the load cell attached to the lever arm. Selected all of the required components and packaged them together.",
+						"skillId": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+						"toolIds": ["36e23a8e-9c50-4f3a-a612-ec20f59116d5"]
+					},
+					{
+						"id": "201fcba1-f977-408b-a2b4-1746e520bf5b",
+
+						"description": "Created the motor controller H-bridge circuit and load cell amplification circuit designing the PCB for final packaging. Also added BLE support for controlling the test bench remotely.",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"672ef347-820d-4fe6-84c6-760a466e8e8f",
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "521283fd-104d-4a53-88b9-61464e1259cc",
+
+			"date": "2012-04-16",
+			"name": "Supplier performance dashboard",
+			"company": "CGN",
+			"description": "Excel-based dashboards showing demand vs. capacity gap sent to 50 different suppliers monthly",
+			"skills": {
+				"items": [
+					{
+						"id": "b5fe1a27-a603-468c-8538-b40e2f026108",
+
+						"description": "Previously the supplier dashboard creation process was manual, so created a VBA script to read in the new data, update the charts and create an outputted dashboard to be sent to the suppliers",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["cefe0f3b-4b84-48d9-b5c6-1fbd9bcfd911"]
+					},
+					{
+						"id": "52bbf9ea-98f5-4619-a903-441f9e48cf7a",
+
+						"description": "Analyze supply gap to make observations for the team",
+						"skillId": "0632a47a-60f6-48df-87ad-dc65ff4d15e8",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "c01927a7-1567-494a-9af2-dc1c15e8ace7",
+
+			"date": "2012-05-08",
+			"name": "Engine part 3D map",
+			"company": "CGN",
+			"description": "Engine serial number and part number quantity 3D map",
+			"skills": {
+				"items": [
+					{
+						"id": "40d67378-80fb-43ad-b1fa-deb0dc541bba",
+
+						"description": "Read thousands of engine serial number and part number data sets and combine them into a consolidate 3D map",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["3c16bc62-dac9-480c-bd48-b144c5b56ddf"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "d2071651-a4f5-4fda-9954-30446b6ed9f2",
+
+			"date": "2012-12-01",
+			"name": "Push to pull ordering",
+			"company": "CGN",
+			"description": "Helped customer understand the current part ordering system and help organize the data in order to convert from a push to a pull-style ordering",
+			"skills": {
+				"items": [
+					{
+						"id": "58c8a7b7-44fc-487f-94c8-c089b9dc927e",
+
+						"description": "Documented the current part ordering status and mapped it out through the facility",
+						"skillId": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+						"toolIds": null
+					},
+					{
+						"id": "918b77d3-44f0-4b5d-8707-8ef8696b8d9c",
+
+						"description": "Created a database that took part lead time, days-on-hand and inventory and combined into a database to help determine which parts can be converted from push to pull ordering",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": ["c9dacabe-9081-4c07-b3de-fc1ccac1274e"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "837e1e7f-232c-4167-95e5-cfaf5425dbf8",
+
+			"date": "2008-01-01",
+			"name": "Piston temp plug measurement",
+			"company": "Caterpillar",
+			"description": "Temp plugs are used to measure maximum temperatures of various locations around a piston",
+			"skills": {
+				"items": [
+					{
+						"id": "500cc069-a19d-4b7e-8a9c-830a9f88f414",
+
+						"description": "Set up an objective method to consistently measure the depths that the temp plugs were inserted using CMM and later refined the process to make it faster",
+						"skillId": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "8acde7d6-658d-4349-9d83-c233f06b4fbc",
+
+			"date": "2013-06-01",
+			"name": "RV business evaluation",
+			"company": "CGN",
+			"description": "A RV business hired us to understand their business, create business improvement metrics and put new processes in place to improve their business",
+			"skills": {
+				"items": [
+					{
+						"id": "54c362f0-218e-47fc-a0e9-09cc759063bc",
+
+						"description": "Talked with multiple employees responsible for RV servicing to understand ways to reduce waste, improve material flow and increase service",
+						"skillId": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "fad5712f-9391-4aaa-b1e0-756e66dd767c",
+
+			"date": "2018-02-01",
+			"name": "Mining Telematics Dashboards",
+			"company": "ARi",
+			"description": "Touch screen application used by large trucks and loaders on surface mining sites that displays cycle time and efficiency data to the operator.",
+			"skills": {
+				"items": [
+					{
+						"id": "2c8bf903-3aee-490f-a5ae-9629b9b5984a",
+
+						"description": "Won SW project by discussing our capabilities with the customer. Later won bracket and harness work as well.",
+						"skillId": "0713a424-b6c3-4530-a0d4-69c15d037a99",
+						"toolIds": null
+					},
+					{
+						"id": "b9d3bf35-b42b-41fb-8109-d7ad959551c7",
+
+						"description": "Designed the electrical harness that connects the touch screen displays to the end-user mining truck and loader",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": null
+					},
+					{
+						"id": "6dba44fc-e9d1-427e-85bb-79369255f2ab",
+
+						"description": "Forked from Canari, user interface dashboards grabbing data through socket communication with customer's server to Node, Linux OS handling for display brightness and LEDs, http and websocket communication to the front-end React application and state management to update the display as new information is received.",
+						"skillId": "44de4a6e-b125-4af6-b5bf-adf0a31a4825",
+						"toolIds": [
+							"f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb",
+							"0645ecbf-7f01-4341-bdfe-10ab227ee2ac",
+							"3c62c28d-1c9c-4ef3-83d1-f9e31d323ee6"
+						]
+					},
+					{
+						"id": "54651048-a0aa-488e-97a2-4f7f013c6e8c",
+
+						"description": "Led implementation of some of the product features, worked with ARi fabrication team to build mounting brackets and harnesses per the customer's request. Created a workbook shared with the team including accounting to seamlessly track customer requests through invoicing",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "9c4401f1-d7f6-4dd0-89c9-30e50ef9e3d7",
+
+			"date": "2016-06-01",
+			"name": "Chair encoder",
+			"company": "ARi",
+			"description": "Designed an encoder to measure and output the position of an office swivel chair for demonstrating our capabilities",
+			"skills": {
+				"items": [
+					{
+						"id": "87fbcb1c-cc46-42dd-bed2-0cd59551efd4",
+
+						"description": "Printed out the rotary encoder disc and mounting brackets on our 3D printer",
+						"skillId": "7b272cf5-ff69-47ce-b6fe-7bf35fa211d8",
+						"toolIds": null
+					},
+					{
+						"id": "32fcd195-f2e5-4a5b-b6e0-f33185cbdc48",
+
+						"description": "Wrote encoder quadrature algorithm with the two LED position inputs and outputted a processed position PWM signal to be read in by another controller",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": ["c3808037-1520-4134-9a8f-f1725dbf5559"]
+					},
+					{
+						"id": "2ac9be12-2945-4021-9e47-07d7e3f7c7d9",
+
+						"description": "Using two LEDs, a flashlight and an Arduino, created a custom encoder circuit that would measure chair rotation within five degrees resolution",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1",
+							"62c619bc-0200-4958-957f-b6fccc1eb569"
+						]
+					},
+					{
+						"id": "b004ed50-7ee0-4263-b48b-37bb2c51545e",
+
+						"description": "Designed an encoder disc that would allow the LEDs to pick up the change in rotation of the chair and created a bracket to mount it all to the underside of a chair",
+						"skillId": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+						"toolIds": ["0a943d5c-3647-464c-8ba1-71b8383e2c92"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "5ca62c9a-a528-4ae0-ab1f-0f2781f7365e",
+
+			"date": "2016-12-01",
+			"name": "BLDC Motor Design",
+			"company": "ARi",
+			"description": "Designed a prototype BLDC motor and Atmel-based controller writing all of the SW and printing the motor prototype",
+			"skills": {
+				"items": [
+					{
+						"id": "1735c622-3cc3-4992-8335-f0874f3f1b68",
+
+						"description": "Designed the BLDC motor all working components purchasing bearings and magnets for the rotor, hall-effect sensors for the position sensing and designing the rest in Fusion 360",
+						"skillId": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+						"toolIds": ["0a943d5c-3647-464c-8ba1-71b8383e2c92"]
+					},
+					{
+						"id": "2fcddd95-51c5-435a-b1b7-79bea7727331",
+
+						"description": "Printed the motor rotor and stator housing components, wrapped the electromagnets and assembled the motor",
+						"skillId": "7b272cf5-ff69-47ce-b6fe-7bf35fa211d8",
+						"toolIds": null
+					},
+					{
+						"id": "313a2347-1e50-43a9-aaca-43b40f5a2d3f",
+
+						"description": "Designed the controller using an Atmega 32M1 MCU with opto-isolators, transistor H-bridge and RS232 communication circuit. Soldered the prototype circuit on breadboard for initial testing",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"672ef347-820d-4fe6-84c6-760a466e8e8f",
+							"62c619bc-0200-4958-957f-b6fccc1eb569",
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1"
+						]
+					},
+					{
+						"id": "cbe072a0-e221-4f12-b7fc-749083120a89",
+
+						"description": "Wrote the primary commutation algorithm to power the necessary electromagnets based on the desired direction and hall effect position sensor inputs. Wrote a simple command-line-based tool to control the direction and speed of the controller using RS232 serial communication. Had two closed-loop modes - position and velocity",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": [
+							"d373d23b-ead6-4604-a531-ba435e565882",
+							"498caf32-d5f8-4f38-9fec-5d89f00afaec"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "d82ce3a6-3455-416c-9ffb-79e57179772d",
+
+			"date": "2015-01-01",
+			"name": "Electric actuator",
+			"company": "ARi",
+			"description": "Electric actuator used to control the wastegate on a turbocharger for small gasoline engines in China",
+			"skills": {
+				"items": [
+					{
+						"id": "db6b778b-47d7-4277-aaed-87dadf9a97f4",
+
+						"description": "Designed the PCB that held the hall effect position and temperature sensors as well as the back-emf voltage spike filter",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": ["672ef347-820d-4fe6-84c6-760a466e8e8f"]
+					},
+					{
+						"id": "7fa02d33-83de-42e7-afbf-4faf70ff161e",
+
+						"description": "Created a business case for starting the project including the anticipated volumes and revenues, timeline and costs. Developed a detailed project plan in Project to include every stage of the product development. Worked as project manager tracking action items and updating the project plan",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": [
+							"7e3d0302-528c-4051-864b-ffe9f04d5425",
+							"cb58efb9-0fa0-421c-be6c-ebb86e0a28a0"
+						]
+					},
+					{
+						"id": "648d75c6-496e-4cab-9709-109052043063",
+
+						"description": "Created a multiple test fixtures to test components and the finished product",
+						"skillId": "ab485dd6-c50b-47d2-949c-a4200bd656db",
+						"toolIds": null
+					},
+					{
+						"id": "07fd25a0-56d1-4def-8afb-6f411c208379",
+
+						"description": "Lead a team of engineers - mechanical design, electrical and validation, assuring timely and quality delivery",
+						"skillId": "55dd8f71-fe74-4b8d-8ff5-e6945594ea12",
+						"toolIds": null
+					},
+					{
+						"id": "b58eb8f7-b1f0-4010-a36a-be3874706858",
+
+						"description": "Using an Arduino, wrote the PID control algorithms used to move the actuator to various set points on a cycle",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": ["c3808037-1520-4134-9a8f-f1725dbf5559"]
+					},
+					{
+						"id": "775beee1-abbf-48fa-9122-cdddcaf72288",
+
+						"description": "Plotted test data and analyzed the overall performance of the actuator to make sure it met the required specifications of the product",
+						"skillId": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					},
+					{
+						"id": "2cd5a5f7-15d8-4756-8d67-044efc23193a",
+
+						"description": "Created dynamics model to simulate the movement of the actuator as a 4-bar linkage attached to the turbo valve including inertia",
+						"skillId": "9a24bf18-0107-4607-b2f4-72165bbb38c3",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "9a5efd88-7a4c-4cc5-a7ef-029fd797e6d2",
+
+			"date": "2015-08-01",
+			"name": "Hub inspection",
+			"company": "ARi",
+			"description": "ARi was awarded project to check for cracks in wheel hubs of over 1000 heavy trucks in the field in North America",
+			"skills": {
+				"items": [
+					{
+						"id": "6d29edc2-1f36-4b99-84eb-e0f24b6d84ef",
+
+						"description": "Looking at historical data and forecasted inspections, determined estimated completion dates to finish all 1000 truck inspections. Calculated failure percentages based on the field data. Performed engineer travel route optimizations",
+						"skillId": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					},
+					{
+						"id": "c7dcd951-5eec-40fc-9df6-d11f9d2d4d44",
+
+						"description": "Created an Access database for the project used for billing the customer, tracking machine measurements and internal costs and efficiencies",
+						"skillId": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+						"toolIds": ["c9dacabe-9081-4c07-b3de-fc1ccac1274e"]
+					},
+					{
+						"id": "70aca6bc-0260-4472-92ba-c16955212ad0",
+
+						"description": "Supervised team of four field engineers conducting NDT measurements investigating for cracks. Helped schedule travel around all of North America including the far north reaches of Canada.",
+						"skillId": "55dd8f71-fe74-4b8d-8ff5-e6945594ea12",
+						"toolIds": null
+					},
+					{
+						"id": "3d30c960-6acd-4c31-8e50-e230616d1a4f",
+
+						"description": "Created machinery location footprint maps to show the density of populations around North America as well as status trends showing rate of inspections",
+						"skillId": "cb381058-cc32-40e4-bc0c-f8d168e2dd51",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					},
+					{
+						"id": "27238467-85eb-4d5f-9a2a-0c98fbb34e33",
+
+						"description": null,
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "5106e365-ad52-4906-bcb5-285a6a71fe86",
+
+			"date": "2015-08-01",
+			"name": "Test facility architectural concept",
+			"company": "ARi",
+			"description": "Our company needed a concept to show a foreign government the plans to build a new facility for engineers to develop engines and heavy machinery",
+			"skills": {
+				"items": [
+					{
+						"id": "6480ea79-ce47-417f-b75c-0e62937a677d",
+
+						"description": "Supported the design direction of the facility making changes as needed",
+						"skillId": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+						"toolIds": ["f7c0829b-6de3-41ae-8418-b469443360e1"]
+					},
+					{
+						"id": "2b3c41f0-bd7a-45ea-94af-15e586edb116",
+
+						"description": "Made a presentation to show various angles and features of the facility model to give to management to present to the government parties interested in the development",
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					},
+					{
+						"id": "cb10ad36-3402-4092-b649-5371c4e3c145",
+
+						"description": "Instructing a team member to design the facility in Sketchup giving the requirements and providing feedback",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "fb20d0c0-9925-4ddd-8c35-1064b107cd8e",
+
+			"date": "2011-06-01",
+			"name": "Dyno and throttle control SW",
+			"company": "ARi",
+			"description": "The test cell dyno and engine throttle are controlled by PID controllers",
+			"skills": {
+				"items": [
+					{
+						"id": "5c2b0120-a704-4939-a6b2-822b3bdcc375",
+
+						"description": "Created PID control algorithm to control the signal sent to the engine throttle using Visual Basic. Created different modes based on type of engine - speed or fuel controlled",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["1b566dc5-722f-489f-8829-e0c3ac2fb539"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "a24eb0cf-a195-4617-a40f-55c48c8bc9e8",
+
+			"date": "2016-06-01",
+			"name": "Actuator calibration bench",
+			"company": "ARi",
+			"description": "Test bench used to calibrate position sensor and test acuracy of actuator",
+			"skills": {
+				"items": [
+					{
+						"id": "63e55dab-961a-4880-8231-2f1669c2433d",
+
+						"description": "Worked with offshore team to write python UI to control the actuator to various positions to use external calibration module for the position sensor IC. Worked with ME to design fixture and fab team to assemble.",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					},
+					{
+						"id": "c346fc2c-c67c-43d9-a300-f9ce71581bf1",
+
+						"description": "Designed H-bridge circuit to control the motor in both directions to interact with Arduino",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": [
+							"672ef347-820d-4fe6-84c6-760a466e8e8f",
+							"62c619bc-0200-4958-957f-b6fccc1eb569",
+							"5740cb1b-19c9-4189-9f4e-da382c5631d1"
+						]
+					},
+					{
+						"id": "6c8b7339-ae7e-438d-ad66-32bc3d834ee9",
+
+						"description": "Wrote portion of embedded SW to take commands and move actuator to specified position",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": [
+							"d373d23b-ead6-4604-a531-ba435e565882",
+							"c3808037-1520-4134-9a8f-f1725dbf5559"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "890f37df-137d-4cf7-aafc-6ca1dd17a1f5",
+
+			"date": "2018-09-01",
+			"name": "Web configuration tool for collision avoidance",
+			"company": "ARi",
+			"description": "Web configuration tool used by our customer to configure one of their gateway controllers",
+			"skills": {
+				"items": [
+					{
+						"id": "fd9d9ee0-e55a-454c-80bc-f4fb2e799c25",
+
+						"description": "Managed one other team member to style, implement google Protobuff messaging format and maintain the tool",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					},
+					{
+						"id": "1b43c19f-ce64-431e-bdb8-0e38fe407fa1",
+
+						"description": "Built Angular/Ionic application that communicates with the controller to view and update vehicle information regarding collision avoidance. Designed the application to allow easy field type configuration using abstract markup and static json properties",
+						"skillId": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+						"toolIds": [
+							"a97a2dd9-738f-400e-9c1e-9e0c930a7b7c",
+							"714c5d2c-ac61-4814-aba7-9474c3b6e5a2",
+							"0645ecbf-7f01-4341-bdfe-10ab227ee2ac"
+						]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "c8fc035b-5b79-46c6-9c9b-2c24f4ef234b",
+
+			"date": "2010-06-01",
+			"name": "Engine steady-state plotter",
+			"company": "ARi",
+			"description": "Tool to visualize engine steady-state data",
+			"skills": {
+				"items": [
+					{
+						"id": "8f469cb4-3143-4575-b2b4-8d13185e0baf",
+
+						"description": "Wrote VBA script to port in new SS engine data files into  project file, add calculations and update plots to evaluate engine health",
+						"skillId": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+						"toolIds": ["cefe0f3b-4b84-48d9-b5c6-1fbd9bcfd911"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "f8ff01d6-05ec-44c4-980f-99f1a079e331",
+
+			"date": "2016-02-01",
+			"name": "Actuator test bench",
+			"company": "ARi",
+			"description": "Test bench used to apply a constant load to an electric actuator using control SW to control the position.",
+			"skills": {
+				"items": [
+					{
+						"id": "41e163ef-b4f8-4f5a-8a1a-5fb66625193f",
+
+						"description": "Designed a coil spring to mimic the application torque on the actuator capable of handling multiple cycles at elevated temperatures",
+						"skillId": "c3b0ff0a-558a-4858-8b98-c033a58dcf86",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					},
+					{
+						"id": "fda73d0a-7d41-4d12-8be1-1022cf40465d",
+
+						"description": "Using the position sensor feedback and motor controller output, created a PID controller to command the actuator to follow an application-based test cycle including the ability to repeat the cycle for as long as desired",
+						"skillId": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+						"toolIds": [
+							"c3808037-1520-4134-9a8f-f1725dbf5559",
+							"d373d23b-ead6-4604-a531-ba435e565882"
+						]
+					},
+					{
+						"id": "09115ea2-f894-46c7-9f06-0d551437c1bb",
+
+						"description": "Worked with app team to develop a Python-based UI to: select a test cycle, start and pause the cycle and plot the position and temperature during operation",
+						"skillId": "87348824-6971-4973-8469-74999b1e84df",
+						"toolIds": null
+					},
+					{
+						"id": "d2231138-b003-4627-947b-1334337ea605",
+
+						"description": "Created an electrical schematic for controlling the actuator motor, reading the position sensor and two temperature sensors",
+						"skillId": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+						"toolIds": ["672ef347-820d-4fe6-84c6-760a466e8e8f"]
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "17988302-0f22-4b07-accf-f8ff49d835a0",
+
+			"date": "2013-01-01",
+			"name": "Inventory reduction",
+			"company": "CGN",
+			"description": "Multiple consulting teams set up to find ways to reduce inventory throughout the supply chain - purchased, manufacturing WiP and finished goods",
+			"skills": {
+				"items": [
+					{
+						"id": "f5b728b3-6060-48b8-a12e-2a78f8ff7161",
+
+						"description": "Created a root cause diagram to show where the waste was located throughout the manufacturing process",
+						"skillId": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+						"toolIds": ["91464b55-8c50-4bed-b65f-50afcb1c4c62"]
+					},
+					{
+						"id": "48783a52-3592-42c3-88b5-b217ff5ef2c1",
+
+						"description": "Mapped out the manufacturing process for multiple assembled components to determine areas of waste",
+						"skillId": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+						"toolIds": ["5a298540-df2e-4d88-b3e6-a7d10ef5350b"]
+					},
+					{
+						"id": "d62eaaa1-59de-4237-a576-30a41967c19d",
+
+						"description": "Analyze WiP components to calculate necessary vs. actual inventory levels",
+						"skillId": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+						"toolIds": ["4a27d302-2df6-41d4-979a-5c90040f3ae1"]
+					}
+				],
+				"nextToken": null
+			}
+		}
+	],
+	"allCategories": [
+		{
+			"id": "b0300787-aa91-4941-8bf4-c1043f9d60a9",
+
+			"name": "Leadership",
+			"skills": {
+				"items": [
+					{
+						"id": "55dd8f71-fe74-4b8d-8ff5-e6945594ea12",
+
+						"name": "Supervising"
+					},
+					{
+						"id": "7be9c752-7409-4b6c-b9fb-8b2470257cd4",
+
+						"name": "Teaching"
+					},
+					{
+						"id": "87348824-6971-4973-8469-74999b1e84df",
+
+						"name": "Project Management"
+					},
+					{
+						"id": "a68a28c0-7822-4061-b646-cf20e976d149",
+
+						"name": "Group Leadership"
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+			"name": "Product Development",
+			"skills": {
+				"items": [
+					{
+						"id": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+
+						"name": "Electronics Design"
+					},
+					{
+						"id": "7ce44979-9b8b-4fae-a19f-80e64d3bdd7e",
+
+						"name": "Hands On"
+					},
+					{
+						"id": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+
+						"name": "Embedded SW"
+					},
+					{
+						"id": "7b272cf5-ff69-47ce-b6fe-7bf35fa211d8",
+
+						"name": "Prototypes / 3D Printing"
+					},
+					{
+						"id": "9a24bf18-0107-4607-b2f4-72165bbb38c3",
+
+						"name": "Dynamics"
+					},
+					{
+						"id": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+
+						"name": "Computer Aided Design"
+					},
+					{
+						"id": "ab485dd6-c50b-47d2-949c-a4200bd656db",
+
+						"name": "Testing"
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "4ce88e55-b419-4560-8dd0-d4d7bc72ed4d",
+
+			"name": "Web Technology",
+			"skills": {
+				"items": [
+					{
+						"id": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+
+						"name": "Web Sites"
+					},
+					{
+						"id": "44de4a6e-b125-4af6-b5bf-adf0a31a4825",
+
+						"name": "Touch Screen Displays"
+					},
+					{
+						"id": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+
+						"name": "Database Design"
+					},
+					{
+						"id": "588c403c-6adf-49c9-9cbf-ea09f2d51b52",
+
+						"name": "Desktop Web Apps"
+					}
+				],
+				"nextToken": null
+			}
+		},
+		{
+			"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+			"name": "Data Analysis",
+			"skills": {
+				"items": [
+					{
+						"id": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+
+						"name": "Engine Testing"
+					},
+					{
+						"id": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
+
+						"name": "Writing"
+					},
+					{
+						"id": "cb381058-cc32-40e4-bc0c-f8d168e2dd51",
+
+						"name": "Visualization"
+					},
+					{
+						"id": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+
+						"name": "Scripting"
+					},
+					{
+						"id": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+
+						"name": "Analysis"
+					},
+					{
+						"id": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+
+						"name": "Process Mapping"
+					},
+					{
+						"id": "0632a47a-60f6-48df-87ad-dc65ff4d15e8",
+
+						"name": "Supply Chain"
+					}
+				],
+				"nextToken": null
+			}
+		}
+	],
+	"allSkills": [
+		{
+			"id": "55dd8f71-fe74-4b8d-8ff5-e6945594ea12",
+
+			"name": "Supervising",
+			"category": {
+				"id": "b0300787-aa91-4941-8bf4-c1043f9d60a9",
+
+				"name": "Leadership"
+			}
+		},
+		{
+			"id": "82a9cf34-3bdb-405e-8eea-045de5e516bb",
+
+			"name": "Electronics Design",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "7ce44979-9b8b-4fae-a19f-80e64d3bdd7e",
+
+			"name": "Hands On",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "32f63be7-cddf-45d5-8dfe-410411db19d5",
+
+			"name": "Engine Testing",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "92565fde-960d-40ea-bd64-2c92154b0fb2",
+
+			"name": "Web Sites",
+			"category": {
+				"id": "4ce88e55-b419-4560-8dd0-d4d7bc72ed4d",
+
+				"name": "Web Technology"
+			}
+		},
+		{
+			"id": "c3b0ff0a-558a-4858-8b98-c033a58dcf86",
+
+			"name": "Mechanical Design",
+			"category": null
+		},
+		{
+			"id": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
+
+			"name": "Writing",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "7be9c752-7409-4b6c-b9fb-8b2470257cd4",
+
+			"name": "Teaching",
+			"category": {
+				"id": "b0300787-aa91-4941-8bf4-c1043f9d60a9",
+
+				"name": "Leadership"
+			}
+		},
+		{
+			"id": "cb381058-cc32-40e4-bc0c-f8d168e2dd51",
+
+			"name": "Visualization",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "04090cf4-be7c-4b27-841f-eb331a783ac1",
+
+			"name": "Scripting",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "0713a424-b6c3-4530-a0d4-69c15d037a99",
+
+			"name": "Business Development",
+			"category": null
+		},
+		{
+			"id": "14b2e791-b008-4462-95c9-22b2b0a0d8c4",
+
+			"name": "Analysis",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "08a65dc5-e30e-498d-ab5e-cdb8f0a9964c",
+
+			"name": "Process Mapping",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "f1a66939-0ff1-4042-b1b4-580868cf2305",
+
+			"name": "Embedded SW",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "87348824-6971-4973-8469-74999b1e84df",
+
+			"name": "Project Management",
+			"category": {
+				"id": "b0300787-aa91-4941-8bf4-c1043f9d60a9",
+
+				"name": "Leadership"
+			}
+		},
+		{
+			"id": "7b272cf5-ff69-47ce-b6fe-7bf35fa211d8",
+
+			"name": "Prototypes / 3D Printing",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "44de4a6e-b125-4af6-b5bf-adf0a31a4825",
+
+			"name": "Touch Screen Displays",
+			"category": {
+				"id": "4ce88e55-b419-4560-8dd0-d4d7bc72ed4d",
+
+				"name": "Web Technology"
+			}
+		},
+		{
+			"id": "d03cffd0-fb29-4900-94b8-f21c686b079f",
+
+			"name": "Linux",
+			"category": null
+		},
+		{
+			"id": "0632a47a-60f6-48df-87ad-dc65ff4d15e8",
+
+			"name": "Supply Chain",
+			"category": {
+				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
+
+				"name": "Data Analysis"
+			}
+		},
+		{
+			"id": "9a24bf18-0107-4607-b2f4-72165bbb38c3",
+
+			"name": "Dynamics",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "261907d4-0a41-4ef1-b5d2-b413477bb1fb",
+
+			"name": "Computer Aided Design",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "6e6102b0-dc44-4e21-9fdf-d4fb2c6a154a",
+
+			"name": "Database Design",
+			"category": {
+				"id": "4ce88e55-b419-4560-8dd0-d4d7bc72ed4d",
+
+				"name": "Web Technology"
+			}
+		},
+		{
+			"id": "588c403c-6adf-49c9-9cbf-ea09f2d51b52",
+
+			"name": "Desktop Web Apps",
+			"category": {
+				"id": "4ce88e55-b419-4560-8dd0-d4d7bc72ed4d",
+
+				"name": "Web Technology"
+			}
+		},
+		{
+			"id": "ab485dd6-c50b-47d2-949c-a4200bd656db",
+
+			"name": "Testing",
+			"category": {
+				"id": "2ff6599e-9cb4-4c26-8911-126dd729faf0",
+
+				"name": "Product Development"
+			}
+		},
+		{
+			"id": "a68a28c0-7822-4061-b646-cf20e976d149",
+
+			"name": "Group Leadership",
+			"category": {
+				"id": "b0300787-aa91-4941-8bf4-c1043f9d60a9",
+
+				"name": "Leadership"
+			}
+		},
+		{
+			"id": "b4cb05c3-4872-49ed-af2e-98a15f5b70b5",
+
+			"name": "Presentation",
+			"category": null
+		}
+	],
+	"allTools": [
+		{
+			"id": "28cbca20-d190-48c2-8e7a-eab6ec09edeb",
+
+			"name": "AWS",
+			"website": null
+		},
+		{
+			"id": "28b734ee-d59b-4205-88c4-870f630445f1",
+
+			"name": "AWS Amplify",
+			"website": null
+		},
+		{
+			"id": "a97a2dd9-738f-400e-9c1e-9e0c930a7b7c",
+
+			"name": "Angular",
+			"website": null
+		},
+		{
+			"id": "c3808037-1520-4134-9a8f-f1725dbf5559",
+
+			"name": "Arduino",
+			"website": null
+		},
+		{
+			"id": "498caf32-d5f8-4f38-9fec-5d89f00afaec",
+
+			"name": "Atmel Studio",
+			"website": null
+		},
+		{
+			"id": "62c619bc-0200-4958-957f-b6fccc1eb569",
+
+			"name": "Breadboarding",
+			"website": null
+		},
+		{
+			"id": "cb58efb9-0fa0-421c-be6c-ebb86e0a28a0",
+
+			"name": "Business Case",
+			"website": null
+		},
+		{
+			"id": "d373d23b-ead6-4604-a531-ba435e565882",
+
+			"name": "C++",
+			"website": null
+		},
+		{
+			"id": "36e23a8e-9c50-4f3a-a612-ec20f59116d5",
+
+			"name": "CREO",
+			"website": null
+		},
+		{
+			"id": "ce53c38f-62b6-4863-8ac9-e2a855849cbc",
+
+			"name": "Data Aquisition",
+			"website": null
+		},
+		{
+			"id": "672ef347-820d-4fe6-84c6-760a466e8e8f",
+
+			"name": "EAGLE",
+			"website": null
+		},
+		{
+			"id": "bbbae607-a669-4723-8729-194bd14be0a9",
+
+			"name": "Electron",
+			"website": null
+		},
+		{
+			"id": "4a27d302-2df6-41d4-979a-5c90040f3ae1",
+
+			"name": "Excel",
+			"website": null
+		},
+		{
+			"id": "cefe0f3b-4b84-48d9-b5c6-1fbd9bcfd911",
+
+			"name": "Excel w/ VBA",
+			"website": null
+		},
+		{
+			"id": "fe8c4fb9-8319-4590-95ee-cd4351182562",
+
+			"name": "ExpressJS",
+			"website": null
+		},
+		{
+			"id": "0a943d5c-3647-464c-8ba1-71b8383e2c92",
+
+			"name": "Fusion 360",
+			"website": null
+		},
+		{
+			"id": "5c68dc24-5c91-483b-ada7-b6bdfc466bec",
+
+			"name": "GrapghQL",
+			"website": null
+		},
+		{
+			"id": "714c5d2c-ac61-4814-aba7-9474c3b6e5a2",
+
+			"name": "Ionic",
+			"website": null
+		},
+		{
+			"id": "c9dacabe-9081-4c07-b3de-fc1ccac1274e",
+
+			"name": "MS Access",
+			"website": null
+		},
+		{
+			"id": "7e3d0302-528c-4051-864b-ffe9f04d5425",
+
+			"name": "MS Project",
+			"website": null
+		},
+		{
+			"id": "d80827cb-daa3-4c11-9ac5-0c907ed365ee",
+
+			"name": "MS Word",
+			"website": null
+		},
+		{
+			"id": "11c3f874-fc5c-4578-b246-c58cde0bedc0",
+
+			"name": "Material Design",
+			"website": null
+		},
+		{
+			"id": "9e76bc01-465e-45c2-bb93-4a71ffc44fe4",
+
+			"name": "Matlab",
+			"website": null
+		},
+		{
+			"id": "e1079e67-a658-49ba-bd15-7c3b3ad4e46c",
+
+			"name": "MongoDB",
+			"website": null
+		},
+		{
+			"id": "35a36a49-b8a7-4af9-956c-c53d3fcafe0e",
+
+			"name": "Multimeter",
+			"website": null
+		},
+		{
+			"id": "8b2078d0-52cd-4324-8e77-3fa590d00a63",
+
+			"name": "Multimeter",
+			"website": null
+		},
+		{
+			"id": "3c62c28d-1c9c-4ef3-83d1-f9e31d323ee6",
+
+			"name": "NodeJS",
+			"website": null
+		},
+		{
+			"id": "00a02e31-6709-4f4a-b2ea-428bb252b88f",
+
+			"name": "Particle MCU",
+			"website": null
+		},
+		{
+			"id": "91464b55-8c50-4bed-b65f-50afcb1c4c62",
+
+			"name": "PowerPoint",
+			"website": null
+		},
+		{
+			"id": "ee660582-fe89-4110-9632-feaf917acfd1",
+
+			"name": "PowerPoint",
+			"website": null
+		},
+		{
+			"id": "3c16bc62-dac9-480c-bd48-b144c5b56ddf",
+
+			"name": "R",
+			"website": null
+		},
+		{
+			"id": "2ff9417c-3c4d-47f6-ae82-6a09624c45fa",
+
+			"name": "Raspberry Pi",
+			"website": null
+		},
+		{
+			"id": "f0eb8c2f-1a3a-45eb-b0ef-b29771dabbbb",
+
+			"name": "React",
+			"website": null
+		},
+		{
+			"id": "0645ecbf-7f01-4341-bdfe-10ab227ee2ac",
+
+			"name": "Redux",
+			"website": null
+		},
+		{
+			"id": "f7c0829b-6de3-41ae-8418-b469443360e1",
+
+			"name": "Sketchup",
+			"website": null
+		},
+		{
+			"id": "5740cb1b-19c9-4189-9f4e-da382c5631d1",
+
+			"name": "Soldering",
+			"website": null
+		},
+		{
+			"id": "df18fa8a-cf71-44b3-bdaa-5e8e94921c4b",
+
+			"name": "Supply Chain Guru",
+			"website": null
+		},
+		{
+			"id": "1a08deab-f0d7-409c-83f1-c366d056f8b9",
+
+			"name": "Supply Chain Guru",
+			"website": null
+		},
+		{
+			"id": "5a298540-df2e-4d88-b3e6-a7d10ef5350b",
+
+			"name": "Visio",
+			"website": null
+		},
+		{
+			"id": "1b566dc5-722f-489f-8829-e0c3ac2fb539",
+
+			"name": "Visual Basic",
+			"website": null
+		},
+		{
+			"id": "4d887646-74cb-4c58-bef4-cde3c8db1dc2",
+
+			"name": "tableau",
+			"website": null
+		}
+	]
+}

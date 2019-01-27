@@ -23,3 +23,4 @@ AWS Amplify commands:
 Create a .env file at the root of the project. The following variables are used in the project
 
 REACT_APP_TEST_USER=test # this override your AWS SAM id with "test"
+REACT_APP_USE_LOCAL_DATA=true # this will read in local test data and not do any AWS interaction

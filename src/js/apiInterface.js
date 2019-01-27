@@ -112,6 +112,11 @@ async function cleanupDirtyTables(userId, allSkills, allTools) {
 }
 
 export async function getAllData() {
+	// If working with local data
+	if (process.env.REACT_APP_USE_LOCAL_DATA) {
+		return fetch('/assets/sample-data.json').then(res => res.json())
+	}
+
 	const userId = await getUserId()
 	const allSkills = await getSkills(userId)
 	const allTools = await getTools(userId)
