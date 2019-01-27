@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 
+import Sunburst from './Sunburst'
 import ListProjects from './ListProjects'
 import Projects from './Projects'
 import EditProject from './EditProject'
@@ -25,7 +26,8 @@ import Spinner from './Spinner'
 import { getAllData } from '../js/apiInterface'
 
 const drawerLinks = [
-	{ link: '/', text: 'List Projects' },
+	{ link: '/', text: 'Sunburst' },
+	{ link: '/listProjects', text: 'List Projects' },
 	{ link: '/projects', text: 'Projects' },
 	{ link: '/skills', text: 'Edit Skills' },
 	{ link: '/tools', text: 'Edit Tools' },
@@ -112,7 +114,8 @@ class App extends Component<Props, State> {
 					</Drawer>
 
 					<div style={this.bodyStyle}>
-						<Route exact path="/" component={ListProjects} />
+						<Route exact path="/" component={Sunburst} />
+						<Route path="/listProjects" component={ListProjects} />
 						<Route path="/projects" component={Projects} />
 						<Route path="/editProject/:id/:isNew?" component={EditProject} />
 						<Route path="/skills" component={EditSkills} />
