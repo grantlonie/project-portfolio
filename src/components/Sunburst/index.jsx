@@ -9,13 +9,13 @@ class ListProjects extends Component {
 		if (projects.length === 0) return <h3>Loading...</h3>
 
 		const radius = 100
-		const phi = (2 * Math.PI) / projects.length
-		const thick = 100
+		const phi = 360 / projects.length
+		const length = 200
 
 		// return (
 		// 	<div
 		// 		style={{ transform: `rotate(${-phi}rad) translateX(${radius}px)`, transformOrigin: '0 0' }}>
-		// 		<Node text={'hi'} radius={radius} phi={phi} thick={thick} />
+		// 		<Node text={'hi'} radius={radius} phi={phi} length={length} />
 		// 	</div>
 		// )
 		return (
@@ -30,10 +30,10 @@ class ListProjects extends Component {
 							key={project.id}
 							style={{
 								position: 'absolute',
-								transform: `rotate(${phi * projectI}rad) translateX(${radius}px)`,
+								transform: `rotate(${phi * projectI}deg) translateX(${radius}px)`,
 								transformOrigin: '0 0',
 							}}>
-							<Node text={project.name} radius={radius} phi={phi} thick={thick} />
+							<Node text={project.name} radius={radius} phi={phi} length={length} />
 						</div>
 					)
 				})}
