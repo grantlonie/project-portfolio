@@ -2,7 +2,7 @@ import React from 'react'
 import LinesEllipsis from 'react-lines-ellipsis'
 
 const Node = props => {
-	const { text, radius, phi, length, fontSize } = props
+	const { text, radius, phi, length, fontSize, fill } = props
 	const cosPhi = Math.cos((phi * Math.PI) / 180)
 
 	const nodeMargin = 1
@@ -13,10 +13,10 @@ const Node = props => {
 
 	const alpha = (180 - phi / 2) / 2
 	const tanAlpha = Math.tan((alpha * Math.PI) / 180)
-	const x1 = -c1 / 2 / tanAlpha
-	const x2 = length - c2 / 2 / tanAlpha
-	const y1 = c1 / 2 - nodeMargin //* Math.sin(alpha)
-	const y2 = c2 / 2 - nodeMargin //* Math.sin(alpha)
+	const x1 = -c1 / 2 / tanAlpha + nodeMargin
+	const x2 = length - c2 / 2 / tanAlpha - nodeMargin
+	const y1 = c1 / 2 - nodeMargin
+	const y2 = c2 / 2 - nodeMargin
 
 	return (
 		<div>
@@ -28,7 +28,7 @@ const Node = props => {
             A ${radius + length} ${radius + length} 0 0 0 ${x2} ${-y2} 
             Z
           `}
-					fill="orange"
+					fill={fill}
 				/>
 			</svg>
 			<div
