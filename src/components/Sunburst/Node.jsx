@@ -1,10 +1,12 @@
 import React from 'react'
+import LinesEllipsis from 'react-lines-ellipsis'
 
 const Node = props => {
 	const { text, radius, phi, length } = props
 	const cosPhi = Math.cos((phi * Math.PI) / 180)
 
-	const padding = 1
+	const nodeMargin = 1
+	const fontSize = 12
 
 	// Law of cosines to determine thickness at inner and outer radius
 	const c1 = Math.sqrt(2 * Math.pow(radius, 2) * (1 - cosPhi))
@@ -12,8 +14,8 @@ const Node = props => {
 
 	const x1 = 0 //-c1 * Math.cos(alpha)
 	const x2 = length //- c1 * Math.cos(alpha)
-	const y1 = c1 / 2 - padding //* Math.sin(alpha)
-	const y2 = c2 / 2 - padding //* Math.sin(alpha)
+	const y1 = c1 / 2 - nodeMargin //* Math.sin(alpha)
+	const y2 = c2 / 2 - nodeMargin //* Math.sin(alpha)
 
 	return (
 		<div>
@@ -29,20 +31,19 @@ const Node = props => {
 				/>
 			</svg>
 
-			<p
+			<LinesEllipsis
 				style={{
 					position: 'absolute',
-					top: -y1 + 'px',
-					height: y1 * 2 + 'px',
-					textOverflow: 'ellipsis',
+					top: Math.floor(-y1 - fontSize / 4) + 'px',
 					width: length + 'px',
-					whiteSpace: 'nowrap',
-					overflow: 'hidden',
-					lineHeight: '8px',
-					fontSize: '12px',
-				}}>
-				{text}
-			</p>
+					paddingLeft: '5px',
+					fontSize,
+				}}
+				text={text}
+				maxLine="2"
+				trimRight
+				basedOn="letters"
+			/>
 		</div>
 	)
 }
