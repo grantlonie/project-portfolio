@@ -33,7 +33,9 @@ class Sunburst extends Component {
 		const totalProjects = data.reduce((acc, cur) => acc + cur.projectCount, 0)
 		data = data.map(category => {
 			const skills = category.skills.map(skill => {
-				return { ...skill, phi: (skill.projectCount * 360) / totalProjects }
+				const projects = skill.projects.map(project => ({ ...project, phi: 360 / totalProjects }))
+
+				return { ...skill, projects, phi: (skill.projectCount * 360) / totalProjects }
 			})
 
 			return { ...category, skills, phi: (category.projectCount * 360) / totalProjects }
@@ -55,21 +57,43 @@ class Sunburst extends Component {
 					position: 'absolute',
 					transform: `translate(${400}px, ${400}px)`,
 				}}>
-				<Circle data={data} radius={100} length={100} />
+				<Circle data={data} radius={100} length={100} itemRotation={0} />
 
 				{data.map((category, categoryI) => {
 					// Rotation logic to determine starting point for skills
 					if (categoryI > 0) categoryRotation += data[categoryI - 1].phi / 2 + category.phi / 2
-					const itemRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
+
+					let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
 					return (
-						<Circle
-							key={category.id}
-							data={category.skills}
-							radius={200}
-							length={150}
-							itemRotation={itemRotation}
-						/>
+						<React.Fragment key={category.id}>
+							<Circle
+								data={category.skills}
+								radius={200}
+								length={150}
+								itemRotation={skillRotation}
+							/>
+
+							{category.skills.map((skill, skillI) => {
+								// If no projects exist return null
+								if (!skill.projects || skill.projects.length === 0) return null
+
+								// Rotation logic to determine starting point for skills
+								if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
+								const itemRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
+
+								return (
+									<React.Fragment key={skill.id}>
+										<Circle
+											data={skill.projects}
+											radius={350}
+											length={200}
+											itemRotation={itemRotation}
+										/>
+									</React.Fragment>
+								)
+							})}
+						</React.Fragment>
 					)
 				})}
 			</div>
@@ -77,7 +101,7 @@ class Sunburst extends Component {
 	}
 }
 
-const Circle = ({ data, radius, length, itemRotation = 0 }) => {
+const Circle = ({ data, radius, length, itemRotation }) => {
 	return data.map((item, itemI) => {
 		if (itemI > 0) itemRotation += data[itemI - 1].phi / 2 + item.phi / 2
 
