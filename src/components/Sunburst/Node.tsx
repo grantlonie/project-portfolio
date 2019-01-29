@@ -10,10 +10,14 @@ interface Props {
 	length: number
 	fontSize: number
 	fill: string
+	id: string
+	startProjectHovering: (id: string) => void
 }
 
 const Node = (props: Props) => {
-	const { text, radius, phi, length, fontSize, fill } = props
+	// console.time()
+	console.log('render')
+	const { text, radius, phi, length, fontSize, fill, id, startProjectHovering } = props
 	const cosPhi = Math.cos((phi * Math.PI) / 180)
 
 	const nodeMargin = 1
@@ -29,21 +33,30 @@ const Node = (props: Props) => {
 	const y1 = c1 / 2 - nodeMargin
 	const y2 = c2 / 2 - nodeMargin
 
+	// console.timeEnd()
+
 	return (
 		<div>
-			<svg style={{ position: 'absolute', overflow: 'visible' }}>
+			<svg
+				width={length}
+				height={c2}
+				style={{
+					position: 'absolute',
+					overflow: 'visible',
+				}}>
 				<path
 					d={`
-            M${x1} ${-y1}
-            A ${radius} ${radius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
-            A ${radius + length} ${radius + length} 0 0 0 ${x2} ${-y2} 
-            Z
+						M${x1} ${-y1}
+						A ${radius} ${radius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
+						A ${radius + length} ${radius + length} 0 0 0 ${x2} ${-y2} 
+						Z
           `}
 					fill={fill}
 				/>
 			</svg>
 			<div
 				className="text-wrapper"
+				onClick={() => startProjectHovering(id)}
 				style={{
 					top: Math.floor(-c1 / 2) + 'px',
 					height: c1 + 'px',

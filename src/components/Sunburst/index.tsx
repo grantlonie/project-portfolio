@@ -11,6 +11,10 @@ interface Props {
 	allCategories: CategoryItem[]
 }
 
+interface State {
+	hoveringProjectId: string // which project id the user is hovering over
+}
+
 interface SunburstData {
 	id: string
 	name: string
@@ -33,6 +37,8 @@ interface SunburstData {
 }
 
 class Sunburst extends Component<Props> {
+	state: State = { hoveringProjectId: null }
+
 	// this method creates the sunburst data by looping through categories, skills and projects
 	createData() {
 		const { projects, allCategories } = this.props
@@ -84,6 +90,10 @@ class Sunburst extends Component<Props> {
 		return data
 	}
 
+	startProjectHovering(type, id) {
+		if (type === 'project') this.setState({ hoveringProjectId: id })
+	}
+
 	render() {
 		const data: SunburstData[] = this.createData()
 
@@ -97,7 +107,15 @@ class Sunburst extends Component<Props> {
 					position: 'absolute',
 					transform: `translate(${300}px, ${400}px)`,
 				}}>
-				<Circle data={data} radius={50} length={75} itemRotation={0} fontSize={14} />
+				<Circle
+					data={data}
+					radius={50}
+					length={75}
+					itemRotation={0}
+					fontSize={14}
+					hoveringProjectId={this.state.hoveringProjectId}
+					startProjectHovering={this.startProjectHovering.bind(this, 'category')}
+				/>
 
 				{data.map((category, categoryI) => {
 					// Rotation logic for skills
@@ -112,6 +130,8 @@ class Sunburst extends Component<Props> {
 								length={75}
 								itemRotation={skillRotation}
 								fontSize={12}
+								hoveringProjectId={this.state.hoveringProjectId}
+								startProjectHovering={this.startProjectHovering.bind(this, 'skill')}
 							/>
 
 							{category.skills.map((skill, skillI) => {
@@ -127,6 +147,8 @@ class Sunburst extends Component<Props> {
 											length={50}
 											itemRotation={projectRotation}
 											fontSize={10}
+											hoveringProjectId={this.state.hoveringProjectId}
+											startProjectHovering={this.startProjectHovering.bind(this, 'project')}
 										/>
 									</React.Fragment>
 								)
