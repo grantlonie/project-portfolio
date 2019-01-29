@@ -47,7 +47,6 @@ class Sunburst extends Component {
 
 		if (data.length === 0) return <h3>Loading...</h3>
 
-		console.log('data: ', data)
 		let categoryRotation = 0
 
 		return (
@@ -56,27 +55,44 @@ class Sunburst extends Component {
 					position: 'absolute',
 					transform: `translate(${400}px, ${400}px)`,
 				}}>
+				<Circle data={data} radius={100} length={100} />
+
 				{data.map((category, categoryI) => {
-					const radius = 100
-					const length = 200
-					categoryRotation += category.phi
-					console.log('categoryRotation: ', categoryRotation)
+					// Rotation logic to determine starting point for skills
+					if (categoryI > 0) categoryRotation += data[categoryI - 1].phi / 2 + category.phi / 2
+					const itemRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
 					return (
-						<div
+						<Circle
 							key={category.id}
-							style={{
-								position: 'absolute',
-								transform: `rotate(${categoryRotation - category.phi}deg) translateX(${radius}px)`,
-								transformOrigin: '0 0',
-							}}>
-							<Node text={category.name} radius={radius} phi={category.phi} length={length} />
-						</div>
+							data={category.skills}
+							radius={200}
+							length={150}
+							itemRotation={itemRotation}
+						/>
 					)
 				})}
 			</div>
 		)
 	}
+}
+
+const Circle = ({ data, radius, length, itemRotation = 0 }) => {
+	return data.map((item, itemI) => {
+		if (itemI > 0) itemRotation += data[itemI - 1].phi / 2 + item.phi / 2
+
+		return (
+			<div
+				key={item.id}
+				style={{
+					position: 'absolute',
+					transform: `rotate(${itemRotation}deg) translateX(${radius}px)`,
+					transformOrigin: '0 0',
+				}}>
+				<Node text={item.name} radius={radius} phi={item.phi} length={length} fontSize={16} />
+			</div>
+		)
+	})
 }
 
 const mapStateToProps = ({ projects, allCategories }) => ({ projects, allCategories })
