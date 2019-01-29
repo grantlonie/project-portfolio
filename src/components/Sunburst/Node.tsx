@@ -1,7 +1,16 @@
 import React from 'react'
 import LinesEllipsis from 'react-lines-ellipsis'
 
-const Node = props => {
+interface Props {
+	text: string
+	radius: number
+	phi: number
+	length: number
+	fontSize: number
+	fill: string
+}
+
+const Node = (props: Props) => {
 	const { text, radius, phi, length, fontSize, fill } = props
 	const cosPhi = Math.cos((phi * Math.PI) / 180)
 

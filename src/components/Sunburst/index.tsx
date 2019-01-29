@@ -2,10 +2,37 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import Circle from './Circle'
+import { ProjectItem, CategoryItem } from '../../types'
 
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959']
 
-class Sunburst extends Component {
+interface Props {
+	projects: ProjectItem[]
+	allCategories: CategoryItem[]
+}
+
+interface SunburstData {
+	id: string
+	name: string
+	fill: string
+	phi: number
+	projectCount: number
+	skills: {
+		id: string
+		name: string
+		fill: string
+		phi: number
+		projectCount: number
+		projects: {
+			id: string
+			name: string
+			fill: string
+			phi: number
+		}[]
+	}[]
+}
+
+class Sunburst extends Component<Props> {
 	// this method creates the sunburst data by looping through categories, skills and projects
 	createData() {
 		const { projects, allCategories } = this.props
@@ -21,7 +48,7 @@ class Sunburst extends Component {
 							})
 							return skillIndex !== -1
 						})
-						.map(({ id, name }) => ({ id, name, fill: colors[categoryI] }))
+						.map(({ id, name }) => ({ id, name, phi: null, fill: colors[categoryI] }))
 
 					// If no projects are associated with skill
 					if (associatedProjects.length === 0) return null
@@ -30,6 +57,7 @@ class Sunburst extends Component {
 						...skill,
 						projects: associatedProjects,
 						projectCount: associatedProjects.length,
+						phi: null,
 						fill: colors[categoryI],
 					}
 				})
@@ -38,7 +66,7 @@ class Sunburst extends Component {
 			// Number of total projects in skills
 			const projectCount = skills.reduce((acc, cur) => acc + cur.projectCount, 0)
 
-			return { ...category, skills, projectCount, fill: colors[categoryI] }
+			return { ...category, skills, projectCount, phi: null, fill: colors[categoryI] }
 		})
 
 		// Count total projects and calculate rotation angle for each category, skill and project
@@ -57,7 +85,7 @@ class Sunburst extends Component {
 	}
 
 	render() {
-		const data = this.createData()
+		const data: SunburstData[] = this.createData()
 
 		if (data.length === 0) return <h3>Loading...</h3>
 
