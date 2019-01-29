@@ -95,9 +95,9 @@ class Sunburst extends Component<Props> {
 			<div
 				style={{
 					position: 'absolute',
-					transform: `translate(${400}px, ${400}px)`,
+					transform: `translate(${300}px, ${400}px)`,
 				}}>
-				<Circle data={data} radius={100} length={100} itemRotation={0} fontSize={16} />
+				<Circle data={data} radius={50} length={75} itemRotation={0} fontSize={14} />
 
 				{data.map((category, categoryI) => {
 					// Rotation logic for skills
@@ -108,10 +108,10 @@ class Sunburst extends Component<Props> {
 						<React.Fragment key={category.id}>
 							<Circle
 								data={category.skills}
-								radius={200}
-								length={150}
+								radius={125}
+								length={75}
 								itemRotation={skillRotation}
-								fontSize={14}
+								fontSize={12}
 							/>
 
 							{category.skills.map((skill, skillI) => {
@@ -123,10 +123,10 @@ class Sunburst extends Component<Props> {
 									<React.Fragment key={skill.id}>
 										<Circle
 											data={skill.projects}
-											radius={350}
-											length={200}
+											radius={200}
+											length={50}
 											itemRotation={projectRotation}
-											fontSize={12}
+											fontSize={10}
 										/>
 									</React.Fragment>
 								)

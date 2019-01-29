@@ -1,5 +1,7 @@
 import React from 'react'
+
 import LinesEllipsis from 'react-lines-ellipsis'
+import '../../styles/node.css'
 
 interface Props {
 	text: string
@@ -41,15 +43,21 @@ const Node = (props: Props) => {
 				/>
 			</svg>
 			<div
+				className="text-wrapper"
 				style={{
-					position: 'absolute',
-					top: Math.floor(-fontSize) + 'px',
+					top: Math.floor(-c1 / 2) + 'px',
+					height: c1 + 'px',
 					width: length + 'px',
-					paddingLeft: '5px',
 					fontSize,
-					margin: 'auto',
 				}}>
-				<LinesEllipsis text={text} maxLine="2" trimRight basedOn="letters" />
+				<LinesEllipsis
+					className="text"
+					style={{ lineHeight: fontSize + 'px' }}
+					text={text}
+					maxLine={Math.floor(c1 / fontSize)}
+					trimRight
+					basedOn="letters"
+				/>
 			</div>
 		</div>
 	)

@@ -1,0 +1,10 @@
+.text-wrapper {
+	position: absolute;
+	padding-left: 5px;
+}
+
+.text {
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
