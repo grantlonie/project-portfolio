@@ -90,8 +90,12 @@ class Sunburst extends Component<Props> {
 		return data
 	}
 
-	startProjectHovering(type, id) {
+	hoverNode(type, id) {
 		if (type === 'project') this.setState({ hoveringProjectId: id })
+	}
+
+	selectNode(type, id) {
+		if (type === 'project') console.log('cool')
 	}
 
 	render() {
@@ -114,7 +118,8 @@ class Sunburst extends Component<Props> {
 					itemRotation={0}
 					fontSize={14}
 					hoveringProjectId={this.state.hoveringProjectId}
-					startProjectHovering={this.startProjectHovering.bind(this, 'category')}
+					hoverNode={this.hoverNode.bind(this, 'category')}
+					selectNode={this.selectNode.bind(this, 'category')}
 				/>
 
 				{data.map((category, categoryI) => {
@@ -131,7 +136,8 @@ class Sunburst extends Component<Props> {
 								itemRotation={skillRotation}
 								fontSize={12}
 								hoveringProjectId={this.state.hoveringProjectId}
-								startProjectHovering={this.startProjectHovering.bind(this, 'skill')}
+								hoverNode={this.hoverNode.bind(this, 'skill')}
+								selectNode={this.selectNode.bind(this, 'skill')}
 							/>
 
 							{category.skills.map((skill, skillI) => {
@@ -148,7 +154,8 @@ class Sunburst extends Component<Props> {
 											itemRotation={projectRotation}
 											fontSize={10}
 											hoveringProjectId={this.state.hoveringProjectId}
-											startProjectHovering={this.startProjectHovering.bind(this, 'project')}
+											hoverNode={this.hoverNode.bind(this, 'project')}
+											selectNode={this.selectNode.bind(this, 'project')}
 										/>
 									</React.Fragment>
 								)

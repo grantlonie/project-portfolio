@@ -3,13 +3,21 @@ import React from 'react'
 import Node from './Node'
 
 interface Props {
+	/** Contains data needed to make Sunburst Circle */
 	data: any
+	/** Distance to inner radius of Node */
 	radius: number
+	/** Length of the Node */
 	length: number
+	/** Initial Node center rotation angle in degrees */
 	itemRotation: number
 	fontSize: number
+	/** Id of project that is being hovered */
 	hoveringProjectId?: string
-	startProjectHovering?: (id: string) => void
+	/** callback triggered when hovering starts over a node */
+	hoverNode: (id: string) => void
+	/** Fires when node is clicked */
+	selectNode: (id: string) => void
 }
 
 const SunburstCircle = (props: Props) => {
@@ -20,7 +28,8 @@ const SunburstCircle = (props: Props) => {
 		itemRotation,
 		fontSize,
 		hoveringProjectId,
-		startProjectHovering,
+		hoverNode,
+		selectNode,
 	} = props
 
 	let rotation = itemRotation
@@ -29,7 +38,7 @@ const SunburstCircle = (props: Props) => {
 		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + item.phi / 2
 
 		let translate = radius
-		if (hoveringProjectId && hoveringProjectId === item.id) translate += 50
+		if (hoveringProjectId && hoveringProjectId === item.id) translate += 10
 
 		return (
 			<div
@@ -37,9 +46,11 @@ const SunburstCircle = (props: Props) => {
 				style={{
 					position: 'absolute',
 					transform: `rotate(${rotation}deg) translateX(${translate}px)`,
+					transition: 'all 500ms',
 					transformOrigin: '0 0',
 				}}>
 				<Node
+					location={null}
 					text={item.name}
 					radius={radius}
 					phi={item.phi}
@@ -47,7 +58,8 @@ const SunburstCircle = (props: Props) => {
 					fontSize={fontSize}
 					fill={item.fill}
 					id={item.id}
-					startProjectHovering={startProjectHovering}
+					hoverNode={hoverNode}
+					selectNode={selectNode}
 				/>
 			</div>
 		)
