@@ -8,14 +8,15 @@ interface Props {
 	projectDetailsPositioning: { startX: number; startY: number; spacing: number; width: number }
 	/** project selected to show additional details. If null, don't display */
 	selectedProject: ProjectItem
+	/** Height of the project details header with description and date */
+	projectHeaderHeight: number
 }
 
 const ProjectDetails = (props: Props) => {
-	const { projectDetailsPositioning, selectedProject } = props
+	const { projectDetailsPositioning, selectedProject, projectHeaderHeight } = props
 	const { startX, startY, spacing } = projectDetailsPositioning
 
 	if (!selectedProject) return null
-	console.log('selectedProject: ', selectedProject)
 	const { name, date, description } = selectedProject
 
 	return (
@@ -24,7 +25,7 @@ const ProjectDetails = (props: Props) => {
 				style={{
 					position: 'absolute',
 					width: projectDetailsPositioning.width,
-					transform: `translate3d(${startX}px, ${startY - 200}px, 0)`,
+					transform: `translate3d(${startX}px, ${startY - projectHeaderHeight}px, 0)`,
 				}}>
 				<h3>{name}</h3>
 				<p>Project date: {date}</p>
@@ -45,7 +46,12 @@ const ProjectDetails = (props: Props) => {
 								position: 'absolute',
 								transform: `translate3d(0, ${skillI * spacing}px, 0)`,
 							}}>
-							<LinesEllipsis text={skill.description} maxLine={2} trimRight basedOn="letters" />
+							<LinesEllipsis
+								text={skill.description || ''}
+								maxLine={2}
+								trimRight
+								basedOn="letters"
+							/>
 						</div>
 					)
 				})}

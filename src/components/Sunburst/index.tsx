@@ -59,6 +59,8 @@ class Sunburst extends Component<Props, State> {
 	private sunburstPosition: { x: number; y: number }
 	/** Inner radius for each circle of sunburst */
 	private radiuses: { category: number; skill: number; project: number; outer: number }
+	/** Height of the project details header with description and date */
+	private projectHeaderHeight: number = 170
 
 	constructor(props) {
 		super(props)
@@ -69,15 +71,13 @@ class Sunburst extends Component<Props, State> {
 		const minSideBySideWidth = 800
 		const sunburstMargin = 20
 
-		const projectHeaderHeight = 200
-
 		let sunBurstXPosition
 		if (screenWidth > minSideBySideWidth) {
 			this.sunburstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
 			sunBurstXPosition = this.sunburstDiameter / 2 + sunburstMargin
 			this.projectDetailsPositioning = {
 				startX: sunBurstXPosition,
-				startY: projectHeaderHeight - this.sunburstDiameter / 2,
+				startY: this.projectHeaderHeight - this.sunburstDiameter / 2,
 				spacing: 60,
 				width: screenWidth - this.sunburstDiameter - sunburstMargin * 4,
 			}
@@ -266,6 +266,7 @@ class Sunburst extends Component<Props, State> {
 				<ProjectDetails
 					projectDetailsPositioning={this.projectDetailsPositioning}
 					selectedProject={selectedProject}
+					projectHeaderHeight={this.projectHeaderHeight}
 				/>
 			</div>
 		)
