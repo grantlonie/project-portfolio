@@ -1497,11 +1497,6 @@
 						"name": "Engine Testing"
 					},
 					{
-						"id": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
-
-						"name": "Writing"
-					},
-					{
 						"id": "cb381058-cc32-40e4-bc0c-f8d168e2dd51",
 
 						"name": "Visualization"
@@ -1592,11 +1587,7 @@
 			"id": "3179e7c6-915c-4b3b-925d-04646dfa30ce",
 
 			"name": "Writing",
-			"category": {
-				"id": "3df5f65b-407c-41ad-bed3-c2fecf42ba3f",
-
-				"name": "Data Analysis"
-			}
+			"category": null
 		},
 		{
 			"id": "7be9c752-7409-4b6c-b9fb-8b2470257cd4",
