@@ -20,8 +20,8 @@ interface Props {
 	selectNode: (id: string) => void
 	/** Array of projectSkillIds that are selected to show more detail */
 	selectedProjectSkills?: { id: string; name: string }[]
-	/** Where the project details list x and y position are wrt to Sunburst center */
-	projectDetailsListStart?: { x: number; y: number }
+	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
+	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
 }
 
 const SunburstCircle = (props: Props) => {
@@ -35,7 +35,7 @@ const SunburstCircle = (props: Props) => {
 		hoverNode,
 		selectNode,
 		selectedProjectSkills,
-		projectDetailsListStart,
+		projectDetailsPositioning,
 	} = props
 
 	let rotation = itemRotation
@@ -56,9 +56,10 @@ const SunburstCircle = (props: Props) => {
 			: -1
 
 		if (skillItemIndex > -1) {
+			const { startX, startY, spacing } = projectDetailsPositioning
 			text = selectedProjectSkills[skillItemIndex].name
-			translateX = projectDetailsListStart.x
-			translateY = projectDetailsListStart.y + 60 * skillItemIndex
+			translateX = startX
+			translateY = startY + spacing * skillItemIndex
 			corrRotation = 0
 			rectangleShape = { width: 100, height: 50 }
 			displayFontSize = 14
