@@ -45,7 +45,7 @@ interface SunburstData {
 }
 
 class Sunburst extends Component<Props> {
-	private projectDetailsPositioning = { startX: 400, startY: -200, spacing: 60 }
+	private projectDetailsPositioning = { startX: 300, startY: -50, spacing: 60 }
 	state: State = { hoveringProjectId: null, selectedProject: null, selectedProjectSkills: [] }
 
 	// this method creates the sunburst data by looping through categories, skills and projects
