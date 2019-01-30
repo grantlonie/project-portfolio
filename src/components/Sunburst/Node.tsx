@@ -9,11 +9,11 @@ interface Props {
 	/** The displayed text */
 	text: string
 	/** Inner radius of the node */
-	radius: number
+	innerRadius: number
 	/** The arc angle that determines the Node's width */
 	phi: number
-	/** Length of the Node */
-	length: number
+	/** Outer radius of the node */
+	outerRadius: number
 	/** For text */
 	fontSize: number
 	/** Color of Node */
@@ -37,9 +37,9 @@ class Node extends Component<Props> {
 	render() {
 		const {
 			text,
-			radius,
+			innerRadius,
 			phi,
-			length,
+			outerRadius,
 			fontSize,
 			fill,
 			id,
@@ -48,7 +48,12 @@ class Node extends Component<Props> {
 			rectangleShape,
 		} = this.props
 
-		let x1, x2, y1, y2, c1, c2, displayRadius
+		const width = outerRadius - innerRadius
+
+		let x1, x2, y1, y2, c1, c2
+		let adjInnerRadius = innerRadius
+		let adjOuterRadius = outerRadius
+
 		if (rectangleShape) {
 			x1 = 0
 			x2 = rectangleShape.width
@@ -56,33 +61,32 @@ class Node extends Component<Props> {
 			c2 = c1
 			y1 = c1 / 2
 			y2 = c2 / 2
-			displayRadius = 100000
+			adjInnerRadius = 100000
+			adjOuterRadius = 100000
 		} else {
 			const cosPhi = Math.cos((phi * Math.PI) / 180)
-			displayRadius = radius
-
 			const nodeMargin = 1
 
 			// Law of cosines to determine thickness at inner and outer radius
-			c1 = Math.sqrt(2 * Math.pow(displayRadius, 2) * (1 - cosPhi))
-			c2 = Math.sqrt(2 * Math.pow(displayRadius + length, 2) * (1 - cosPhi))
+			c1 = Math.sqrt(2 * Math.pow(adjInnerRadius, 2) * (1 - cosPhi))
+			c2 = Math.sqrt(2 * Math.pow(outerRadius, 2) * (1 - cosPhi))
 
 			const alpha = (180 - phi / 2) / 2
 			const tanAlpha = Math.tan((alpha * Math.PI) / 180)
 			x1 = -c1 / 2 / tanAlpha + nodeMargin
-			x2 = length - c2 / 2 / tanAlpha - nodeMargin
+			x2 = width - c2 / 2 / tanAlpha - nodeMargin
 			y1 = c1 / 2 - nodeMargin
 			y2 = c2 / 2 - nodeMargin
 		}
 
 		return (
 			<div>
-				<svg width={length} height={c2} style={{ position: 'absolute', overflow: 'visible' }}>
+				<svg width={width} height={c2} style={{ position: 'absolute', overflow: 'visible' }}>
 					<path
 						d={`
 						M${x1} ${-y1}
-						A ${displayRadius} ${displayRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
-						A ${displayRadius + length} ${displayRadius + length} 0 0 0 ${x2} ${-y2} 
+						A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
+						A ${adjOuterRadius} ${adjOuterRadius} 0 0 0 ${x2} ${-y2} 
 						Z
           `}
 						fill={fill}
@@ -96,7 +100,7 @@ class Node extends Component<Props> {
 					style={{
 						top: Math.floor(-c1 / 2) + 'px',
 						height: c1 + 'px',
-						width: length + 'px',
+						width: width + 'px',
 						fontSize,
 					}}>
 					<LinesEllipsis

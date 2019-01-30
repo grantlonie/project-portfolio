@@ -5,6 +5,7 @@ import Circle from './Circle'
 import ProjectDetails from './ProjectDetails'
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 
+/** Colors for the categories and associated skills and projects */
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959']
 
 interface Props {
@@ -44,9 +45,36 @@ interface SunburstData {
 	}[]
 }
 
-class Sunburst extends Component<Props> {
-	private projectDetailsPositioning = { startX: 300, startY: -50, spacing: 60 }
-	state: State = { hoveringProjectId: null, selectedProject: null, selectedProjectSkills: [] }
+class Sunburst extends Component<Props, State> {
+	/** Where the project details are positioned relative the sunburst center */
+	private projectDetailsPositioning: { startX: number; startY: number; spacing: number }
+	/** Diameter of sunburst */
+	private sunburstDiameter: number
+	/** Margin around sunburst */
+	private sunburstMargin: number = 20
+	/** Inner radius for each circle of sunburst */
+	private radiuses: { category: number; skill: number; project: number; outer: number }
+
+	constructor(props) {
+		super(props)
+
+		const screenWidth = window.innerWidth
+		this.sunburstDiameter = Math.min(
+			Math.max(screenWidth * 0.3, 500),
+			screenWidth - this.sunburstMargin * 2
+		)
+
+		this.radiuses = {
+			category: (this.sunburstDiameter * 0.2) / 2,
+			skill: (this.sunburstDiameter * 0.5) / 2,
+			project: (this.sunburstDiameter * 0.8) / 2,
+			outer: this.sunburstDiameter / 2,
+		}
+
+		this.projectDetailsPositioning = { startX: 300, startY: -50, spacing: 60 }
+
+		this.state = { hoveringProjectId: null, selectedProject: null, selectedProjectSkills: [] }
+	}
 
 	// this method creates the sunburst data by looping through categories, skills and projects
 	createData() {
@@ -148,17 +176,18 @@ class Sunburst extends Component<Props> {
 		if (data.length === 0) return <h3>Loading...</h3>
 
 		let categoryRotation = 0
+		const sunburstPosition = this.sunburstDiameter / 2 + this.sunburstMargin
 
 		return (
 			<div
 				style={{
 					position: 'absolute',
-					transform: `translate(${300}px, ${400}px)`,
+					transform: `translate(${sunburstPosition}px, ${sunburstPosition}px)`,
 				}}>
 				<Circle
 					data={data}
-					radius={50}
-					length={75}
+					innerRadius={this.radiuses.category}
+					outerRadius={this.radiuses.skill}
 					itemRotation={0}
 					fontSize={14}
 					hoveringProjectId={this.state.hoveringProjectId}
@@ -175,8 +204,8 @@ class Sunburst extends Component<Props> {
 						<React.Fragment key={category.id}>
 							<Circle
 								data={category.skills}
-								radius={125}
-								length={75}
+								innerRadius={this.radiuses.skill}
+								outerRadius={this.radiuses.project}
 								itemRotation={skillRotation}
 								fontSize={12}
 								hoveringProjectId={this.state.hoveringProjectId}
@@ -193,8 +222,8 @@ class Sunburst extends Component<Props> {
 									<React.Fragment key={skill.id}>
 										<Circle
 											data={skill.projects}
-											radius={200}
-											length={50}
+											innerRadius={this.radiuses.project}
+											outerRadius={this.radiuses.outer}
 											itemRotation={projectRotation}
 											fontSize={10}
 											hoveringProjectId={hoveringProjectId}

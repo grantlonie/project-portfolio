@@ -113,8 +113,9 @@ class App extends Component<Props, State> {
 						</div>
 					</Drawer>
 
+					<Route exact path="/" component={Sunburst} />
+
 					<div style={this.bodyStyle}>
-						<Route exact path="/" component={Sunburst} />
 						<Route path="/listProjects" component={ListProjects} />
 						<Route path="/projects" component={Projects} />
 						<Route path="/editProject/:id/:isNew?" component={EditProject} />

@@ -6,9 +6,9 @@ interface Props {
 	/** Contains data needed to make Sunburst Circle */
 	data: any
 	/** Distance to inner radius of Node */
-	radius: number
-	/** Length of the Node */
-	length: number
+	innerRadius: number
+	/** Distance to the outer radius of Node */
+	outerRadius: number
 	/** Initial Node center rotation angle in degrees */
 	itemRotation: number
 	fontSize: number
@@ -27,8 +27,8 @@ interface Props {
 const SunburstCircle = (props: Props) => {
 	const {
 		data,
-		radius,
-		length,
+		innerRadius,
+		outerRadius,
 		itemRotation,
 		fontSize,
 		hoveringProjectId,
@@ -44,7 +44,7 @@ const SunburstCircle = (props: Props) => {
 		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + item.phi / 2
 		if (rotation > 180) rotation -= 360
 
-		let translateX = radius
+		let translateX = innerRadius
 		let translateY = 0
 		let corrRotation = rotation
 		let rectangleShape = null
@@ -77,9 +77,9 @@ const SunburstCircle = (props: Props) => {
 				<Node
 					rectangleShape={rectangleShape}
 					text={text}
-					radius={radius}
+					innerRadius={innerRadius}
 					phi={item.phi}
-					length={length}
+					outerRadius={outerRadius}
 					fontSize={displayFontSize}
 					fill={item.fill}
 					id={item.id}
