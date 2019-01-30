@@ -12,7 +12,10 @@ interface Props {
 }
 
 interface State {
-	hoveringProjectId: string // which project id the user is hovering over
+	/** Project the user is hovering over */
+	hoveringProjectId: string
+	/** Array of projectSkillIds that are selected to show more detail */
+	selectedProjectSkillIds?: string[]
 }
 
 interface SunburstData {
@@ -30,6 +33,7 @@ interface SunburstData {
 		projects: {
 			id: string
 			name: string
+			skillId: string
 			fill: string
 			phi: number
 		}[]
@@ -37,7 +41,7 @@ interface SunburstData {
 }
 
 class Sunburst extends Component<Props> {
-	state: State = { hoveringProjectId: null }
+	state: State = { hoveringProjectId: null, selectedProjectSkillIds: [] }
 
 	// this method creates the sunburst data by looping through categories, skills and projects
 	createData() {
@@ -48,13 +52,14 @@ class Sunburst extends Component<Props> {
 				.map(skill => {
 					// find projects associated with skill
 					const associatedProjects = projects
-						.filter(project => {
-							const skillIndex = project.skills.items.findIndex(projectSkill => {
+						.map(({ id, name, skills }) => {
+							const projectSkill = skills.items.find(projectSkill => {
 								return projectSkill.skillId === skill.id
 							})
-							return skillIndex !== -1
+							if (!projectSkill) return null
+							return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
 						})
-						.map(({ id, name }) => ({ id, name, phi: null, fill: colors[categoryI] }))
+						.filter(project => project !== null)
 
 					// If no projects are associated with skill
 					if (associatedProjects.length === 0) return null
@@ -95,10 +100,30 @@ class Sunburst extends Component<Props> {
 	}
 
 	selectNode(type, id) {
-		if (type === 'project') console.log('cool')
+		if (type !== 'project') return
+
+		const projectSkillIds = this.props.projects
+			.find(project => project.id === id)
+			.skills.items.map(skill => skill.id)
+
+		let selectedProjectSkillIds = []
+		selectedProjectSkillIds.push(projectSkillIds[0])
+
+		this.setState({ selectedProjectSkillIds, hoveringProjectId: null })
+
+		if (projectSkillIds.length < 2) return
+
+		let i = 1
+		let projectSkillInterval = setInterval(() => {
+			selectedProjectSkillIds.push(projectSkillIds[i])
+			this.setState({ selectedProjectSkillIds })
+			i++
+			if (i > projectSkillIds.length) clearInterval(projectSkillInterval)
+		}, 100)
 	}
 
 	render() {
+		const { hoveringProjectId, selectedProjectSkillIds } = this.state
 		const data: SunburstData[] = this.createData()
 
 		if (data.length === 0) return <h3>Loading...</h3>
@@ -106,63 +131,74 @@ class Sunburst extends Component<Props> {
 		let categoryRotation = 0
 
 		return (
-			<div
-				style={{
-					position: 'absolute',
-					transform: `translate(${300}px, ${400}px)`,
-				}}>
-				<Circle
-					data={data}
-					radius={50}
-					length={75}
-					itemRotation={0}
-					fontSize={14}
-					hoveringProjectId={this.state.hoveringProjectId}
-					hoverNode={this.hoverNode.bind(this, 'category')}
-					selectNode={this.selectNode.bind(this, 'category')}
+			<div>
+				<div
+					style={{
+						position: 'absolute',
+						transform: `translate(${300}px, ${400}px)`,
+					}}>
+					<Circle
+						data={data}
+						radius={50}
+						length={75}
+						itemRotation={0}
+						fontSize={14}
+						hoveringProjectId={this.state.hoveringProjectId}
+						hoverNode={this.hoverNode.bind(this, 'category')}
+						selectNode={this.selectNode.bind(this, 'category')}
+					/>
+
+					{data.map((category, categoryI) => {
+						// Rotation logic for skills
+						if (categoryI > 0) categoryRotation += data[categoryI - 1].phi / 2 + category.phi / 2
+						let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
+
+						return (
+							<React.Fragment key={category.id}>
+								<Circle
+									data={category.skills}
+									radius={125}
+									length={75}
+									itemRotation={skillRotation}
+									fontSize={12}
+									hoveringProjectId={this.state.hoveringProjectId}
+									hoverNode={this.hoverNode.bind(this, 'skill')}
+									selectNode={this.selectNode.bind(this, 'skill')}
+								/>
+
+								{category.skills.map((skill, skillI) => {
+									// Rotation logic for projects
+									if (skillI > 0)
+										skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
+									const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
+
+									return (
+										<React.Fragment key={skill.id}>
+											<Circle
+												data={skill.projects}
+												radius={200}
+												length={50}
+												itemRotation={projectRotation}
+												fontSize={10}
+												hoveringProjectId={hoveringProjectId}
+												hoverNode={this.hoverNode.bind(this, 'project')}
+												selectNode={this.selectNode.bind(this, 'project')}
+												selectedProjectSkillIds={selectedProjectSkillIds}
+											/>
+										</React.Fragment>
+									)
+								})}
+							</React.Fragment>
+						)
+					})}
+				</div>
+
+				<div
+					style={{
+						position: 'absolute',
+						transform: `translate(${400}px, ${200}px)`,
+					}}
 				/>
-
-				{data.map((category, categoryI) => {
-					// Rotation logic for skills
-					if (categoryI > 0) categoryRotation += data[categoryI - 1].phi / 2 + category.phi / 2
-					let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
-
-					return (
-						<React.Fragment key={category.id}>
-							<Circle
-								data={category.skills}
-								radius={125}
-								length={75}
-								itemRotation={skillRotation}
-								fontSize={12}
-								hoveringProjectId={this.state.hoveringProjectId}
-								hoverNode={this.hoverNode.bind(this, 'skill')}
-								selectNode={this.selectNode.bind(this, 'skill')}
-							/>
-
-							{category.skills.map((skill, skillI) => {
-								// Rotation logic for projects
-								if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
-								const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
-
-								return (
-									<React.Fragment key={skill.id}>
-										<Circle
-											data={skill.projects}
-											radius={200}
-											length={50}
-											itemRotation={projectRotation}
-											fontSize={10}
-											hoveringProjectId={this.state.hoveringProjectId}
-											hoverNode={this.hoverNode.bind(this, 'project')}
-											selectNode={this.selectNode.bind(this, 'project')}
-										/>
-									</React.Fragment>
-								)
-							})}
-						</React.Fragment>
-					)
-				})}
 			</div>
 		)
 	}
