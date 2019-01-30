@@ -1,6 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
 
-import { ProjectItem } from '../../types'
 import Node from './Node'
 
 interface Props {
@@ -20,7 +19,9 @@ interface Props {
 	/** Fires when node is clicked */
 	selectNode: (id: string) => void
 	/** Array of projectSkillIds that are selected to show more detail */
-	selectedProjectSkillIds?: string[]
+	selectedProjectSkills?: { id: string; name: string }[]
+	/** Where the project details list x and y position are wrt to Sunburst center */
+	projectDetailsListStart?: { x: number; y: number }
 }
 
 const SunburstCircle = (props: Props) => {
@@ -33,7 +34,8 @@ const SunburstCircle = (props: Props) => {
 		hoveringProjectId,
 		hoverNode,
 		selectNode,
-		selectedProjectSkillIds,
+		selectedProjectSkills,
+		projectDetailsListStart,
 	} = props
 
 	let rotation = itemRotation
@@ -42,33 +44,42 @@ const SunburstCircle = (props: Props) => {
 		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + item.phi / 2
 		if (rotation > 180) rotation -= 360
 
-		let translate = radius
+		let translateX = radius
+		let translateY = 0
 		let corrRotation = rotation
+		let rectangleShape = null
+		let text = item.name
+		let displayFontSize = fontSize
 
-		if (
-			selectedProjectSkillIds &&
-			selectedProjectSkillIds.findIndex(i => i === item.skillId) > -1
-		) {
-			translate = 600
+		const skillItemIndex = selectedProjectSkills
+			? selectedProjectSkills.findIndex(i => i.id === item.skillId)
+			: -1
+
+		if (skillItemIndex > -1) {
+			text = selectedProjectSkills[skillItemIndex].name
+			translateX = projectDetailsListStart.x
+			translateY = projectDetailsListStart.y + 60 * skillItemIndex
 			corrRotation = 0
-		} else if (hoveringProjectId && hoveringProjectId === item.id) translate += 10
+			rectangleShape = { width: 100, height: 50 }
+			displayFontSize = 14
+		} else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
 
 		return (
 			<div
 				key={item.id}
 				style={{
 					position: 'absolute',
-					transform: `rotate(${corrRotation}deg) translateX(${translate}px)`,
+					transform: `rotate(${corrRotation}deg) translate3d(${translateX}px, ${translateY}px, 0)`,
 					transition: 'all 500ms',
 					transformOrigin: '0 0',
 				}}>
 				<Node
-					location={null}
-					text={item.name}
+					rectangleShape={rectangleShape}
+					text={text}
 					radius={radius}
 					phi={item.phi}
 					length={length}
-					fontSize={fontSize}
+					fontSize={displayFontSize}
 					fill={item.fill}
 					id={item.id}
 					hoverNode={hoverNode}

@@ -4,8 +4,8 @@ import LinesEllipsis from 'react-lines-ellipsis'
 import '../../styles/node.css'
 
 interface Props {
-	/** If used, the location where the node should go, else it is in sunburst */
-	location?: string
+	/** If used, the change node into rectangle with given values, else take the shape to fit in Sunburst */
+	rectangleShape?: { width: number; height: number }
 	/** The displayed text */
 	text: string
 	/** Inner radius of the node */
@@ -29,45 +29,64 @@ interface Props {
 class Node extends Component<Props> {
 	shouldComponentUpdate(nextProps) {
 		// Only rerender if location changes
-		if (nextProps.location !== this.props.location) return true
+		if (nextProps.rectangleShape !== this.props.rectangleShape) return true
 
 		return false
 	}
 
 	render() {
-		const { text, radius, phi, length, fontSize, fill, id, hoverNode, selectNode } = this.props
-		const cosPhi = Math.cos((phi * Math.PI) / 180)
+		const {
+			text,
+			radius,
+			phi,
+			length,
+			fontSize,
+			fill,
+			id,
+			hoverNode,
+			selectNode,
+			rectangleShape,
+		} = this.props
 
-		const nodeMargin = 1
+		let x1, x2, y1, y2, c1, c2, displayRadius
+		if (rectangleShape) {
+			x1 = 0
+			x2 = rectangleShape.width
+			c1 = rectangleShape.height
+			c2 = c1
+			y1 = c1 / 2
+			y2 = c2 / 2
+			displayRadius = 100000
+		} else {
+			const cosPhi = Math.cos((phi * Math.PI) / 180)
+			displayRadius = radius
 
-		// Law of cosines to determine thickness at inner and outer radius
-		const c1 = Math.sqrt(2 * Math.pow(radius, 2) * (1 - cosPhi))
-		const c2 = Math.sqrt(2 * Math.pow(radius + length, 2) * (1 - cosPhi))
+			const nodeMargin = 1
 
-		const alpha = (180 - phi / 2) / 2
-		const tanAlpha = Math.tan((alpha * Math.PI) / 180)
-		const x1 = -c1 / 2 / tanAlpha + nodeMargin
-		const x2 = length - c2 / 2 / tanAlpha - nodeMargin
-		const y1 = c1 / 2 - nodeMargin
-		const y2 = c2 / 2 - nodeMargin
+			// Law of cosines to determine thickness at inner and outer radius
+			c1 = Math.sqrt(2 * Math.pow(displayRadius, 2) * (1 - cosPhi))
+			c2 = Math.sqrt(2 * Math.pow(displayRadius + length, 2) * (1 - cosPhi))
+
+			const alpha = (180 - phi / 2) / 2
+			const tanAlpha = Math.tan((alpha * Math.PI) / 180)
+			x1 = -c1 / 2 / tanAlpha + nodeMargin
+			x2 = length - c2 / 2 / tanAlpha - nodeMargin
+			y1 = c1 / 2 - nodeMargin
+			y2 = c2 / 2 - nodeMargin
+		}
 
 		return (
 			<div>
-				<svg
-					width={length}
-					height={c2}
-					style={{
-						position: 'absolute',
-						overflow: 'visible',
-					}}>
+				<svg width={length} height={c2} style={{ position: 'absolute', overflow: 'visible' }}>
 					<path
 						d={`
 						M${x1} ${-y1}
-						A ${radius} ${radius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
-						A ${radius + length} ${radius + length} 0 0 0 ${x2} ${-y2} 
+						A ${displayRadius} ${displayRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
+						A ${displayRadius + length} ${displayRadius + length} 0 0 0 ${x2} ${-y2} 
 						Z
           `}
 						fill={fill}
+						style={{ transition: 'all 500ms' }}
 					/>
 				</svg>
 				<div

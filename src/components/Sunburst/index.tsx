@@ -2,20 +2,21 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import Circle from './Circle'
-import { ProjectItem, CategoryItem } from '../../types'
+import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959']
 
 interface Props {
 	projects: ProjectItem[]
 	allCategories: CategoryItem[]
+	allSkills: SkillItem[]
 }
 
 interface State {
 	/** Project the user is hovering over */
 	hoveringProjectId: string
-	/** Array of projectSkillIds that are selected to show more detail */
-	selectedProjectSkillIds?: string[]
+	/** Array of projectSkills that are selected to show more detail */
+	selectedProjectSkills?: { id: string; name: string }[]
 }
 
 interface SunburstData {
@@ -41,7 +42,7 @@ interface SunburstData {
 }
 
 class Sunburst extends Component<Props> {
-	state: State = { hoveringProjectId: null, selectedProjectSkillIds: [] }
+	state: State = { hoveringProjectId: null, selectedProjectSkills: [] }
 
 	// this method creates the sunburst data by looping through categories, skills and projects
 	createData() {
@@ -99,31 +100,39 @@ class Sunburst extends Component<Props> {
 		if (type === 'project') this.setState({ hoveringProjectId: id })
 	}
 
-	selectNode(type, id) {
+	/**
+	 * Method called after user clicks a node
+	 * @param type - Type of node - category, skill or project
+	 * @param id - Node id
+	 */
+	selectNode(type: string, id: string) {
 		if (type !== 'project') return
 
 		const projectSkillIds = this.props.projects
 			.find(project => project.id === id)
-			.skills.items.map(skill => skill.id)
+			.skills.items.map(projectSkill => {
+				const name = this.props.allSkills.find(skill => skill.id === projectSkill.skillId).name
+				return { id: projectSkill.id, name }
+			})
 
-		let selectedProjectSkillIds = []
-		selectedProjectSkillIds.push(projectSkillIds[0])
+		let selectedProjectSkills: State['selectedProjectSkills'] = []
+		selectedProjectSkills.push(projectSkillIds[0])
 
-		this.setState({ selectedProjectSkillIds, hoveringProjectId: null })
+		this.setState({ selectedProjectSkills, hoveringProjectId: null })
 
 		if (projectSkillIds.length < 2) return
 
 		let i = 1
 		let projectSkillInterval = setInterval(() => {
-			selectedProjectSkillIds.push(projectSkillIds[i])
-			this.setState({ selectedProjectSkillIds })
+			selectedProjectSkills.push(projectSkillIds[i])
+			this.setState({ selectedProjectSkills })
 			i++
-			if (i > projectSkillIds.length) clearInterval(projectSkillInterval)
+			if (i === projectSkillIds.length) clearInterval(projectSkillInterval)
 		}, 100)
 	}
 
 	render() {
-		const { hoveringProjectId, selectedProjectSkillIds } = this.state
+		const { hoveringProjectId, selectedProjectSkills } = this.state
 		const data: SunburstData[] = this.createData()
 
 		if (data.length === 0) return <h3>Loading...</h3>
@@ -183,7 +192,8 @@ class Sunburst extends Component<Props> {
 												hoveringProjectId={hoveringProjectId}
 												hoverNode={this.hoverNode.bind(this, 'project')}
 												selectNode={this.selectNode.bind(this, 'project')}
-												selectedProjectSkillIds={selectedProjectSkillIds}
+												selectedProjectSkills={selectedProjectSkills}
+												projectDetailsListStart={{ x: 400, y: -200 }}
 											/>
 										</React.Fragment>
 									)
@@ -204,6 +214,10 @@ class Sunburst extends Component<Props> {
 	}
 }
 
-const mapStateToProps = ({ projects, allCategories }) => ({ projects, allCategories })
+const mapStateToProps = ({ projects, allCategories, allSkills }) => ({
+	projects,
+	allCategories,
+	allSkills,
+})
 
 export default connect(mapStateToProps)(Sunburst)
