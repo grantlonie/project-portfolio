@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-
 import LinesEllipsis from 'react-lines-ellipsis'
+
 import '../../styles/node.css'
 
 interface Props {

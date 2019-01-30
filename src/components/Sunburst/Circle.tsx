@@ -58,10 +58,10 @@ const SunburstCircle = (props: Props) => {
 		if (skillItemIndex > -1) {
 			const { startX, startY, spacing } = projectDetailsPositioning
 			text = selectedProjectSkills[skillItemIndex].name
-			translateX = startX
-			translateY = startY + spacing * skillItemIndex
-			corrRotation = 0
 			rectangleShape = { width: 100, height: 50 }
+			translateX = startX
+			translateY = startY + rectangleShape.height / 2 + spacing * skillItemIndex
+			corrRotation = 0
 			displayFontSize = 14
 		} else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
 

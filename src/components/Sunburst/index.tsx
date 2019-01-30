@@ -47,22 +47,49 @@ interface SunburstData {
 
 class Sunburst extends Component<Props, State> {
 	/** Where the project details are positioned relative the sunburst center */
-	private projectDetailsPositioning: { startX: number; startY: number; spacing: number }
+	private projectDetailsPositioning: {
+		startX: number
+		startY: number
+		spacing: number
+		width: number
+	}
 	/** Diameter of sunburst */
 	private sunburstDiameter: number
-	/** Margin around sunburst */
-	private sunburstMargin: number = 20
+	/** x and y sunburst center position */
+	private sunburstPosition: { x: number; y: number }
 	/** Inner radius for each circle of sunburst */
 	private radiuses: { category: number; skill: number; project: number; outer: number }
 
 	constructor(props) {
 		super(props)
 
+		// Based on screen width, determine side by side or stacked view and size of sunburst
 		const screenWidth = window.innerWidth
-		this.sunburstDiameter = Math.min(
-			Math.max(screenWidth * 0.3, 500),
-			screenWidth - this.sunburstMargin * 2
-		)
+		const normalDiameter = 400
+		const minSideBySideWidth = 800
+		const sunburstMargin = 20
+
+		const projectHeaderHeight = 200
+
+		let sunBurstXPosition
+		if (screenWidth > minSideBySideWidth) {
+			this.sunburstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
+			sunBurstXPosition = this.sunburstDiameter / 2 + sunburstMargin
+			this.projectDetailsPositioning = {
+				startX: sunBurstXPosition,
+				startY: projectHeaderHeight - this.sunburstDiameter / 2,
+				spacing: 60,
+				width: screenWidth - this.sunburstDiameter - sunburstMargin * 4,
+			}
+		} else {
+			this.sunburstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
+			sunBurstXPosition = screenWidth / 2
+		}
+
+		this.sunburstPosition = {
+			x: sunBurstXPosition,
+			y: this.sunburstDiameter / 2 + sunburstMargin,
+		}
 
 		this.radiuses = {
 			category: (this.sunburstDiameter * 0.2) / 2,
@@ -70,8 +97,6 @@ class Sunburst extends Component<Props, State> {
 			project: (this.sunburstDiameter * 0.8) / 2,
 			outer: this.sunburstDiameter / 2,
 		}
-
-		this.projectDetailsPositioning = { startX: 300, startY: -50, spacing: 60 }
 
 		this.state = { hoveringProjectId: null, selectedProject: null, selectedProjectSkills: [] }
 	}
@@ -176,13 +201,12 @@ class Sunburst extends Component<Props, State> {
 		if (data.length === 0) return <h3>Loading...</h3>
 
 		let categoryRotation = 0
-		const sunburstPosition = this.sunburstDiameter / 2 + this.sunburstMargin
 
 		return (
 			<div
 				style={{
 					position: 'absolute',
-					transform: `translate(${sunburstPosition}px, ${sunburstPosition}px)`,
+					transform: `translate(${this.sunburstPosition.x}px, ${this.sunburstPosition.y}px)`,
 				}}>
 				<Circle
 					data={data}

@@ -1,10 +1,11 @@
 import React from 'react'
+import LinesEllipsis from 'react-lines-ellipsis'
 
 import { ProjectItem } from '../../types'
 
 interface Props {
-	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
-	projectDetailsPositioning: { startX: number; startY: number; spacing: number }
+	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills and overall width */
+	projectDetailsPositioning: { startX: number; startY: number; spacing: number; width: number }
 	/** project selected to show additional details. If null, don't display */
 	selectedProject: ProjectItem
 }
@@ -22,7 +23,7 @@ const ProjectDetails = (props: Props) => {
 			<div
 				style={{
 					position: 'absolute',
-					width: '400px',
+					width: projectDetailsPositioning.width,
 					transform: `translate3d(${startX}px, ${startY - 200}px, 0)`,
 				}}>
 				<h3>{name}</h3>
@@ -33,13 +34,18 @@ const ProjectDetails = (props: Props) => {
 			<div
 				style={{
 					position: 'absolute',
-					width: '250px',
+					width: projectDetailsPositioning.width - 120 + 'px',
 					transform: `translate3d(${startX + 125}px, ${startY}px, 0)`,
 				}}>
 				{selectedProject.skills.items.map((skill, skillI) => {
 					return (
-						<div key={skill.id} style={{ transform: `translate3d(0, ${skillI * spacing}, 0)` }}>
-							{skill.description}
+						<div
+							key={skill.id}
+							style={{
+								position: 'absolute',
+								transform: `translate3d(0, ${skillI * spacing}px, 0)`,
+							}}>
+							<LinesEllipsis text={skill.description} maxLine={2} trimRight basedOn="letters" />
 						</div>
 					)
 				})}
