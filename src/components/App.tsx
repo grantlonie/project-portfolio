@@ -23,6 +23,8 @@ import EditSkills from './EditSkills'
 import EditTools from './EditTools'
 import Spinner from './Spinner'
 
+import '../styles/body.css'
+
 import { getAllData } from '../js/apiInterface'
 
 const drawerLinks = [
