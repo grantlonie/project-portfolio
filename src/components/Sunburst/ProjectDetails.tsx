@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import LinesEllipsis from 'react-lines-ellipsis'
 
 import { ProjectItem } from '../../types'
@@ -8,16 +8,29 @@ interface Props {
 	projectDetailsPositioning: { startX: number; startY: number; spacing: number; width: number }
 	/** project selected to show additional details. If null, don't display */
 	selectedProject: ProjectItem
+	/** Array of projectSkills that are selected to show more detail */
+	selectedProjectSkills?: { id: string; name: string }[]
 	/** Height of the project details header with description and date */
 	projectHeaderHeight: number
 }
 
 const ProjectDetails = (props: Props) => {
-	const { projectDetailsPositioning, selectedProject, projectHeaderHeight } = props
+	const {
+		projectDetailsPositioning,
+		selectedProject,
+		projectHeaderHeight,
+		selectedProjectSkills,
+	} = props
 	const { startX, startY, spacing } = projectDetailsPositioning
 
-	if (!selectedProject) return null
-	const { name, date, description } = selectedProject
+	const { id, name, date, description } = selectedProject || {
+		id: null,
+		name: '',
+		date: '',
+		description: '',
+	}
+
+	const headerTransitionY = startY - projectHeaderHeight - (id ? 0 : 200)
 
 	return (
 		<div>
@@ -25,7 +38,9 @@ const ProjectDetails = (props: Props) => {
 				style={{
 					position: 'absolute',
 					width: projectDetailsPositioning.width,
-					transform: `translate3d(${startX}px, ${startY - projectHeaderHeight}px, 0)`,
+					transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
+					opacity: id ? 1 : 0,
+					transition: 'all 500ms',
 				}}>
 				<h3>{name}</h3>
 				<p>Project date: {date}</p>
@@ -38,23 +53,39 @@ const ProjectDetails = (props: Props) => {
 					width: projectDetailsPositioning.width - 120 + 'px',
 					transform: `translate3d(${startX + 125}px, ${startY}px, 0)`,
 				}}>
-				{selectedProject.skills.items.map((skill, skillI) => {
-					return (
-						<div
-							key={skill.id}
-							style={{
-								position: 'absolute',
-								transform: `translate3d(0, ${skillI * spacing}px, 0)`,
-							}}>
-							<LinesEllipsis
-								text={skill.description || ''}
-								maxLine={2}
-								trimRight
-								basedOn="letters"
-							/>
-						</div>
-					)
-				})}
+				{!id ? (
+					<div
+						key="first-description"
+						style={{
+							position: 'absolute',
+							transform: `translate3d(${200}px, 0px, 0)`,
+							opacity: 0,
+							transition: 'all 500ms',
+						}}
+					/>
+				) : (
+					selectedProject.skills.items.map((skill, skillI) => {
+						const visible = selectedProjectSkills.findIndex(i => i.id === skill.id) > -1
+
+						return (
+							<div
+								key={skillI === 0 ? 'first-description' : skill.id}
+								style={{
+									position: 'absolute',
+									transform: `translate3d(${visible ? 0 : 200}px, ${skillI * spacing}px, 0)`,
+									opacity: visible ? 1 : 0,
+									transition: 'all 500ms',
+								}}>
+								<LinesEllipsis
+									text={skill.description || ''}
+									maxLine={2}
+									trimRight
+									basedOn="letters"
+								/>
+							</div>
+						)
+					})
+				)}
 			</div>
 		</div>
 	)

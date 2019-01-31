@@ -108,7 +108,7 @@ class Sunburst extends Component<Props, State> {
 	}
 
 	/**
-	 * Returns the associated lost of projects with a given skillId
+	 * Returns the associated list of projects with a given skillId
 	 * @param skillId - skillId to search for in projects
 	 * @param categoryI - current category index for choosing color
 	 */
@@ -308,6 +308,7 @@ class Sunburst extends Component<Props, State> {
 				<ProjectDetails
 					projectDetailsPositioning={this.projectDetailsPositioning}
 					selectedProject={selectedProject}
+					selectedProjectSkills={selectedProjectSkills}
 					projectHeaderHeight={this.projectHeaderHeight}
 				/>
 			</div>
