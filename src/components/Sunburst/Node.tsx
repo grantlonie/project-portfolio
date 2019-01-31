@@ -28,10 +28,13 @@ interface Props {
 
 class Node extends Component<Props> {
 	shouldComponentUpdate(nextProps) {
-		// Only rerender if location changes
-		if (nextProps.rectangleShape !== this.props.rectangleShape) return true
+		const { rectangleShape } = this.props
 
-		return false
+		// Prevent rerender if shape doesn't change
+		if (nextProps.rectangleShape === rectangleShape) return false
+		if (JSON.stringify(nextProps.rectangleShape) === JSON.stringify(rectangleShape)) return false
+
+		return true
 	}
 
 	render() {

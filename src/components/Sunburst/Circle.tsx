@@ -27,7 +27,7 @@ interface Props {
 	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
 }
 
-const SunburstCircle = (props: Props) => {
+const Circle = (props: Props) => {
 	const {
 		data,
 		innerRadius,
@@ -100,4 +100,4 @@ const SunburstCircle = (props: Props) => {
 	})
 }
 
-export default SunburstCircle
+export default Circle
