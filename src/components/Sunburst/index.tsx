@@ -322,6 +322,7 @@ class Sunburst extends Component<Props, State> {
 											hoveringProjectId={hoveringProjectId}
 											hoverNode={this.hoverNode.bind(this, 'project')}
 											selectNode={this.selectNode.bind(this, 'project')}
+											selectedProject={selectedProject}
 											selectedProjectSkills={selectedProjectSkills}
 											projectDetailsPositioning={this.projectDetailsPositioning}
 										/>

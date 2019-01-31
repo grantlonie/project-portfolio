@@ -1,5 +1,6 @@
 import React from 'react'
 
+import { ProjectItem } from '../../types'
 import Node from './Node'
 
 interface Props {
@@ -18,6 +19,8 @@ interface Props {
 	hoverNode: (id: string) => void
 	/** Fires when node is clicked */
 	selectNode: (id: string) => void
+	/** project selected to show additional details. If null, don't display */
+	selectedProject?: ProjectItem
 	/** Array of projectSkillIds that are selected to show more detail */
 	selectedProjectSkills?: { id: string; name: string }[]
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
@@ -34,6 +37,7 @@ const SunburstCircle = (props: Props) => {
 		hoveringProjectId,
 		hoverNode,
 		selectNode,
+		selectedProject,
 		selectedProjectSkills,
 		projectDetailsPositioning,
 	} = props
@@ -51,9 +55,13 @@ const SunburstCircle = (props: Props) => {
 		let text = item.name
 		let displayFontSize = fontSize
 
-		const skillItemIndex = selectedProjectSkills
-			? selectedProjectSkills.findIndex(i => i.id === item.skillId)
-			: -1
+		// Determine if project skill is selected, hovering or in queue to be selected
+		let skillItemIndex = -1
+		let projectIsSelected = false
+		if (selectedProjectSkills) {
+			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === item.skillId)
+		}
+		if (skillItemIndex === -1 && selectedProject) projectIsSelected = item.id === selectedProject.id
 
 		if (skillItemIndex > -1) {
 			const { startX, startY, spacing } = projectDetailsPositioning
@@ -63,7 +71,8 @@ const SunburstCircle = (props: Props) => {
 			translateY = startY + rectangleShape.height / 2 + spacing * skillItemIndex
 			corrRotation = 0
 			displayFontSize = 14
-		} else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
+		} else if (projectIsSelected) translateX += 30
+		else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
 
 		return (
 			<div
