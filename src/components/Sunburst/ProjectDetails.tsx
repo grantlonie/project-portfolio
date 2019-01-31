@@ -27,25 +27,13 @@ const ProjectDetails = (props: Props) => {
 
 	// if (!selectedProject) return null
 
-	const { id, name, date, description } = selectedProject || {
-		id: null,
-		name: '',
-		date: '',
-		description: '',
-	}
+	const Header = function() {
+		if (!selectedProject) return null
 
-	const headerTransitionY = startY - projectHeaderHeight
+		const { name, date, description } = selectedProject
 
-	console.log(Boolean(selectedProject))
-
-	return (
-		<div>
-			<CSSTransition
-				in={Boolean(selectedProject)}
-				timeout={500}
-				classNames="header"
-				mountOnEnter
-				unmountOnExit>
+		return (
+			<CSSTransition timeout={500} classNames="header">
 				<div
 					style={{
 						position: 'absolute',
@@ -57,6 +45,14 @@ const ProjectDetails = (props: Props) => {
 					<p>{description}</p>
 				</div>
 			</CSSTransition>
+		)
+	}
+
+	const headerTransitionY = startY - projectHeaderHeight
+
+	return (
+		<div>
+			<TransitionGroup>{Header()}</TransitionGroup>
 
 			<div
 				style={{
