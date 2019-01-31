@@ -1,7 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import LinesEllipsis from 'react-lines-ellipsis'
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import { ProjectItem } from '../../types'
+import '../../styles/ProjectDetails.css'
 
 interface Props {
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills and overall width */
@@ -23,6 +25,8 @@ const ProjectDetails = (props: Props) => {
 	} = props
 	const { startX, startY, spacing } = projectDetailsPositioning
 
+	// if (!selectedProject) return null
+
 	const { id, name, date, description } = selectedProject || {
 		id: null,
 		name: '',
@@ -30,22 +34,29 @@ const ProjectDetails = (props: Props) => {
 		description: '',
 	}
 
-	const headerTransitionY = startY - projectHeaderHeight - (id ? 0 : 200)
+	const headerTransitionY = startY - projectHeaderHeight
+
+	console.log(Boolean(selectedProject))
 
 	return (
 		<div>
-			<div
-				style={{
-					position: 'absolute',
-					width: projectDetailsPositioning.width,
-					transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
-					opacity: id ? 1 : 0,
-					transition: 'all 500ms',
-				}}>
-				<h3>{name}</h3>
-				<p>Project date: {date}</p>
-				<p>{description}</p>
-			</div>
+			<CSSTransition
+				in={Boolean(selectedProject)}
+				timeout={500}
+				classNames="header"
+				mountOnEnter
+				unmountOnExit>
+				<div
+					style={{
+						position: 'absolute',
+						width: projectDetailsPositioning.width,
+						transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
+					}}>
+					<h3>{name}</h3>
+					<p>Project date: {date}</p>
+					<p>{description}</p>
+				</div>
+			</CSSTransition>
 
 			<div
 				style={{
@@ -53,39 +64,27 @@ const ProjectDetails = (props: Props) => {
 					width: projectDetailsPositioning.width - 120 + 'px',
 					transform: `translate3d(${startX + 125}px, ${startY}px, 0)`,
 				}}>
-				{!id ? (
-					<div
-						key="first-description"
-						style={{
-							position: 'absolute',
-							transform: `translate3d(${200}px, 0px, 0)`,
-							opacity: 0,
-							transition: 'all 500ms',
-						}}
-					/>
-				) : (
-					selectedProject.skills.items.map((skill, skillI) => {
-						const visible = selectedProjectSkills.findIndex(i => i.id === skill.id) > -1
+				<TransitionGroup>
+					{!selectedProjectSkills
+						? null
+						: selectedProjectSkills.map(({ id }) => {
+								let description = ''
+								if (!selectedProject) return null
+								description = selectedProject.skills.items.find(i => i.id === id).description
 
-						return (
-							<div
-								key={skillI === 0 ? 'first-description' : skill.id}
-								style={{
-									position: 'absolute',
-									transform: `translate3d(${visible ? 0 : 200}px, ${skillI * spacing}px, 0)`,
-									opacity: visible ? 1 : 0,
-									transition: 'all 500ms',
-								}}>
-								<LinesEllipsis
-									text={skill.description || ''}
-									maxLine={2}
-									trimRight
-									basedOn="letters"
-								/>
-							</div>
-						)
-					})
-				)}
+								return (
+									<CSSTransition key={id} timeout={500} classNames="list">
+										<LinesEllipsis
+											style={{ height: spacing }}
+											text={description || ''}
+											maxLine={2}
+											trimRight
+											basedOn="letters"
+										/>
+									</CSSTransition>
+								)
+						  })}
+				</TransitionGroup>
 			</div>
 		</div>
 	)

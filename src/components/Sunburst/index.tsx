@@ -225,6 +225,14 @@ class Sunburst extends Component<Props, State> {
 	selectNode(type: string, id: string) {
 		if (type !== 'project') return
 
+		if (this.state.selectedProject) {
+			this.setState({ selectedProject: null, selectedProjectSkills: null })
+			setTimeout(() => {
+				this.selectNode(type, id)
+			}, 500)
+			return
+		}
+
 		// Find selected project and create list of project skills from selected project
 		const selectedProject = this.props.projects.find(project => project.id === id)
 
