@@ -248,15 +248,14 @@ class Sunburst extends Component<Props, State> {
 		})
 
 		// Add first project skill to selectedProjectSkills
-		let selectedProjectSkills: State['selectedProjectSkills'] = []
-		selectedProjectSkills.push(projectSkills[0])
+		let selectedProjectSkills: State['selectedProjectSkills'] = [projectSkills[0]]
 		this.setState({ selectedProject, selectedProjectSkills, hoveringProjectId: null })
 
 		// Slowly add project skills to selectedProjectSkills
 		if (projectSkills.length < 2) return
 		let i = 1
 		let projectSkillInterval = setInterval(() => {
-			selectedProjectSkills.push(projectSkills[i])
+			selectedProjectSkills = [...selectedProjectSkills, projectSkills[i]]
 			this.setState({ selectedProjectSkills })
 			i++
 			if (i === projectSkills.length) clearInterval(projectSkillInterval)

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import LinesEllipsis from 'react-lines-ellipsis'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
@@ -16,74 +16,86 @@ interface Props {
 	projectHeaderHeight: number
 }
 
-const ProjectDetails = (props: Props) => {
-	const {
-		projectDetailsPositioning,
-		selectedProject,
-		projectHeaderHeight,
-		selectedProjectSkills,
-	} = props
-	const { startX, startY, spacing } = projectDetailsPositioning
+class ProjectDetails extends Component<Props> {
+	shouldComponentUpdate(nextProps) {
+		const { selectedProject, selectedProjectSkills } = this.props
+		// prevent render if no projects are selected
+		if (!selectedProject && !nextProps.selectedProject) return false
+		// prevent render if projectSkills haven't changed
+		if (JSON.stringify(selectedProjectSkills) === JSON.stringify(nextProps.selectedProjectSkills)) {
+			return false
+		}
 
-	// if (!selectedProject) return null
+		return true
+	}
 
-	const Header = function() {
-		if (!selectedProject) return null
+	render() {
+		const {
+			projectDetailsPositioning,
+			selectedProject,
+			projectHeaderHeight,
+			selectedProjectSkills,
+		} = this.props
+		const { startX, startY, spacing } = projectDetailsPositioning
 
-		const { name, date, description } = selectedProject
+		const Header = function() {
+			if (!selectedProject) return null
+
+			const { name, date, description } = selectedProject
+
+			return (
+				<CSSTransition timeout={500} classNames="header">
+					<div
+						style={{
+							position: 'absolute',
+							width: projectDetailsPositioning.width,
+							transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
+						}}>
+						<h3>{name}</h3>
+						<p>Project date: {date}</p>
+						<p>{description}</p>
+					</div>
+				</CSSTransition>
+			)
+		}
+
+		const headerTransitionY = startY - projectHeaderHeight
 
 		return (
-			<CSSTransition timeout={500} classNames="header">
+			<div>
+				<TransitionGroup>{Header()}</TransitionGroup>
+
 				<div
 					style={{
 						position: 'absolute',
-						width: projectDetailsPositioning.width,
-						transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
+						width: projectDetailsPositioning.width - 120 + 'px',
+						transform: `translate3d(${startX + 125}px, ${startY}px, 0)`,
 					}}>
-					<h3>{name}</h3>
-					<p>Project date: {date}</p>
-					<p>{description}</p>
+					<TransitionGroup>
+						{!selectedProjectSkills
+							? null
+							: selectedProjectSkills.map(({ id }) => {
+									let description = ''
+									if (!selectedProject) return null
+									description = selectedProject.skills.items.find(i => i.id === id).description
+
+									return (
+										<CSSTransition key={id} timeout={500} classNames="list">
+											<LinesEllipsis
+												style={{ height: spacing }}
+												text={description || ''}
+												maxLine={2}
+												trimRight
+												basedOn="letters"
+											/>
+										</CSSTransition>
+									)
+							  })}
+					</TransitionGroup>
 				</div>
-			</CSSTransition>
+			</div>
 		)
 	}
-
-	const headerTransitionY = startY - projectHeaderHeight
-
-	return (
-		<div>
-			<TransitionGroup>{Header()}</TransitionGroup>
-
-			<div
-				style={{
-					position: 'absolute',
-					width: projectDetailsPositioning.width - 120 + 'px',
-					transform: `translate3d(${startX + 125}px, ${startY}px, 0)`,
-				}}>
-				<TransitionGroup>
-					{!selectedProjectSkills
-						? null
-						: selectedProjectSkills.map(({ id }) => {
-								let description = ''
-								if (!selectedProject) return null
-								description = selectedProject.skills.items.find(i => i.id === id).description
-
-								return (
-									<CSSTransition key={id} timeout={500} classNames="list">
-										<LinesEllipsis
-											style={{ height: spacing }}
-											text={description || ''}
-											maxLine={2}
-											trimRight
-											basedOn="letters"
-										/>
-									</CSSTransition>
-								)
-						  })}
-				</TransitionGroup>
-			</div>
-		</div>
-	)
 }
 
 export default ProjectDetails
