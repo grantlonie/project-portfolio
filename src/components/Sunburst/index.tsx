@@ -6,7 +6,7 @@ import ProjectDetails from './ProjectDetails'
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 
 /** Colors for the categories and associated skills and projects */
-const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959']
+const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959', '#f682ff']
 
 interface Props {
 	projects: ProjectItem[]
@@ -84,6 +84,12 @@ class Sunburst extends Component<Props, State> {
 		} else {
 			this.sunburstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
 			sunBurstXPosition = screenWidth / 2
+			this.projectDetailsPositioning = {
+				startX: -sunBurstXPosition,
+				startY: this.sunburstDiameter,
+				spacing: 60,
+				width: screenWidth,
+			}
 		}
 
 		this.sunburstPosition = {
@@ -101,25 +107,35 @@ class Sunburst extends Component<Props, State> {
 		this.state = { hoveringProjectId: null, selectedProject: null, selectedProjectSkills: [] }
 	}
 
+	/**
+	 * Returns the associated lost of projects with a given skillId
+	 * @param skillId - skillId to search for in projects
+	 * @param categoryI - current category index for choosing color
+	 */
+	associatedProjects(skillId, categoryI) {
+		const { projects } = this.props
+
+		return projects
+			.map(({ id, name, skills }) => {
+				const projectSkill = skills.items.find(projectSkill => {
+					return projectSkill.skillId === skillId
+				})
+				if (!projectSkill) return null
+				return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
+			})
+			.filter(project => project !== null)
+	}
+
 	// this method creates the sunburst data by looping through categories, skills and projects
 	createData() {
-		const { projects, allCategories } = this.props
+		const { allCategories, allSkills } = this.props
 
-		let data = allCategories.map((category, categoryI) => {
+		if (allCategories.length === 0) return []
+
+		let sunburstData: SunburstData[] = allCategories.map((category, categoryI) => {
 			const skills = category.skills.items
 				.map(skill => {
-					// find projects associated with skill
-					const associatedProjects = projects
-						.map(({ id, name, skills }) => {
-							const projectSkill = skills.items.find(projectSkill => {
-								return projectSkill.skillId === skill.id
-							})
-							if (!projectSkill) return null
-							return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
-						})
-						.filter(project => project !== null)
-
-					// If no projects are associated with skill
+					const associatedProjects = this.associatedProjects(skill.id, categoryI)
 					if (associatedProjects.length === 0) return null
 
 					return {
@@ -138,9 +154,35 @@ class Sunburst extends Component<Props, State> {
 			return { ...category, skills, projectCount, phi: null, fill: colors[categoryI] }
 		})
 
+		// Add general category (no category) skills
+		const generalCategorySkills = allSkills
+			.filter(skill => skill.category === null)
+			.map(skill => {
+				const associatedProjects = this.associatedProjects(skill.id, colors.length - 1)
+				if (associatedProjects.length === 0) return null
+				return {
+					id: skill.id,
+					name: skill.name,
+					projects: associatedProjects,
+					projectCount: associatedProjects.length,
+					phi: null,
+					fill: colors[colors.length - 1],
+				}
+			})
+			.filter(skill => skill !== null)
+
+		sunburstData.push({
+			name: 'General',
+			fill: colors[colors.length - 1],
+			id: null,
+			phi: null,
+			projectCount: generalCategorySkills.reduce((acc, cur) => acc + cur.projectCount, 0),
+			skills: generalCategorySkills,
+		})
+
 		// Count total projects and calculate rotation angle for each category, skill and project
-		const totalProjects = data.reduce((acc, cur) => acc + cur.projectCount, 0)
-		data = data.map(category => {
+		const totalProjects = sunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
+		sunburstData = sunburstData.map(category => {
 			const skills = category.skills.map(skill => {
 				const projects = skill.projects.map(project => ({ ...project, phi: 360 / totalProjects }))
 
@@ -150,7 +192,7 @@ class Sunburst extends Component<Props, State> {
 			return { ...category, skills, phi: (category.projectCount * 360) / totalProjects }
 		})
 
-		return data
+		return sunburstData
 	}
 
 	/**
