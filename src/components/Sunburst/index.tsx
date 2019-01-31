@@ -223,14 +223,20 @@ class Sunburst extends Component<Props, State> {
 	 * @param id - Node id
 	 */
 	selectNode(type: string, id: string) {
+		// only concerned with project skills at this time
 		if (type !== 'project') return
 
 		if (this.state.selectedProject) {
-			this.setState({ selectedProject: null, selectedProjectSkills: null })
-			setTimeout(() => {
-				this.selectNode(type, id)
-			}, 500)
-			return
+			// prevent selecting already selected project skill
+			if (this.state.selectedProject.id === id) return
+			// Close current project first and rerun with new project
+			else {
+				this.setState({ selectedProject: null, selectedProjectSkills: null })
+				setTimeout(() => {
+					this.selectNode(type, id)
+				}, 500)
+				return
+			}
 		}
 
 		// Find selected project and create list of project skills from selected project
