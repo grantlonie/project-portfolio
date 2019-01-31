@@ -14,15 +14,6 @@ interface Props {
 	allSkills: SkillItem[]
 }
 
-interface State {
-	/** Project the user is hovering over */
-	hoveringProjectId: string
-	/** Selected project to show more details */
-	selectedProject: ProjectItem
-	/** Array of projectSkills that are selected to show more detail */
-	selectedProjectSkills?: { id: string; name: string }[]
-}
-
 interface SunburstData {
 	id: string
 	name: string
@@ -43,6 +34,17 @@ interface SunburstData {
 			phi: number
 		}[]
 	}[]
+}
+
+interface State {
+	/** hold the sunburst data */
+	sunburstData: SunburstData[]
+	/** Project the user is hovering over */
+	hoveringProjectId: string
+	/** Selected project to show more details */
+	selectedProject: ProjectItem
+	/** Array of projectSkills that are selected to show more detail */
+	selectedProjectSkills?: { id: string; name: string }[]
 }
 
 class Sunburst extends Component<Props, State> {
@@ -104,7 +106,18 @@ class Sunburst extends Component<Props, State> {
 			outer: this.sunburstDiameter / 2,
 		}
 
-		this.state = { hoveringProjectId: null, selectedProject: null, selectedProjectSkills: [] }
+		this.state = {
+			sunburstData: this.createData(),
+			hoveringProjectId: null,
+			selectedProject: null,
+			selectedProjectSkills: [],
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.allCategories.length !== this.props.allCategories.length) {
+			this.setState({ sunburstData: this.createData() })
+		}
 	}
 
 	/**
@@ -237,10 +250,9 @@ class Sunburst extends Component<Props, State> {
 	}
 
 	render() {
-		const { hoveringProjectId, selectedProject, selectedProjectSkills } = this.state
-		const data: SunburstData[] = this.createData()
+		const { sunburstData, hoveringProjectId, selectedProject, selectedProjectSkills } = this.state
 
-		if (data.length === 0) return <h3>Loading...</h3>
+		if (sunburstData.length === 0) return <h3>Loading...</h3>
 
 		let categoryRotation = 0
 
@@ -251,7 +263,7 @@ class Sunburst extends Component<Props, State> {
 					transform: `translate(${this.sunburstPosition.x}px, ${this.sunburstPosition.y}px)`,
 				}}>
 				<Circle
-					data={data}
+					data={sunburstData}
 					innerRadius={this.radiuses.category}
 					outerRadius={this.radiuses.skill}
 					itemRotation={0}
@@ -261,9 +273,10 @@ class Sunburst extends Component<Props, State> {
 					selectNode={this.selectNode.bind(this, 'category')}
 				/>
 
-				{data.map((category, categoryI) => {
+				{sunburstData.map((category, categoryI) => {
 					// Rotation logic for skills
-					if (categoryI > 0) categoryRotation += data[categoryI - 1].phi / 2 + category.phi / 2
+					if (categoryI > 0)
+						categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
 					let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
 					return (
