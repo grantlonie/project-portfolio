@@ -210,19 +210,19 @@ class Sunburst extends Component<Props, State> {
 
 	/**
 	 * Method called after user hovers over a node
-	 * @param type - Type of node - category, skill or project
 	 * @param id - Node id
+	 * @param type - Type of node - category, skill or project
 	 */
-	hoverNode(type, id) {
+	hoverNode = (id: string, type: string) => {
 		if (type === 'project') this.setState({ hoveringProjectId: id })
 	}
 
 	/**
 	 * Method called after user clicks a node
-	 * @param type - Type of node - category, skill or project
 	 * @param id - Node id
+	 * @param type - Type of node - category, skill or project
 	 */
-	selectNode(type: string, id: string) {
+	selectNode = (id: string, type: string) => {
 		// only concerned with project skills at this time
 		if (type !== 'project') return
 
@@ -233,7 +233,7 @@ class Sunburst extends Component<Props, State> {
 			else {
 				this.setState({ selectedProject: null, selectedProjectSkills: null })
 				setTimeout(() => {
-					this.selectNode(type, id)
+					this.selectNode(id, type)
 				}, 500)
 				return
 			}
@@ -276,14 +276,15 @@ class Sunburst extends Component<Props, State> {
 					transform: `translate(${this.sunburstPosition.x}px, ${this.sunburstPosition.y}px)`,
 				}}>
 				<Circle
+					type="category"
 					data={sunburstData}
 					innerRadius={this.radiuses.category}
 					outerRadius={this.radiuses.skill}
 					itemRotation={0}
 					fontSize={14}
 					hoveringProjectId={this.state.hoveringProjectId}
-					hoverNode={this.hoverNode.bind(this, 'category')}
-					selectNode={this.selectNode.bind(this, 'category')}
+					hoverNode={this.hoverNode}
+					selectNode={this.selectNode}
 				/>
 
 				{sunburstData.map((category, categoryI) => {
@@ -295,14 +296,15 @@ class Sunburst extends Component<Props, State> {
 					return (
 						<React.Fragment key={category.id}>
 							<Circle
+								type="skill"
 								data={category.skills}
 								innerRadius={this.radiuses.skill}
 								outerRadius={this.radiuses.project}
 								itemRotation={skillRotation}
 								fontSize={12}
 								hoveringProjectId={this.state.hoveringProjectId}
-								hoverNode={this.hoverNode.bind(this, 'skill')}
-								selectNode={this.selectNode.bind(this, 'skill')}
+								hoverNode={this.hoverNode}
+								selectNode={this.selectNode}
 							/>
 
 							{category.skills.map((skill, skillI) => {
@@ -313,14 +315,15 @@ class Sunburst extends Component<Props, State> {
 								return (
 									<React.Fragment key={skill.id}>
 										<Circle
+											type="project"
 											data={skill.projects}
 											innerRadius={this.radiuses.project}
 											outerRadius={this.radiuses.outer}
 											itemRotation={projectRotation}
 											fontSize={10}
 											hoveringProjectId={hoveringProjectId}
-											hoverNode={this.hoverNode.bind(this, 'project')}
-											selectNode={this.selectNode.bind(this, 'project')}
+											hoverNode={this.hoverNode}
+											selectNode={this.selectNode}
 											selectedProject={selectedProject}
 											selectedProjectSkills={selectedProjectSkills}
 											projectDetailsPositioning={this.projectDetailsPositioning}

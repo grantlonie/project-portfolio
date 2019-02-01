@@ -4,6 +4,8 @@ import { ProjectItem } from '../../types'
 import Node from './Node'
 
 interface Props {
+	/** Type of circle */
+	type: 'category' | 'skill' | 'project'
 	/** Contains data needed to make Sunburst Circle */
 	data: any
 	/** Distance to inner radius of Node */
@@ -16,9 +18,9 @@ interface Props {
 	/** Id of project that is being hovered */
 	hoveringProjectId?: string
 	/** List of all projects needed for projects circle */
-	hoverNode: (id: string) => void
+	hoverNode: (id: string, type: this['type']) => void
 	/** Fires when node is clicked */
-	selectNode: (id: string) => void
+	selectNode: (id: string, type: this['type']) => void
 	/** project selected to show additional details. If null, don't display */
 	selectedProject?: ProjectItem
 	/** Array of projectSkillIds that are selected to show more detail */
@@ -29,6 +31,7 @@ interface Props {
 
 const Circle = (props: Props) => {
 	const {
+		type,
 		data,
 		innerRadius,
 		outerRadius,
@@ -84,6 +87,7 @@ const Circle = (props: Props) => {
 					transformOrigin: '0 0',
 				}}>
 				<Node
+					type={type}
 					rectangleShape={rectangleShape}
 					text={text}
 					innerRadius={innerRadius}

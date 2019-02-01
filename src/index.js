@@ -10,6 +10,13 @@ import App from './components/App'
 import * as serviceWorker from './serviceWorker'
 import aws_exports from './aws-exports'
 
+const { NODE_ENV, REACT_APP_USE_WHY_DID_YOU_UPDATE } = process.env
+
+if (NODE_ENV !== 'production' && REACT_APP_USE_WHY_DID_YOU_UPDATE) {
+	const { whyDidYouUpdate } = require('why-did-you-update')
+	whyDidYouUpdate(React)
+}
+
 // in this way you are only importing Auth and configuring it.
 Amplify.configure(aws_exports)
 

@@ -4,6 +4,8 @@ import LinesEllipsis from 'react-lines-ellipsis'
 import '../../styles/node.css'
 
 interface Props {
+	/** Type of Node */
+	type: 'category' | 'skill' | 'project'
 	/** If used, the change node into rectangle with given values, else take the shape to fit in Sunburst */
 	rectangleShape?: { width: number; height: number }
 	/** The displayed text */
@@ -21,9 +23,9 @@ interface Props {
 	/** id of the Node - category, skill or project */
 	id: string
 	/** Fires when hovering starts over project */
-	hoverNode: (id: string) => void
+	hoverNode: (id: string, type: this['type']) => void
 	/** Fires when node is clicked */
-	selectNode: (id: string) => void
+	selectNode: (id: string, type: this['type']) => void
 }
 
 class Node extends Component<Props> {
@@ -39,6 +41,7 @@ class Node extends Component<Props> {
 
 	render() {
 		const {
+			type,
 			text,
 			innerRadius,
 			phi,
@@ -98,8 +101,8 @@ class Node extends Component<Props> {
 				</svg>
 				<div
 					className="text-wrapper"
-					onMouseOver={() => hoverNode(id)}
-					onMouseUp={() => selectNode(id)}
+					onMouseOver={() => hoverNode(id, type)}
+					onMouseUp={() => selectNode(id, type)}
 					style={{
 						top: Math.floor(-c1 / 2) + 'px',
 						height: c1 + 'px',
