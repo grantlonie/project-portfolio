@@ -90,11 +90,11 @@ class Node extends Component<Props> {
 				<svg width={width} height={c2} style={{ position: 'absolute', overflow: 'visible' }}>
 					<path
 						d={`
-						M${x1} ${-y1}
-						A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
-						A ${adjOuterRadius} ${adjOuterRadius} 0 0 0 ${x2} ${-y2} 
-						Z
-          `}
+							M${x1} ${-y1}
+							A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
+							A ${adjOuterRadius} ${adjOuterRadius} 0 0 0 ${x2} ${-y2} 
+							Z
+						`}
 						fill={fill}
 						style={{ transition: 'all 500ms' }}
 					/>

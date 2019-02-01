@@ -43,6 +43,10 @@ interface State {
 	hoveringProjectId: string
 	/** Selected project to show more details */
 	selectedProject: ProjectItem
+	/** track when Nodes are moving to prevent additional hover-renders */
+	nodesAreMoving: boolean
+	/** track when Nodes are in a hover transition to prevent additional hover-renders */
+	inHoverTransition: boolean
 	/** Array of projectSkills that are selected to show more detail */
 	selectedProjectSkills?: { id: string; name: string }[]
 }
@@ -63,6 +67,8 @@ class Sunburst extends Component<Props, State> {
 	private radiuses: { category: number; skill: number; project: number; outer: number }
 	/** Height of the project details header with description and date */
 	private projectHeaderHeight: number = 170
+	/** Track which Node user is currently hovering over */
+	private currentHoverNode: { id: string; type: string } = null
 
 	constructor(props) {
 		super(props)
@@ -111,6 +117,8 @@ class Sunburst extends Component<Props, State> {
 			hoveringProjectId: null,
 			selectedProject: null,
 			selectedProjectSkills: [],
+			nodesAreMoving: false,
+			inHoverTransition: false,
 		}
 	}
 
@@ -214,7 +222,14 @@ class Sunburst extends Component<Props, State> {
 	 * @param type - Type of node - category, skill or project
 	 */
 	hoverNode = (id: string, type: string) => {
-		if (type === 'project') this.setState({ hoveringProjectId: id })
+		if (type !== 'project') return
+		this.currentHoverNode = { id, type }
+		if (this.state.nodesAreMoving || this.state.inHoverTransition) return
+
+		this.setState({ hoveringProjectId: this.currentHoverNode.id, inHoverTransition: true })
+		setTimeout(() => {
+			this.setState({ hoveringProjectId: this.currentHoverNode.id, inHoverTransition: false })
+		}, 300)
 	}
 
 	/**
@@ -223,7 +238,7 @@ class Sunburst extends Component<Props, State> {
 	 * @param type - Type of node - category, skill or project
 	 */
 	selectNode = (id: string, type: string) => {
-		// only concerned with project skills at this time
+		if (this.state.nodesAreMoving) return
 		if (type !== 'project') return
 
 		if (this.state.selectedProject) {
@@ -249,7 +264,12 @@ class Sunburst extends Component<Props, State> {
 
 		// Add first project skill to selectedProjectSkills
 		let selectedProjectSkills: State['selectedProjectSkills'] = [projectSkills[0]]
-		this.setState({ selectedProject, selectedProjectSkills, hoveringProjectId: null })
+		this.setState({
+			selectedProject,
+			selectedProjectSkills,
+			hoveringProjectId: null,
+			nodesAreMoving: projectSkills.length < 2 ? false : true,
+		})
 
 		// Slowly add project skills to selectedProjectSkills
 		if (projectSkills.length < 2) return
@@ -258,7 +278,10 @@ class Sunburst extends Component<Props, State> {
 			selectedProjectSkills = [...selectedProjectSkills, projectSkills[i]]
 			this.setState({ selectedProjectSkills })
 			i++
-			if (i === projectSkills.length) clearInterval(projectSkillInterval)
+			if (i === projectSkills.length) {
+				this.setState({ nodesAreMoving: false })
+				clearInterval(projectSkillInterval)
+			}
 		}, 100)
 	}
 
