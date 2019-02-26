@@ -85,7 +85,8 @@ const Circle = (props: Props) => {
 					transform: `rotate(${corrRotation}deg) translate3d(${translateX}px, ${translateY}px, 0)`,
 					transition: 'all 500ms',
 					transformOrigin: '0 0',
-				}}>
+				}}
+			>
 				<Node
 					type={type}
 					rectangleShape={rectangleShape}

@@ -108,7 +108,8 @@ class Node extends Component<Props> {
 						height: c1 + 'px',
 						width: width + 'px',
 						fontSize,
-					}}>
+					}}
+				>
 					<LinesEllipsis
 						className="text"
 						style={{ lineHeight: fontSize + 'px' }}

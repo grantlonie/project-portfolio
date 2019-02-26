@@ -228,8 +228,19 @@ class Sunburst extends Component<Props, State> {
 
 		this.setState({ hoveringProjectId: this.currentHoverNode.id, inHoverTransition: true })
 		setTimeout(() => {
-			this.setState({ hoveringProjectId: this.currentHoverNode.id, inHoverTransition: false })
+			this.setState({
+				hoveringProjectId: this.currentHoverNode ? this.currentHoverNode.id : null,
+				inHoverTransition: false,
+			})
 		}, 300)
+	}
+
+	/**
+	 * Method called after leaving the Sunburst
+	 */
+	leaveSunburst = () => {
+		this.currentHoverNode = null
+		this.setState({ hoveringProjectId: null })
 	}
 
 	/**
@@ -294,10 +305,12 @@ class Sunburst extends Component<Props, State> {
 
 		return (
 			<div
+				onMouseLeave={this.leaveSunburst}
 				style={{
 					position: 'absolute',
 					transform: `translate(${this.sunburstPosition.x}px, ${this.sunburstPosition.y}px)`,
-				}}>
+				}}
+			>
 				<Circle
 					type="category"
 					data={sunburstData}
@@ -312,8 +325,7 @@ class Sunburst extends Component<Props, State> {
 
 				{sunburstData.map((category, categoryI) => {
 					// Rotation logic for skills
-					if (categoryI > 0)
-						categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
+					if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
 					let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
 					return (
