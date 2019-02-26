@@ -23,6 +23,7 @@
     "react-scripts": "^2.1.5",
     "react-spinners": "^0.4.8",
     "react-transition-group": "^2.5.3",
+    "react-use": "^5.5.4",
     "redux": "^4.0.1",
     "typescript": "^3.3.3333",
     "why-did-you-update": "^1.0.6"

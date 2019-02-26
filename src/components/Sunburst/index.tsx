@@ -1,5 +1,6 @@
-import React, { Component } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { connect } from 'react-redux'
+import { useWindowSize } from 'react-use'
 
 import Circle from './Circle'
 import ProjectDetails from './ProjectDetails'
@@ -36,127 +37,92 @@ interface SunburstData {
 	}[]
 }
 
-interface State {
-	/** hold the sunburst data */
-	sunburstData: SunburstData[]
-	/** Project the user is hovering over */
-	hoveringProjectId: string
-	/** Selected project to show more details */
-	selectedProject: ProjectItem
-	/** track when Nodes are moving to prevent additional hover-renders */
-	nodesAreMoving: boolean
-	/** track when Nodes are in a hover transition to prevent additional hover-renders */
-	inHoverTransition: boolean
-	/** Array of projectSkills that are selected to show more detail */
-	selectedProjectSkills?: { id: string; name: string }[]
+interface ProjectDetailsPositioning {
+	startX: number
+	startY: number
+	spacing: number
+	width: number
 }
 
-class Sunburst extends Component<Props, State> {
+interface Radiuses {
+	category: number
+	skill: number
+	project: number
+	outer: number
+}
+
+interface ProjectSkill {
+	id: string
+	name: string
+}
+
+function useSunburstDimensioning(screenWidth) {
 	/** Where the project details are positioned relative the sunburst center */
-	private projectDetailsPositioning: {
-		startX: number
-		startY: number
-		spacing: number
-		width: number
-	}
-	/** Diameter of sunburst */
-	private sunburstDiameter: number
+	const initialProjectDetailsPositioning: ProjectDetailsPositioning = null
+	const [projectDetailsPositioning, setProjectDetailsPositioning] = useState(initialProjectDetailsPositioning)
+
 	/** x and y sunburst center position */
-	private sunburstPosition: { x: number; y: number }
+	const initialSunburstPosition: { x: number; y: number } = null
+	const [sunburstPosition, setSunburstPosition] = useState(initialSunburstPosition)
+
 	/** Inner radius for each circle of sunburst */
-	private radiuses: { category: number; skill: number; project: number; outer: number }
-	/** Height of the project details header with description and date */
-	private projectHeaderHeight: number = 170
-	/** Track which Node user is currently hovering over */
-	private currentHoverNode: { id: string; type: string } = null
+	const initialRadiuses: Radiuses = null
+	const [radiuses, setRadiuses]: [Radiuses, any] = useState(initialRadiuses)
 
-	constructor(props) {
-		super(props)
-
-		// Based on screen width, determine side by side or stacked view and size of sunburst
-		const screenWidth = window.innerWidth
+	useEffect(() => {
 		const normalDiameter = 400
 		const minSideBySideWidth = 800
 		const sunburstMargin = 20
-
 		let sunBurstXPosition
+		let sunBurstDiameter
+
 		if (screenWidth > minSideBySideWidth) {
-			this.sunburstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
-			sunBurstXPosition = this.sunburstDiameter / 2 + sunburstMargin
-			this.projectDetailsPositioning = {
+			sunBurstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
+			sunBurstXPosition = sunBurstDiameter / 2 + sunburstMargin
+			setProjectDetailsPositioning({
 				startX: sunBurstXPosition,
-				startY: this.projectHeaderHeight - this.sunburstDiameter / 2,
+				startY: projectHeaderHeight - sunBurstDiameter / 2,
 				spacing: 60,
-				width: screenWidth - this.sunburstDiameter - sunburstMargin * 4,
-			}
+				width: screenWidth - sunBurstDiameter - sunburstMargin * 4,
+			})
 		} else {
-			this.sunburstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
+			sunBurstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
 			sunBurstXPosition = screenWidth / 2
-			this.projectDetailsPositioning = {
+			setProjectDetailsPositioning({
 				startX: -sunBurstXPosition,
-				startY: this.sunburstDiameter,
+				startY: sunBurstDiameter,
 				spacing: 60,
 				width: screenWidth,
-			}
-		}
-
-		this.sunburstPosition = {
-			x: sunBurstXPosition,
-			y: this.sunburstDiameter / 2 + sunburstMargin,
-		}
-
-		this.radiuses = {
-			category: (this.sunburstDiameter * 0.2) / 2,
-			skill: (this.sunburstDiameter * 0.5) / 2,
-			project: (this.sunburstDiameter * 0.8) / 2,
-			outer: this.sunburstDiameter / 2,
-		}
-
-		this.state = {
-			sunburstData: this.createData(),
-			hoveringProjectId: null,
-			selectedProject: null,
-			selectedProjectSkills: [],
-			nodesAreMoving: false,
-			inHoverTransition: false,
-		}
-	}
-
-	componentDidUpdate(prevProps) {
-		if (prevProps.allCategories.length !== this.props.allCategories.length) {
-			this.setState({ sunburstData: this.createData() })
-		}
-	}
-
-	/**
-	 * Returns the associated list of projects with a given skillId
-	 * @param skillId - skillId to search for in projects
-	 * @param categoryI - current category index for choosing color
-	 */
-	associatedProjects(skillId, categoryI) {
-		const { projects } = this.props
-
-		return projects
-			.map(({ id, name, skills }) => {
-				const projectSkill = skills.items.find(projectSkill => {
-					return projectSkill.skillId === skillId
-				})
-				if (!projectSkill) return null
-				return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
 			})
-			.filter(project => project !== null)
-	}
+		}
 
-	// this method creates the sunburst data by looping through categories, skills and projects
-	createData() {
-		const { allCategories, allSkills } = this.props
+		setSunburstPosition({
+			x: sunBurstXPosition,
+			y: sunBurstDiameter / 2 + sunburstMargin,
+		})
 
-		if (allCategories.length === 0) return []
+		setRadiuses({
+			category: (sunBurstDiameter * 0.2) / 2,
+			skill: (sunBurstDiameter * 0.5) / 2,
+			project: (sunBurstDiameter * 0.8) / 2,
+			outer: sunBurstDiameter / 2,
+		})
+	}, [screenWidth])
 
-		let sunburstData: SunburstData[] = allCategories.map((category, categoryI) => {
+	return { projectDetailsPositioning, sunburstPosition, radiuses }
+}
+
+// this method creates the sunburst data by looping through categories, skills and projects
+function useSunburstData(allCategories, allSkills, projects) {
+	const [sunburstData, setSunburstData]: [SunburstData[], any] = useState([])
+
+	useEffect(() => {
+		if (allCategories.length === 0) return
+
+		let newSunburstData: SunburstData[] = allCategories.map((category, categoryI) => {
 			const skills = category.skills.items
 				.map(skill => {
-					const associatedProjects = this.associatedProjects(skill.id, categoryI)
+					const associatedProjects = getAssociatedProjects(skill.id, categoryI, projects)
 					if (associatedProjects.length === 0) return null
 
 					return {
@@ -179,7 +145,7 @@ class Sunburst extends Component<Props, State> {
 		const generalCategorySkills = allSkills
 			.filter(skill => skill.category === null)
 			.map(skill => {
-				const associatedProjects = this.associatedProjects(skill.id, colors.length - 1)
+				const associatedProjects = getAssociatedProjects(skill.id, colors.length - 1, projects)
 				if (associatedProjects.length === 0) return null
 				return {
 					id: skill.id,
@@ -192,7 +158,7 @@ class Sunburst extends Component<Props, State> {
 			})
 			.filter(skill => skill !== null)
 
-		sunburstData.push({
+		newSunburstData.push({
 			name: 'General',
 			fill: colors[colors.length - 1],
 			id: null,
@@ -202,8 +168,8 @@ class Sunburst extends Component<Props, State> {
 		})
 
 		// Count total projects and calculate rotation angle for each category, skill and project
-		const totalProjects = sunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
-		sunburstData = sunburstData.map(category => {
+		const totalProjects = newSunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
+		newSunburstData = newSunburstData.map(category => {
 			const skills = category.skills.map(skill => {
 				const projects = skill.projects.map(project => ({ ...project, phi: 360 / totalProjects }))
 
@@ -213,34 +179,83 @@ class Sunburst extends Component<Props, State> {
 			return { ...category, skills, phi: (category.projectCount * 360) / totalProjects }
 		})
 
-		return sunburstData
-	}
+		setSunburstData(newSunburstData)
+	}, [allCategories.length])
+
+	return sunburstData
+}
+
+/**
+ * Returns the associated list of projects with a given skillId
+ * @param skillId - skillId to search for in projects
+ * @param categoryI - current category index for choosing color
+ */
+function getAssociatedProjects(skillId, categoryI, projects) {
+	return projects
+		.map(({ id, name, skills }) => {
+			const projectSkill = skills.items.find(projectSkill => {
+				return projectSkill.skillId === skillId
+			})
+			if (!projectSkill) return null
+			return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
+		})
+		.filter(project => project !== null)
+}
+
+/** Height of the project details header with description and date */
+const projectHeaderHeight = 170
+
+const Sunburst = (props: Props) => {
+	/** Track which Node user is currently hovering over */
+	const currentHoverNode: { current: { id: string; type: string } } = useRef(null)
+
+	const { width: screenWidth } = useWindowSize()
+
+	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth)
+
+	const { allCategories, allSkills, projects } = props
+	const sunburstData = useSunburstData(allCategories, allSkills, projects)
+
+	/** Project the user is hovering over */
+	const [hoveringProjectId, setHoveringProjectId]: [string, any] = useState(null)
+
+	/** Selected project to show more details */
+	const [selectedProject, setSelectedProject]: [ProjectItem, any] = useState(null)
+
+	/** track when Nodes are moving to prevent additional hover-renders */
+	const [nodesAreMoving, setNodesAreMoving]: [boolean, any] = useState(null)
+
+	/** track when Nodes are in a hover transition to prevent additional hover-renders */
+	const [inHoverTransition, setInHoverTransition]: [boolean, any] = useState(false)
+
+	/** Array of projectSkills that are selected to show more detail */
+	const [selectedProjectSkills, setSelectedProjectSkills]: [ProjectSkill[], any] = useState(null)
 
 	/**
 	 * Method called after user hovers over a node
 	 * @param id - Node id
 	 * @param type - Type of node - category, skill or project
 	 */
-	hoverNode = (id: string, type: string) => {
+	const hoverNode = (id: string, type: string) => {
 		if (type !== 'project') return
-		this.currentHoverNode = { id, type }
-		if (this.state.nodesAreMoving || this.state.inHoverTransition) return
+		currentHoverNode.current = { id, type }
+		if (nodesAreMoving || inHoverTransition) return
 
-		this.setState({ hoveringProjectId: this.currentHoverNode.id, inHoverTransition: true })
+		setHoveringProjectId(currentHoverNode.current.id)
+
+		setInHoverTransition(true)
 		setTimeout(() => {
-			this.setState({
-				hoveringProjectId: this.currentHoverNode ? this.currentHoverNode.id : null,
-				inHoverTransition: false,
-			})
+			setHoveringProjectId(currentHoverNode.current ? currentHoverNode.current.id : null)
+			setInHoverTransition(false)
 		}, 300)
 	}
 
 	/**
 	 * Method called after leaving the Sunburst
 	 */
-	leaveSunburst = () => {
-		this.currentHoverNode = null
-		this.setState({ hoveringProjectId: null })
+	const leaveSunburst = () => {
+		currentHoverNode.current = null
+		setHoveringProjectId(null)
 	}
 
 	/**
@@ -248,137 +263,132 @@ class Sunburst extends Component<Props, State> {
 	 * @param id - Node id
 	 * @param type - Type of node - category, skill or project
 	 */
-	selectNode = (id: string, type: string) => {
-		if (this.state.nodesAreMoving) return
+	const selectNode = (id: string, type: string) => {
+		if (nodesAreMoving) return
 		if (type !== 'project') return
 
-		if (this.state.selectedProject) {
+		if (selectedProject) {
 			// prevent selecting already selected project skill
-			if (this.state.selectedProject.id === id) return
+			if (selectedProject.id === id) return
 			// Close current project first and rerun with new project
 			else {
-				this.setState({ selectedProject: null, selectedProjectSkills: null })
+				setSelectedProject(null)
+				setSelectedProjectSkills(null)
 				setTimeout(() => {
-					this.selectNode(id, type)
+					selectNode(id, type)
 				}, 500)
 				return
 			}
 		}
 
 		// Find selected project and create list of project skills from selected project
-		const selectedProject = this.props.projects.find(project => project.id === id)
+		const newSelectedProject = props.projects.find(project => project.id === id)
 
-		const projectSkills = selectedProject.skills.items.map(projectSkill => {
-			const name = this.props.allSkills.find(skill => skill.id === projectSkill.skillId).name
+		const projectSkills = newSelectedProject.skills.items.map(projectSkill => {
+			const name = allSkills.find(skill => skill.id === projectSkill.skillId).name
 			return { id: projectSkill.id, name }
 		})
 
 		// Add first project skill to selectedProjectSkills
-		let selectedProjectSkills: State['selectedProjectSkills'] = [projectSkills[0]]
-		this.setState({
-			selectedProject,
-			selectedProjectSkills,
-			hoveringProjectId: null,
-			nodesAreMoving: projectSkills.length < 2 ? false : true,
-		})
+		let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
+		setHoveringProjectId(null)
+		setSelectedProject(newSelectedProject)
+		setNodesAreMoving(projectSkills.length < 2 ? false : true)
+		setSelectedProjectSkills(newSelectedProjectSkills)
 
 		// Slowly add project skills to selectedProjectSkills
 		if (projectSkills.length < 2) return
 		let i = 1
 		let projectSkillInterval = setInterval(() => {
-			selectedProjectSkills = [...selectedProjectSkills, projectSkills[i]]
-			this.setState({ selectedProjectSkills })
+			newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
+			setSelectedProjectSkills(newSelectedProjectSkills)
 			i++
 			if (i === projectSkills.length) {
-				this.setState({ nodesAreMoving: false })
+				setNodesAreMoving(false)
 				clearInterval(projectSkillInterval)
 			}
 		}, 100)
 	}
 
-	render() {
-		const { sunburstData, hoveringProjectId, selectedProject, selectedProjectSkills } = this.state
+	if (sunburstData.length === 0) return <h3>Loading...</h3>
 
-		if (sunburstData.length === 0) return <h3>Loading...</h3>
+	let categoryRotation = 0
 
-		let categoryRotation = 0
+	return (
+		<div
+			onMouseLeave={leaveSunburst}
+			style={{
+				position: 'absolute',
+				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px)`,
+			}}
+		>
+			<Circle
+				type="category"
+				data={sunburstData}
+				innerRadius={radiuses.category}
+				outerRadius={radiuses.skill}
+				itemRotation={0}
+				fontSize={14}
+				hoveringProjectId={hoveringProjectId}
+				hoverNode={hoverNode}
+				selectNode={selectNode}
+			/>
 
-		return (
-			<div
-				onMouseLeave={this.leaveSunburst}
-				style={{
-					position: 'absolute',
-					transform: `translate(${this.sunburstPosition.x}px, ${this.sunburstPosition.y}px)`,
-				}}
-			>
-				<Circle
-					type="category"
-					data={sunburstData}
-					innerRadius={this.radiuses.category}
-					outerRadius={this.radiuses.skill}
-					itemRotation={0}
-					fontSize={14}
-					hoveringProjectId={this.state.hoveringProjectId}
-					hoverNode={this.hoverNode}
-					selectNode={this.selectNode}
-				/>
+			{sunburstData.map((category, categoryI) => {
+				// Rotation logic for skills
+				if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
+				let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
-				{sunburstData.map((category, categoryI) => {
-					// Rotation logic for skills
-					if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
-					let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
+				return (
+					<React.Fragment key={category.id}>
+						<Circle
+							type="skill"
+							data={category.skills}
+							innerRadius={radiuses.skill}
+							outerRadius={radiuses.project}
+							itemRotation={skillRotation}
+							fontSize={12}
+							hoveringProjectId={hoveringProjectId}
+							hoverNode={hoverNode}
+							selectNode={selectNode}
+						/>
 
-					return (
-						<React.Fragment key={category.id}>
-							<Circle
-								type="skill"
-								data={category.skills}
-								innerRadius={this.radiuses.skill}
-								outerRadius={this.radiuses.project}
-								itemRotation={skillRotation}
-								fontSize={12}
-								hoveringProjectId={this.state.hoveringProjectId}
-								hoverNode={this.hoverNode}
-								selectNode={this.selectNode}
-							/>
+						{category.skills.map((skill, skillI) => {
+							// Rotation logic for projects
+							if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
+							const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
 
-							{category.skills.map((skill, skillI) => {
-								// Rotation logic for projects
-								if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
-								const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
+							return (
+								<React.Fragment key={skill.id}>
+									<Circle
+										type="project"
+										data={skill.projects}
+										innerRadius={radiuses.project}
+										outerRadius={radiuses.outer}
+										itemRotation={projectRotation}
+										fontSize={10}
+										hoveringProjectId={hoveringProjectId}
+										hoverNode={hoverNode}
+										selectNode={selectNode}
+										selectedProject={selectedProject}
+										selectedProjectSkills={selectedProjectSkills}
+										projectDetailsPositioning={projectDetailsPositioning}
+									/>
+								</React.Fragment>
+							)
+						})}
+					</React.Fragment>
+				)
+			})}
 
-								return (
-									<React.Fragment key={skill.id}>
-										<Circle
-											type="project"
-											data={skill.projects}
-											innerRadius={this.radiuses.project}
-											outerRadius={this.radiuses.outer}
-											itemRotation={projectRotation}
-											fontSize={10}
-											hoveringProjectId={hoveringProjectId}
-											hoverNode={this.hoverNode}
-											selectNode={this.selectNode}
-											selectedProject={selectedProject}
-											selectedProjectSkills={selectedProjectSkills}
-											projectDetailsPositioning={this.projectDetailsPositioning}
-										/>
-									</React.Fragment>
-								)
-							})}
-						</React.Fragment>
-					)
-				})}
-
-				<ProjectDetails
-					projectDetailsPositioning={this.projectDetailsPositioning}
-					selectedProject={selectedProject}
-					selectedProjectSkills={selectedProjectSkills}
-					projectHeaderHeight={this.projectHeaderHeight}
-				/>
-			</div>
-		)
-	}
+			<ProjectDetails
+				projectDetailsPositioning={projectDetailsPositioning}
+				selectedProject={selectedProject}
+				selectedProjectSkills={selectedProjectSkills}
+				projectHeaderHeight={projectHeaderHeight}
+			/>
+		</div>
+	)
 }
 
 const mapStateToProps = ({ projects, allCategories, allSkills }) => ({
