@@ -2,12 +2,15 @@ import React, { useState, useRef, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { useWindowSize } from 'react-use'
 
+import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 import Circle from './Circle'
 import ProjectDetails from './ProjectDetails'
-import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 
 /** Colors for the categories and associated skills and projects */
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959', '#f682ff']
+
+/** Height of the project details header with description and date */
+const projectHeaderHeight = 170
 
 interface Props {
 	projects: ProjectItem[]
@@ -15,221 +18,31 @@ interface Props {
 	allSkills: SkillItem[]
 }
 
-interface SunburstData {
-	id: string
-	name: string
-	fill: string
-	phi: number
-	projectCount: number
-	skills: {
-		id: string
-		name: string
-		fill: string
-		phi: number
-		projectCount: number
-		projects: {
-			id: string
-			name: string
-			skillId: string
-			fill: string
-			phi: number
-		}[]
-	}[]
-}
-
-interface ProjectDetailsPositioning {
-	startX: number
-	startY: number
-	spacing: number
-	width: number
-}
-
-interface Radiuses {
-	category: number
-	skill: number
-	project: number
-	outer: number
-}
-
 interface ProjectSkill {
 	id: string
 	name: string
 }
 
-function useSunburstDimensioning(screenWidth) {
-	/** Where the project details are positioned relative the sunburst center */
-	const initialProjectDetailsPositioning: ProjectDetailsPositioning = null
-	const [projectDetailsPositioning, setProjectDetailsPositioning] = useState(initialProjectDetailsPositioning)
-
-	/** x and y sunburst center position */
-	const initialSunburstPosition: { x: number; y: number } = null
-	const [sunburstPosition, setSunburstPosition] = useState(initialSunburstPosition)
-
-	/** Inner radius for each circle of sunburst */
-	const initialRadiuses: Radiuses = null
-	const [radiuses, setRadiuses]: [Radiuses, any] = useState(initialRadiuses)
-
-	useEffect(() => {
-		const normalDiameter = 400
-		const minSideBySideWidth = 800
-		const sunburstMargin = 20
-		let sunBurstXPosition
-		let sunBurstDiameter
-
-		if (screenWidth > minSideBySideWidth) {
-			sunBurstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
-			sunBurstXPosition = sunBurstDiameter / 2 + sunburstMargin
-			setProjectDetailsPositioning({
-				startX: sunBurstXPosition,
-				startY: projectHeaderHeight - sunBurstDiameter / 2,
-				spacing: 60,
-				width: screenWidth - sunBurstDiameter - sunburstMargin * 4,
-			})
-		} else {
-			sunBurstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
-			sunBurstXPosition = screenWidth / 2
-			setProjectDetailsPositioning({
-				startX: -sunBurstXPosition,
-				startY: sunBurstDiameter,
-				spacing: 60,
-				width: screenWidth,
-			})
-		}
-
-		setSunburstPosition({
-			x: sunBurstXPosition,
-			y: sunBurstDiameter / 2 + sunburstMargin,
-		})
-
-		setRadiuses({
-			category: (sunBurstDiameter * 0.2) / 2,
-			skill: (sunBurstDiameter * 0.5) / 2,
-			project: (sunBurstDiameter * 0.8) / 2,
-			outer: sunBurstDiameter / 2,
-		})
-	}, [screenWidth])
-
-	return { projectDetailsPositioning, sunburstPosition, radiuses }
-}
-
-// this method creates the sunburst data by looping through categories, skills and projects
-function useSunburstData(allCategories, allSkills, projects) {
-	const [sunburstData, setSunburstData]: [SunburstData[], any] = useState([])
-
-	useEffect(() => {
-		if (allCategories.length === 0) return
-
-		let newSunburstData: SunburstData[] = allCategories.map((category, categoryI) => {
-			const skills = category.skills.items
-				.map(skill => {
-					const associatedProjects = getAssociatedProjects(skill.id, categoryI, projects)
-					if (associatedProjects.length === 0) return null
-
-					return {
-						...skill,
-						projects: associatedProjects,
-						projectCount: associatedProjects.length,
-						phi: null,
-						fill: colors[categoryI],
-					}
-				})
-				.filter(skill => skill !== null)
-
-			// Number of total projects in skills
-			const projectCount = skills.reduce((acc, cur) => acc + cur.projectCount, 0)
-
-			return { ...category, skills, projectCount, phi: null, fill: colors[categoryI] }
-		})
-
-		// Add general category (no category) skills
-		const generalCategorySkills = allSkills
-			.filter(skill => skill.category === null)
-			.map(skill => {
-				const associatedProjects = getAssociatedProjects(skill.id, colors.length - 1, projects)
-				if (associatedProjects.length === 0) return null
-				return {
-					id: skill.id,
-					name: skill.name,
-					projects: associatedProjects,
-					projectCount: associatedProjects.length,
-					phi: null,
-					fill: colors[colors.length - 1],
-				}
-			})
-			.filter(skill => skill !== null)
-
-		newSunburstData.push({
-			name: 'General',
-			fill: colors[colors.length - 1],
-			id: null,
-			phi: null,
-			projectCount: generalCategorySkills.reduce((acc, cur) => acc + cur.projectCount, 0),
-			skills: generalCategorySkills,
-		})
-
-		// Count total projects and calculate rotation angle for each category, skill and project
-		const totalProjects = newSunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
-		newSunburstData = newSunburstData.map(category => {
-			const skills = category.skills.map(skill => {
-				const projects = skill.projects.map(project => ({ ...project, phi: 360 / totalProjects }))
-
-				return { ...skill, projects, phi: (skill.projectCount * 360) / totalProjects }
-			})
-
-			return { ...category, skills, phi: (category.projectCount * 360) / totalProjects }
-		})
-
-		setSunburstData(newSunburstData)
-	}, [allCategories.length])
-
-	return sunburstData
-}
-
-/**
- * Returns the associated list of projects with a given skillId
- * @param skillId - skillId to search for in projects
- * @param categoryI - current category index for choosing color
- */
-function getAssociatedProjects(skillId, categoryI, projects) {
-	return projects
-		.map(({ id, name, skills }) => {
-			const projectSkill = skills.items.find(projectSkill => {
-				return projectSkill.skillId === skillId
-			})
-			if (!projectSkill) return null
-			return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
-		})
-		.filter(project => project !== null)
-}
-
-/** Height of the project details header with description and date */
-const projectHeaderHeight = 170
-
 const Sunburst = (props: Props) => {
+	const { allCategories, allSkills, projects } = props
+
 	/** Track which Node user is currently hovering over */
 	const currentHoverNode: { current: { id: string; type: string } } = useRef(null)
 
-	const { width: screenWidth } = useWindowSize()
-
-	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth)
-
-	const { allCategories, allSkills, projects } = props
-	const sunburstData = useSunburstData(allCategories, allSkills, projects)
-
 	/** Project the user is hovering over */
-	const [hoveringProjectId, setHoveringProjectId]: [string, any] = useState(null)
-
+	const [hoveringProjectId, setHoveringProjectId] = useState(null as string)
 	/** Selected project to show more details */
-	const [selectedProject, setSelectedProject]: [ProjectItem, any] = useState(null)
-
+	const [selectedProject, setSelectedProject] = useState(null as ProjectItem)
 	/** track when Nodes are moving to prevent additional hover-renders */
-	const [nodesAreMoving, setNodesAreMoving]: [boolean, any] = useState(null)
-
+	const [nodesAreMoving, setNodesAreMoving] = useState(null as boolean)
 	/** track when Nodes are in a hover transition to prevent additional hover-renders */
-	const [inHoverTransition, setInHoverTransition]: [boolean, any] = useState(false)
-
+	const [inHoverTransition, setInHoverTransition] = useState(false as boolean)
 	/** Array of projectSkills that are selected to show more detail */
-	const [selectedProjectSkills, setSelectedProjectSkills]: [ProjectSkill[], any] = useState(null)
+	const [selectedProjectSkills, setSelectedProjectSkills] = useState(null as ProjectSkill[])
+
+	const { width: screenWidth } = useWindowSize()
+	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth)
+	const sunburstData = useSunburstData(allCategories, allSkills, projects)
 
 	/**
 	 * Method called after user hovers over a node
@@ -250,9 +63,7 @@ const Sunburst = (props: Props) => {
 		}, 300)
 	}
 
-	/**
-	 * Method called after leaving the Sunburst
-	 */
+	/** Method called after leaving the Sunburst */
 	const leaveSunburst = () => {
 		currentHoverNode.current = null
 		setHoveringProjectId(null)
@@ -260,8 +71,8 @@ const Sunburst = (props: Props) => {
 
 	/**
 	 * Method called after user clicks a node
-	 * @param id - Node id
-	 * @param type - Type of node - category, skill or project
+	 * @param id Node id
+	 * @param type Type of node - category, skill or project
 	 */
 	const selectNode = (id: string, type: string) => {
 		if (nodesAreMoving) return
@@ -389,6 +200,185 @@ const Sunburst = (props: Props) => {
 			/>
 		</div>
 	)
+}
+
+interface ProjectDetailsPositioning {
+	startX: number
+	startY: number
+	spacing: number
+	width: number
+}
+
+interface Radiuses {
+	category: number
+	skill: number
+	project: number
+	outer: number
+}
+
+/** Set sunburst and associated text positions and sizes */
+function useSunburstDimensioning(screenWidth) {
+	/** Where the project details are positioned relative the sunburst center */
+	const [projectDetailsPositioning, setProjectDetailsPositioning] = useState(null as ProjectDetailsPositioning)
+	/** x and y sunburst center position */
+	const [sunburstPosition, setSunburstPosition] = useState(null as { x: number; y: number })
+	/** Inner radius for each circle of sunburst */
+	const [radiuses, setRadiuses]: [Radiuses, any] = useState(null as Radiuses)
+
+	useEffect(() => {
+		const normalDiameter = 400
+		const minSideBySideWidth = 800
+		const sunburstMargin = 20
+		let sunBurstXPosition
+		let sunBurstDiameter
+
+		if (screenWidth > minSideBySideWidth) {
+			sunBurstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
+			sunBurstXPosition = sunBurstDiameter / 2 + sunburstMargin
+			setProjectDetailsPositioning({
+				startX: sunBurstXPosition,
+				startY: projectHeaderHeight - sunBurstDiameter / 2,
+				spacing: 60,
+				width: screenWidth - sunBurstDiameter - sunburstMargin * 4,
+			})
+		} else {
+			sunBurstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
+			sunBurstXPosition = screenWidth / 2
+			setProjectDetailsPositioning({
+				startX: -sunBurstXPosition,
+				startY: sunBurstDiameter,
+				spacing: 60,
+				width: screenWidth,
+			})
+		}
+
+		setSunburstPosition({
+			x: sunBurstXPosition,
+			y: sunBurstDiameter / 2 + sunburstMargin,
+		})
+
+		setRadiuses({
+			category: (sunBurstDiameter * 0.2) / 2,
+			skill: (sunBurstDiameter * 0.5) / 2,
+			project: (sunBurstDiameter * 0.8) / 2,
+			outer: sunBurstDiameter / 2,
+		})
+	}, [screenWidth])
+
+	return { projectDetailsPositioning, sunburstPosition, radiuses }
+}
+
+interface SunburstData {
+	id: string
+	name: string
+	fill: string
+	phi: number
+	projectCount: number
+	skills: {
+		id: string
+		name: string
+		fill: string
+		phi: number
+		projectCount: number
+		projects: {
+			id: string
+			name: string
+			skillId: string
+			fill: string
+			phi: number
+		}[]
+	}[]
+}
+
+/** This method creates the sunburst data by looping through categories, skills and projects */
+function useSunburstData(allCategories, allSkills, projects) {
+	const [sunburstData, setSunburstData] = useState([] as SunburstData[])
+
+	useEffect(() => {
+		if (allCategories.length === 0) return
+
+		let newSunburstData: SunburstData[] = allCategories.map((category, categoryI) => {
+			const skills = category.skills.items
+				.map(skill => {
+					const associatedProjects = getAssociatedProjects(skill.id, categoryI, projects)
+					if (associatedProjects.length === 0) return null
+
+					return {
+						...skill,
+						projects: associatedProjects,
+						projectCount: associatedProjects.length,
+						phi: null,
+						fill: colors[categoryI],
+					}
+				})
+				.filter(skill => skill !== null)
+
+			// Number of total projects in skills
+			const projectCount = skills.reduce((acc, cur) => acc + cur.projectCount, 0)
+
+			return { ...category, skills, projectCount, phi: null, fill: colors[categoryI] }
+		})
+
+		// Add general category (no category) skills
+		const generalCategorySkills = allSkills
+			.filter(skill => skill.category === null)
+			.map(skill => {
+				const associatedProjects = getAssociatedProjects(skill.id, colors.length - 1, projects)
+				if (associatedProjects.length === 0) return null
+				return {
+					id: skill.id,
+					name: skill.name,
+					projects: associatedProjects,
+					projectCount: associatedProjects.length,
+					phi: null,
+					fill: colors[colors.length - 1],
+				}
+			})
+			.filter(skill => skill !== null)
+
+		newSunburstData.push({
+			name: 'General',
+			fill: colors[colors.length - 1],
+			id: null,
+			phi: null,
+			projectCount: generalCategorySkills.reduce((acc, cur) => acc + cur.projectCount, 0),
+			skills: generalCategorySkills,
+		})
+
+		// Count total projects and calculate rotation angle for each category, skill and project
+		const totalProjects = newSunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
+		newSunburstData = newSunburstData.map(category => {
+			const skills = category.skills.map(skill => {
+				const projects = skill.projects.map(project => ({ ...project, phi: 360 / totalProjects }))
+
+				return { ...skill, projects, phi: (skill.projectCount * 360) / totalProjects }
+			})
+
+			return { ...category, skills, phi: (category.projectCount * 360) / totalProjects }
+		})
+
+		setSunburstData(newSunburstData)
+	}, [allCategories.length])
+
+	return sunburstData
+}
+
+/**
+ * Returns the associated list of projects with a given skillId
+ * @param skillId skillId to search for in projects
+ * @param categoryI current category index for choosing color
+ * @param projects list of projects
+ */
+function getAssociatedProjects(skillId, categoryI, projects) {
+	return projects
+		.map(({ id, name, skills }) => {
+			const projectSkill = skills.items.find(projectSkill => {
+				return projectSkill.skillId === skillId
+			})
+			if (!projectSkill) return null
+			return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
+		})
+		.filter(project => project !== null)
 }
 
 const mapStateToProps = ({ projects, allCategories, allSkills }) => ({
