@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React from 'react'
 import LinesEllipsis from 'react-lines-ellipsis'
 
 import '../../styles/node.css'
@@ -28,31 +28,9 @@ interface Props {
 	selectNode: (id: string, type: this['type']) => void
 }
 
-class Node extends Component<Props> {
-	shouldComponentUpdate(nextProps) {
-		const { rectangleShape } = this.props
-
-		// Prevent rerender if shape doesn't change
-		if (nextProps.rectangleShape === rectangleShape) return false
-		if (JSON.stringify(nextProps.rectangleShape) === JSON.stringify(rectangleShape)) return false
-
-		return true
-	}
-
-	render() {
-		const {
-			type,
-			text,
-			innerRadius,
-			phi,
-			outerRadius,
-			fontSize,
-			fill,
-			id,
-			hoverNode,
-			selectNode,
-			rectangleShape,
-		} = this.props
+const Node = React.memo(
+	(props: Props) => {
+		const { type, text, innerRadius, phi, outerRadius, fontSize, fill, id, hoverNode, selectNode, rectangleShape } = props
 
 		const width = outerRadius - innerRadius
 
@@ -121,7 +99,14 @@ class Node extends Component<Props> {
 				</div>
 			</div>
 		)
+	},
+	({ rectangleShape }, nextProps) => {
+		// Prevent rerender if shape doesn't change
+		if (nextProps.rectangleShape === rectangleShape) return true
+		if (JSON.stringify(nextProps.rectangleShape) === JSON.stringify(rectangleShape)) return true
+
+		return false
 	}
-}
+)
 
 export default Node
