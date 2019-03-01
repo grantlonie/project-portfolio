@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { connect } from 'react-redux'
+import sleep from 'sleep-promise'
 import { useWindowSize } from 'react-use'
 
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
@@ -70,7 +71,7 @@ const Sunburst = (props: Props) => {
 	 * @param id Node id
 	 * @param type Type of node - category, skill or project
 	 */
-	const selectNode = (id: string, type: string) => {
+	const selectNode = async (id: string, type: string) => {
 		if (nodesAreMoving) return
 		if (type !== 'project') return
 
@@ -81,10 +82,7 @@ const Sunburst = (props: Props) => {
 			else {
 				setSelectedProject(null)
 				setSelectedProjectSkills(null)
-				setTimeout(() => {
-					selectNode(id, type)
-				}, 500)
-				return
+				await sleep(300)
 			}
 		}
 
