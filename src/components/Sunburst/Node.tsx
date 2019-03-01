@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
+import { createStyles, withStyles } from '@material-ui/core/styles'
 import LinesEllipsis from 'react-lines-ellipsis'
-
-import '../../styles/node.css'
 
 interface Props {
 	/** Type of Node */
@@ -12,7 +11,7 @@ interface Props {
 	text: string
 	/** Inner radius of the node */
 	innerRadius: number
-	/** The arc angle that determines the Node's width */
+	/** The arc angle in degrees that determines the Node's width */
 	phi: number
 	/** Outer radius of the node */
 	outerRadius: number
@@ -26,10 +25,17 @@ interface Props {
 	hoverNode: (id: string, type: this['type']) => void
 	/** Fires when node is clicked */
 	selectNode: (id: string, type: this['type']) => void
+	/** Material UI withStyles classes object */
+	classes: any
 }
 
+const styles = createStyles({
+	textWrapper: { cursor: 'pointer', position: 'absolute', paddingLeft: '5px' },
+	text: { position: 'relative', top: '50%', transform: 'translateY(-50%)' },
+})
+
 const Node = (props: Props) => {
-	const { type, text, innerRadius, phi, outerRadius, fontSize, fill, id, hoverNode, selectNode, rectangleShape } = props
+	const { type, text, innerRadius, phi, outerRadius, fontSize, fill, id, hoverNode, selectNode, rectangleShape, classes } = props
 
 	const width = outerRadius - innerRadius
 
@@ -47,25 +53,27 @@ const Node = (props: Props) => {
 		adjInnerRadius = 100000
 		adjOuterRadius = 100000
 	} else {
-		const cosPhi = Math.cos((phi * Math.PI) / 180)
-		const nodeMargin = 1
+		const phiRads = (phi * Math.PI) / 180
 
 		// Law of cosines to determine thickness at inner and outer radius
+		const cosPhi = Math.cos(phiRads)
 		c1 = Math.sqrt(2 * Math.pow(adjInnerRadius, 2) * (1 - cosPhi))
 		c2 = Math.sqrt(2 * Math.pow(outerRadius, 2) * (1 - cosPhi))
 
-		const alpha = (180 - phi / 2) / 2
-		const tanAlpha = Math.tan((alpha * Math.PI) / 180)
-		x1 = -c1 / 2 / tanAlpha + nodeMargin
-		x2 = width - c2 / 2 / tanAlpha - nodeMargin
-		y1 = c1 / 2 - nodeMargin
-		y2 = c2 / 2 - nodeMargin
+		// Determine the node corners adjusting for margin
+		const margin = 1
+		const alpha = (Math.PI - phiRads / 2) / 2
+		const tanAlpha = Math.tan(alpha)
+		x1 = -c1 / 2 / tanAlpha + margin
+		x2 = width - c2 / 2 / tanAlpha - margin + 0.7 * phiRads
+		y1 = c1 / 2 - margin
+		y2 = c2 / 2 - margin - 0.7 * phiRads
 	}
 
 	const displayText = useMemo(
 		() => (
 			<LinesEllipsis
-				className="text"
+				className={classes.text}
 				style={{ lineHeight: fontSize + 'px' }}
 				text={text}
 				maxLine={Math.floor(c1 / fontSize)}
@@ -91,7 +99,7 @@ const Node = (props: Props) => {
 				/>
 			</svg>
 			<div
-				className="text-wrapper"
+				className={classes.textWrapper}
 				onMouseOver={() => hoverNode(id, type)}
 				onMouseUp={() => selectNode(id, type)}
 				style={{
@@ -107,4 +115,4 @@ const Node = (props: Props) => {
 	)
 }
 
-export default Node
+export default withStyles(styles)(Node)
