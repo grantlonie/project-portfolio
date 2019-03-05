@@ -36,6 +36,8 @@ const Sunburst = (props: Props) => {
 	const [inHoverTransition, setInHoverTransition] = useState(false as boolean)
 	/** Array of projectSkills that are selected to show more detail */
 	const [selectedProjectSkills, setSelectedProjectSkills] = useState(null as ProjectSkill[])
+	/** Category id that is currently being hovered over */
+	const [hoverCategory, setHoverCategory] = useState(null as string)
 
 	const { width: screenWidth } = useWindowSize()
 	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth)
@@ -115,6 +117,10 @@ const Sunburst = (props: Props) => {
 		}, 100)
 	}
 
+	const handleCategoryHover = categoryId => {
+		setHoverCategory(categoryId)
+	}
+
 	if (sunburstData.length === 0) return <h3>Loading...</h3>
 
 	let categoryRotation = 0
@@ -144,8 +150,20 @@ const Sunburst = (props: Props) => {
 				if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
 				let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
+				let transform = null
+				if (hoverCategory === category.id) {
+					transform = `translate(${40 * Math.cos((categoryRotation * Math.PI) / 180)}px, ${40 *
+						Math.sin((categoryRotation * Math.PI) / 180)}px)`
+				}
+
+				const categoryStyle: React.CSSProperties = {
+					position: 'absolute',
+					transform,
+					transition: 'all 500ms',
+				}
+
 				return (
-					<React.Fragment key={category.id}>
+					<div key={category.id} onMouseEnter={() => handleCategoryHover(category.id)} style={categoryStyle}>
 						<Circle
 							type="skill"
 							data={category.skills}
@@ -182,7 +200,7 @@ const Sunburst = (props: Props) => {
 								</React.Fragment>
 							)
 						})}
-					</React.Fragment>
+					</div>
 				)
 			})}
 
