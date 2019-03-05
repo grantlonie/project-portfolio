@@ -152,8 +152,9 @@ const Sunburst = (props: Props) => {
 
 				let transform = null
 				if (hoverCategory === category.id) {
-					transform = `translate(${40 * Math.cos((categoryRotation * Math.PI) / 180)}px, ${40 *
-						Math.sin((categoryRotation * Math.PI) / 180)}px)`
+					const translateAmount = 40
+					transform = `translate(${translateAmount * Math.cos(categoryRotation)}px, ${translateAmount *
+						Math.sin(categoryRotation)}px)`
 				}
 
 				const categoryStyle: React.CSSProperties = {

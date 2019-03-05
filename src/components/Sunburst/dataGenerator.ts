@@ -84,12 +84,12 @@ export default function useSunburstData(allCategories, allSkills, projects) {
 		const totalProjects = newSunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
 		newSunburstData = newSunburstData.map(category => {
 			const skills = category.skills.map(skill => {
-				const projects = skill.projects.map(project => ({ ...project, phi: 360 / totalProjects }))
+				const projects = skill.projects.map(project => ({ ...project, phi: (Math.PI * 2) / totalProjects }))
 
-				return { ...skill, projects, phi: (skill.projectCount * 360) / totalProjects }
+				return { ...skill, projects, phi: (skill.projectCount * Math.PI * 2) / totalProjects }
 			})
 
-			return { ...category, skills, phi: (category.projectCount * 360) / totalProjects }
+			return { ...category, skills, phi: (category.projectCount * Math.PI * 2) / totalProjects }
 		})
 
 		setSunburstData(newSunburstData)

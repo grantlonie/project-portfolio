@@ -53,21 +53,19 @@ const Node = (props: Props) => {
 		adjInnerRadius = 100000
 		adjOuterRadius = 100000
 	} else {
-		const phiRads = (phi * Math.PI) / 180
-
 		// Law of cosines to determine thickness at inner and outer radius
-		const cosPhi = Math.cos(phiRads)
+		const cosPhi = Math.cos(phi)
 		c1 = Math.sqrt(2 * Math.pow(adjInnerRadius, 2) * (1 - cosPhi))
 		c2 = Math.sqrt(2 * Math.pow(outerRadius, 2) * (1 - cosPhi))
 
 		// Determine the node corners adjusting for margin
 		const margin = 1
-		const alpha = (Math.PI - phiRads / 2) / 2
+		const alpha = (Math.PI - phi / 2) / 2
 		const tanAlpha = Math.tan(alpha)
 		x1 = -c1 / 2 / tanAlpha + margin
-		x2 = width - c2 / 2 / tanAlpha - margin + 0.7 * phiRads
+		x2 = width - c2 / 2 / tanAlpha - margin + 0.7 * phi
 		y1 = c1 / 2 - margin
-		y2 = c2 / 2 - margin - 0.7 * phiRads
+		y2 = c2 / 2 - margin - 0.7 * phi
 	}
 
 	const displayText = useMemo(

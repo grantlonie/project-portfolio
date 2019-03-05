@@ -49,7 +49,7 @@ const Circle = (props: Props) => {
 
 	return data.map((item, itemI) => {
 		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + item.phi / 2
-		if (rotation > 180) rotation -= 360
+		if (rotation > Math.PI) rotation -= Math.PI * 2
 
 		let translateX = innerRadius
 		let translateY = 0
@@ -82,7 +82,7 @@ const Circle = (props: Props) => {
 				key={item.id}
 				style={{
 					position: 'absolute',
-					transform: `rotate(${corrRotation}deg) translate3d(${translateX}px, ${translateY}px, 0)`,
+					transform: `rotate(${corrRotation}rad) translate3d(${translateX}px, ${translateY}px, 0)`,
 					transition: 'all 500ms',
 					transformOrigin: '0 0',
 				}}
