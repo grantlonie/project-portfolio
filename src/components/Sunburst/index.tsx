@@ -49,6 +49,7 @@ const Sunburst = (props: Props) => {
 	 * @param type - Type of node - category, skill or project
 	 */
 	const hoverNode = (id: string, type: string) => {
+		return
 		if (type !== 'project') return
 		currentHoverNode.current = { id, type }
 		if (nodesAreMoving || inHoverTransition) return
@@ -133,18 +134,6 @@ const Sunburst = (props: Props) => {
 				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px)`,
 			}}
 		>
-			<Circle
-				type="category"
-				data={sunburstData}
-				innerRadius={radiuses.category}
-				outerRadius={radiuses.skill}
-				itemRotation={0}
-				fontSize={14}
-				hoveringProjectId={hoveringProjectId}
-				hoverNode={hoverNode}
-				selectNode={selectNode}
-			/>
-
 			{sunburstData.map((category, categoryI) => {
 				// Rotation logic for skills
 				if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
@@ -165,6 +154,18 @@ const Sunburst = (props: Props) => {
 
 				return (
 					<div key={category.id} onMouseEnter={() => handleCategoryHover(category.id)} style={categoryStyle}>
+						<Circle
+							type="category"
+							data={[category]}
+							innerRadius={radiuses.category}
+							outerRadius={radiuses.skill}
+							itemRotation={categoryRotation}
+							fontSize={14}
+							hoveringProjectId={hoveringProjectId}
+							hoverNode={hoverNode}
+							selectNode={selectNode}
+						/>
+
 						<Circle
 							type="skill"
 							data={category.skills}
