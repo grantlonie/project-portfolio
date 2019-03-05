@@ -74,7 +74,7 @@ export default function useSunburstData(allCategories, allSkills, projects) {
 		newSunburstData.push({
 			name: 'General',
 			fill: colors[colors.length - 1],
-			id: null,
+			id: 'general',
 			phi: null,
 			projectCount: generalCategorySkills.reduce((acc, cur) => acc + cur.projectCount, 0),
 			skills: generalCategorySkills,

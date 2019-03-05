@@ -29,7 +29,7 @@ interface Props {
 	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
 }
 
-const Circle = (props: Props) => {
+const NodePositioner = (props: Props) => {
 	const {
 		type,
 		data,
@@ -105,4 +105,4 @@ const Circle = (props: Props) => {
 	})
 }
 
-export default Circle
+export default NodePositioner

@@ -4,7 +4,7 @@ import sleep from 'sleep-promise'
 import { useWindowSize } from 'react-use'
 
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
-import Circle from './Circle'
+import NodePositioner from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import { useSunburstDimensioning, projectHeaderHeight } from './dimensioning'
 import useSunburstData from './dataGenerator'
@@ -154,7 +154,7 @@ const Sunburst = (props: Props) => {
 
 				return (
 					<div key={category.id} onMouseEnter={() => handleCategoryHover(category.id)} style={categoryStyle}>
-						<Circle
+						<NodePositioner
 							type="category"
 							data={[category]}
 							innerRadius={radiuses.category}
@@ -166,7 +166,7 @@ const Sunburst = (props: Props) => {
 							selectNode={selectNode}
 						/>
 
-						<Circle
+						<NodePositioner
 							type="skill"
 							data={category.skills}
 							innerRadius={radiuses.skill}
@@ -185,7 +185,7 @@ const Sunburst = (props: Props) => {
 
 							return (
 								<React.Fragment key={skill.id}>
-									<Circle
+									<NodePositioner
 										type="project"
 										data={skill.projects}
 										innerRadius={radiuses.project}
