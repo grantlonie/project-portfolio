@@ -8,6 +8,7 @@ import NodePositioner from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import { useSunburstDimensioning, projectHeaderHeight } from './dimensioning'
 import useSunburstData from './dataGenerator'
+import stateService from './state'
 
 interface Props {
 	projects: ProjectItem[]
