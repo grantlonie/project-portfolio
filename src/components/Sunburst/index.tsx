@@ -49,9 +49,9 @@ const Sunburst = (props: Props) => {
 	 * @param type - Type of node - category, skill or project
 	 */
 	const hoverNode = (id: string, type: string) => {
+		currentHoverNode.current = { id, type }
 		return
 		if (type !== 'project') return
-		currentHoverNode.current = { id, type }
 		if (nodesAreMoving || inHoverTransition) return
 
 		setHoveringProjectId(currentHoverNode.current.id)
@@ -64,9 +64,14 @@ const Sunburst = (props: Props) => {
 	}
 
 	/** Method called after leaving the Sunburst */
+	const leaveSunburstTimeout = useRef(null)
 	const leaveSunburst = () => {
 		currentHoverNode.current = null
 		setHoveringProjectId(null)
+		clearTimeout(leaveSunburstTimeout.current)
+		leaveSunburstTimeout.current = setTimeout(() => {
+			if (!currentHoverNode.current) setHoverCategory(null)
+		}, 2000)
 	}
 
 	/**

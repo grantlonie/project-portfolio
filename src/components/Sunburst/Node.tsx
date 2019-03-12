@@ -30,7 +30,7 @@ interface Props {
 }
 
 const styles = createStyles({
-	textWrapper: { cursor: 'pointer', position: 'absolute', paddingLeft: '5px' },
+	textWrapper: { pointerEvents: 'none', position: 'absolute', paddingLeft: '5px' },
 	text: { position: 'relative', top: '50%', transform: 'translateY(-50%)' },
 })
 
@@ -84,22 +84,24 @@ const Node = (props: Props) => {
 
 	return (
 		<div>
-			<svg width={width} height={c2} style={{ position: 'absolute', overflow: 'visible' }}>
+			<svg width={width} height={c2} style={{ position: 'absolute', overflow: 'visible' }} pointerEvents="none">
 				<path
 					d={`
-							M${x1} ${-y1}
-							A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
-							A ${adjOuterRadius} ${adjOuterRadius} 0 0 0 ${x2} ${-y2} 
-							Z
-						`}
+						M${x1} ${-y1}
+						A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
+						A ${adjOuterRadius} ${adjOuterRadius} 0 0 0 ${x2} ${-y2} 
+						Z
+					`}
+					pointerEvents="visible"
+					cursor="pointer"
 					fill={fill}
 					style={{ transition: 'all 500ms' }}
+					onMouseOver={() => hoverNode(id, type)}
+					onMouseUp={() => selectNode(id, type)}
 				/>
 			</svg>
 			<div
 				className={classes.textWrapper}
-				onMouseOver={() => hoverNode(id, type)}
-				onMouseUp={() => selectNode(id, type)}
 				style={{
 					top: Math.floor(-c1 / 2) + 'px',
 					height: c1 + 'px',
