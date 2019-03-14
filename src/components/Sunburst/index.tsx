@@ -131,12 +131,19 @@ const Sunburst = (props: Props) => {
 	}
 
 	const handleCategoryHover = categoryId => {
-		setHoverCategoryId(categoryId)
+		if (!selectedCategoryId) {
+			setHoverCategoryId(categoryId)
+		}
 	}
 
 	const handleCategorySelect = categoryId => {
-		setSunburstScale(1)
-		setSelectedCategoryId(categoryId)
+		if (selectedCategoryId) {
+			setSunburstScale(1)
+			setSelectedCategoryId(null)
+		} else {
+			setSunburstScale(0.7)
+			setSelectedCategoryId(categoryId)
+		}
 	}
 
 	if (sunburstData.length === 0) return <h3>Loading...</h3>
@@ -178,6 +185,11 @@ const Sunburst = (props: Props) => {
 					transition: 'all 500ms',
 				}
 
+				let selectedCategory = null
+				if (selectedCategoryId === category.id) {
+					selectedCategory = { phi: category.phi, projectCount: category.projectCount }
+				}
+
 				return (
 					<div
 						key={category.id}
@@ -195,7 +207,7 @@ const Sunburst = (props: Props) => {
 							hoveringProjectId={hoveringProjectId}
 							hoverNode={hoverNode}
 							selectNode={selectNode}
-							isCategorySelected={selectedCategoryId === category.id}
+							selectedCategory={selectedCategory}
 						/>
 
 						<NodePositioner
@@ -208,8 +220,7 @@ const Sunburst = (props: Props) => {
 							hoveringProjectId={hoveringProjectId}
 							hoverNode={hoverNode}
 							selectNode={selectNode}
-							isCategorySelected={selectedCategoryId === category.id}
-							category={category}
+							selectedCategory={selectedCategory}
 						/>
 
 						{category.skills.map((skill, skillI) => {
@@ -232,8 +243,7 @@ const Sunburst = (props: Props) => {
 										selectedProject={selectedProject}
 										selectedProjectSkills={selectedProjectSkills}
 										projectDetailsPositioning={projectDetailsPositioning}
-										isCategorySelected={selectedCategoryId === category.id}
-										category={category}
+										selectedCategory={selectedCategory}
 									/>
 								</React.Fragment>
 							)

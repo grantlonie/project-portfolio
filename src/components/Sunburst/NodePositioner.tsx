@@ -14,8 +14,6 @@ interface Props {
 	outerRadius: number
 	/** Initial Node center rotation angle in degrees */
 	itemRotation: number
-	/** Category of node is selected */
-	isCategorySelected: boolean
 	fontSize: number
 	/** Id of project that is being hovered */
 	hoveringProjectId?: string
@@ -29,8 +27,8 @@ interface Props {
 	selectedProjectSkills?: { id: string; name: string }[]
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
 	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
-	/** Category object of node */
-	category?: any
+	/** If category is selected, key positioning props */
+	selectedCategory?: { projectCount: number; phi: number }
 }
 
 const categoryHeight = 400
@@ -44,13 +42,12 @@ const NodePositioner = (props: Props) => {
 		itemRotation,
 		fontSize,
 		hoveringProjectId,
-		isCategorySelected,
 		hoverNode,
 		selectNode,
 		selectedProject,
 		selectedProjectSkills,
 		projectDetailsPositioning,
-		category,
+		selectedCategory,
 	} = props
 
 	let rotation = itemRotation
@@ -65,28 +62,29 @@ const NodePositioner = (props: Props) => {
 		let rectangleShape = null
 		let text = item.name
 		let displayFontSize = fontSize
+		let scale = 1
 
 		// Determine if project skill is selected, hovering or in queue to be selected
 		let skillItemIndex = -1
 		let projectIsSelected = false
-		if (isCategorySelected) {
+		if (selectedCategory) {
 			corrRotation = 0
+			scale = 0.7
 			switch (type) {
 				case 'category':
-					translateX = 100
-					translateY = 100 * Math.tan(rotation)
-					rectangleShape = { width: 100, height: categoryHeight }
+					translateX = 250
+					translateY = -categoryHeight / 2 - 50 / 2
+					rectangleShape = { width: 350, height: 50 }
 					break
 				case 'skill':
-					translateX = 300
-					translateY = (categoryHeight * rotation) / category.phi
-					rectangleShape = { width: 100, height: (item.projectCount / category.projectCount) * categoryHeight }
+					translateX = 250
+					translateY = (categoryHeight * rotation) / selectedCategory.phi
+					rectangleShape = { width: 150, height: (item.projectCount / selectedCategory.projectCount) * categoryHeight }
 					break
 				case 'project':
-					translateX = 500
-					translateY = (categoryHeight * rotation) / category.phi
-					rectangleShape = { width: 100, height: (1 / category.projectCount) * categoryHeight }
-
+					translateX = 400
+					translateY = (categoryHeight * rotation) / selectedCategory.phi
+					rectangleShape = { width: 200, height: (1 / selectedCategory.projectCount) * categoryHeight }
 					break
 			}
 		}
@@ -112,7 +110,11 @@ const NodePositioner = (props: Props) => {
 				key={item.id}
 				style={{
 					position: 'absolute',
-					transform: `rotate(${corrRotation}rad) translate3d(${translateX}px, ${translateY}px, 0)`,
+					transform: `
+						scale(${1 / scale})
+						rotate(${corrRotation}rad) 
+						translate3d(${translateX}px, ${translateY}px, 0)
+					`,
 					transition: 'all 500ms',
 					transformOrigin: '0 0',
 				}}

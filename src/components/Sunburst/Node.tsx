@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { createStyles, withStyles } from '@material-ui/core/styles'
 import LinesEllipsis from 'react-lines-ellipsis'
+import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
 
 interface Props {
 	/** Type of Node */
@@ -30,6 +31,8 @@ interface Props {
 }
 
 const styles = createStyles({
+	svg: { position: 'absolute', overflow: 'visible' },
+	svgPath: { transition: 'all 500ms' },
 	textWrapper: { pointerEvents: 'none', position: 'absolute', paddingLeft: '5px' },
 	text: { position: 'relative', top: '50%', transform: 'translateY(-50%)' },
 })
@@ -37,13 +40,12 @@ const styles = createStyles({
 const Node = (props: Props) => {
 	const { type, text, innerRadius, phi, outerRadius, fontSize, fill, id, hoverNode, selectNode, rectangleShape, classes } = props
 
-	const width = outerRadius - innerRadius
-
-	let x1, x2, y1, y2, c1, c2
+	let width, x1, x2, y1, y2, c1, c2
 	let adjInnerRadius = innerRadius
 	let adjOuterRadius = outerRadius
 
 	if (rectangleShape) {
+		width = rectangleShape.width
 		x1 = 0
 		x2 = rectangleShape.width
 		c1 = rectangleShape.height
@@ -59,6 +61,7 @@ const Node = (props: Props) => {
 		c2 = Math.sqrt(2 * Math.pow(outerRadius, 2) * (1 - cosPhi))
 
 		// Determine the node corners adjusting for margin
+		width = outerRadius - innerRadius
 		const margin = 1
 		const alpha = (Math.PI - phi / 2) / 2
 		const tanAlpha = Math.tan(alpha)
@@ -68,43 +71,35 @@ const Node = (props: Props) => {
 		y2 = c2 / 2 - margin - 0.7 * phi
 	}
 
-	const displayText = useMemo(
-		() => (
-			<LinesEllipsis
+	const displayText = useMemo(() => {
+		const ResponsiveEllipsis = responsiveHOC()(LinesEllipsis)
+		return (
+			<ResponsiveEllipsis
 				className={classes.text}
-				style={{ lineHeight: fontSize + 'px' }}
+				style={{ lineHeight: fontSize + 'px', fontSize }}
 				text={text}
 				maxLine={Math.floor(c1 / fontSize)}
-				trimRight
 				basedOn="letters"
 			/>
-		),
-		[fontSize, text]
-	)
-
-	if (id === '6e83a2af-b527-4593-ad37-3c3660bcbab3') {
-		console.log('y2: ', y2)
-		console.log('x2: ', x2)
-		console.log('y1: ', y1)
-		console.log('x1: ', x1)
-	}
+		)
+	}, [fontSize, text, rectangleShape])
 
 	return (
 		<div>
-			<svg width={width} height={c2} style={{ position: 'absolute', overflow: 'visible' }} pointerEvents="none">
+			<svg width={width} height={c2} className={classes.svg} pointerEvents="none">
 				<path
+					pointerEvents="visible"
+					cursor="pointer"
+					fill={fill}
+					className={classes.svgPath}
+					onMouseOver={() => hoverNode(id, type)}
+					onMouseUp={() => selectNode(id, type)}
 					d={`
 						M${x1} ${-y1}
 						A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 
 						A ${adjOuterRadius} ${adjOuterRadius} 0 0 0 ${x2} ${-y2} 
 						Z
 					`}
-					pointerEvents="visible"
-					cursor="pointer"
-					fill={fill}
-					style={{ transition: 'all 500ms' }}
-					onMouseOver={() => hoverNode(id, type)}
-					onMouseUp={() => selectNode(id, type)}
 				/>
 			</svg>
 			<div
@@ -112,8 +107,7 @@ const Node = (props: Props) => {
 				style={{
 					top: Math.floor(-c1 / 2) + 'px',
 					height: c1 + 'px',
-					width: width + 'px',
-					fontSize,
+					width,
 				}}
 			>
 				{displayText}
