@@ -6,6 +6,7 @@ import { useWindowSize } from 'react-use'
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 import NodePositioner from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
+import CategoryDetails from './CategoryDetails'
 import { useSunburstDimensioning, projectHeaderHeight } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import stateService from './state'
@@ -257,6 +258,8 @@ const Sunburst = (props: Props) => {
 				selectedProjectSkills={selectedProjectSkills}
 				projectHeaderHeight={projectHeaderHeight}
 			/>
+
+			<CategoryDetails show={Boolean(selectedCategoryId)} />
 		</div>
 	)
 }

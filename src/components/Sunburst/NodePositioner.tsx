@@ -2,6 +2,7 @@ import React from 'react'
 
 import { ProjectItem } from '../../types'
 import Node from './Node'
+import { categoryInfo } from './CategoryDetails'
 
 interface Props {
 	/** Type of circle */
@@ -30,10 +31,6 @@ interface Props {
 	/** If category is selected, key positioning props */
 	selectedCategory?: { projectCount: number; phi: number }
 }
-
-const categoryHeight = 400
-const categoryItemHeightMargin = 2
-const categoryItemWidthMargin = 3
 
 const NodePositioner = (props: Props) => {
 	const {
@@ -75,23 +72,23 @@ const NodePositioner = (props: Props) => {
 			scale = 0.7
 			switch (type) {
 				case 'category':
-					translateX = 175
-					trapezoid = { width: 100 - categoryItemWidthMargin, innerHeight: 50, outerHeight: categoryHeight }
+					translateX = categoryInfo.category.translate
+					trapezoid = { width: categoryInfo.category.width, innerHeight: 50, outerHeight: categoryInfo.totalHeight }
 					break
 				case 'skill':
-					translateX = 275
-					translateY = (categoryHeight * rotation) / selectedCategory.phi
+					translateX = categoryInfo.skill.translate
+					translateY = (categoryInfo.totalHeight * rotation) / selectedCategory.phi
 					rectangle = {
-						width: 150 - categoryItemWidthMargin,
-						height: (item.projectCount / selectedCategory.projectCount) * categoryHeight - categoryItemHeightMargin,
+						width: categoryInfo.skill.width,
+						height: (item.projectCount / selectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
 					}
 					break
 				case 'project':
-					translateX = 425
-					translateY = (categoryHeight * rotation) / selectedCategory.phi
+					translateX = categoryInfo.project.translate
+					translateY = (categoryInfo.totalHeight * rotation) / selectedCategory.phi
 					rectangle = {
-						width: 200 - categoryItemWidthMargin,
-						height: (1 / selectedCategory.projectCount) * categoryHeight - categoryItemHeightMargin,
+						width: categoryInfo.project.width,
+						height: (1 / selectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
 					}
 					break
 			}
