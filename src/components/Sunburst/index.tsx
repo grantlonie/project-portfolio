@@ -85,7 +85,6 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 */
 	const selectNode = async (id: string, type: string) => {
-		console.log('id: ', id)
 		return
 		if (nodesAreMoving) return
 		if (type !== 'project') return

@@ -6,8 +6,10 @@ import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
 interface Props {
 	/** Type of Node */
 	type: 'category' | 'skill' | 'project'
-	/** If used, the change node into rectangle with given values, else take the shape to fit in Sunburst */
-	rectangleShape?: { width: number; height: number }
+	/** If used, change node into rectangle with given values, else take the shape to fit in Sunburst */
+	rectangle?: { width: number; height: number }
+	/** If used, change node into trapezoid with given values, else take the shape to fit in Sunburst */
+	trapezoid?: { width: number; innerHeight: number; outerHeight: number }
 	/** The displayed text */
 	text: string
 	/** Inner radius of the node */
@@ -38,17 +40,41 @@ const styles = createStyles({
 })
 
 const Node = (props: Props) => {
-	const { type, text, innerRadius, phi, outerRadius, fontSize, fill, id, hoverNode, selectNode, rectangleShape, classes } = props
+	const {
+		type,
+		text,
+		innerRadius,
+		phi,
+		outerRadius,
+		fontSize,
+		fill,
+		id,
+		hoverNode,
+		selectNode,
+		rectangle,
+		trapezoid,
+		classes,
+	} = props
 
 	let width, x1, x2, y1, y2, c1, c2
 	let adjInnerRadius = innerRadius
 	let adjOuterRadius = outerRadius
 
-	if (rectangleShape) {
-		width = rectangleShape.width
+	if (trapezoid) {
+		width = trapezoid.width
 		x1 = 0
-		x2 = rectangleShape.width
-		c1 = rectangleShape.height
+		x2 = width
+		c1 = trapezoid.innerHeight
+		c2 = trapezoid.outerHeight
+		y1 = c1 / 2
+		y2 = c2 / 2
+		adjInnerRadius = 10000
+		adjOuterRadius = 10000
+	} else if (rectangle) {
+		width = rectangle.width
+		x1 = 0
+		x2 = width
+		c1 = rectangle.height
 		c2 = c1
 		y1 = c1 / 2
 		y2 = c2 / 2
@@ -82,7 +108,7 @@ const Node = (props: Props) => {
 				basedOn="letters"
 			/>
 		)
-	}, [fontSize, text, rectangleShape])
+	}, [fontSize, text, rectangle])
 
 	return (
 		<div>

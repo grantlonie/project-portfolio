@@ -32,6 +32,8 @@ interface Props {
 }
 
 const categoryHeight = 400
+const categoryItemHeightMargin = 2
+const categoryItemWidthMargin = 3
 
 const NodePositioner = (props: Props) => {
 	const {
@@ -59,7 +61,8 @@ const NodePositioner = (props: Props) => {
 		let translateX = innerRadius
 		let translateY = 0
 		let corrRotation = rotation
-		let rectangleShape = null
+		let rectangle = null
+		let trapezoid = null
 		let text = item.name
 		let displayFontSize = fontSize
 		let scale = 1
@@ -72,19 +75,24 @@ const NodePositioner = (props: Props) => {
 			scale = 0.7
 			switch (type) {
 				case 'category':
-					translateX = 250
-					translateY = -categoryHeight / 2 - 50 / 2
-					rectangleShape = { width: 350, height: 50 }
+					translateX = 175
+					trapezoid = { width: 100 - categoryItemWidthMargin, innerHeight: 50, outerHeight: categoryHeight }
 					break
 				case 'skill':
-					translateX = 250
+					translateX = 275
 					translateY = (categoryHeight * rotation) / selectedCategory.phi
-					rectangleShape = { width: 150, height: (item.projectCount / selectedCategory.projectCount) * categoryHeight }
+					rectangle = {
+						width: 150 - categoryItemWidthMargin,
+						height: (item.projectCount / selectedCategory.projectCount) * categoryHeight - categoryItemHeightMargin,
+					}
 					break
 				case 'project':
-					translateX = 400
+					translateX = 425
 					translateY = (categoryHeight * rotation) / selectedCategory.phi
-					rectangleShape = { width: 200, height: (1 / selectedCategory.projectCount) * categoryHeight }
+					rectangle = {
+						width: 200 - categoryItemWidthMargin,
+						height: (1 / selectedCategory.projectCount) * categoryHeight - categoryItemHeightMargin,
+					}
 					break
 			}
 		}
@@ -97,9 +105,9 @@ const NodePositioner = (props: Props) => {
 		if (skillItemIndex > -1) {
 			const { startX, startY, spacing } = projectDetailsPositioning
 			text = selectedProjectSkills[skillItemIndex].name
-			rectangleShape = { width: 100, height: 50 }
+			rectangle = { width: 100, height: 50 }
 			translateX = startX
-			translateY = startY + rectangleShape.height / 2 + spacing * skillItemIndex
+			translateY = startY + rectangle.height / 2 + spacing * skillItemIndex
 			corrRotation = 0
 			displayFontSize = 14
 		} else if (projectIsSelected) translateX += 30
@@ -121,7 +129,8 @@ const NodePositioner = (props: Props) => {
 			>
 				<Node
 					type={type}
-					rectangleShape={rectangleShape}
+					rectangle={rectangle}
+					trapezoid={trapezoid}
 					text={text}
 					innerRadius={innerRadius}
 					phi={item.phi}
