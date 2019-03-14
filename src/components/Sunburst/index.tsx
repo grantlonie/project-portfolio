@@ -7,7 +7,7 @@ import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 import NodePositioner from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import CategoryDetails from './CategoryDetails'
-import { useSunburstDimensioning, projectHeaderHeight } from './dimensioning'
+import { useSunburstDimensioning, projectHeaderHeight, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import stateService from './state'
 
@@ -141,7 +141,7 @@ const Sunburst = (props: Props) => {
 			setSunburstScale(1)
 			setSelectedCategoryId(null)
 		} else {
-			setSunburstScale(0.7)
+			setSunburstScale(sunburstScaleDown)
 			setSelectedCategoryId(categoryId)
 		}
 	}
@@ -155,7 +155,7 @@ const Sunburst = (props: Props) => {
 			onMouseLeave={leaveSunburst}
 			style={{
 				position: 'absolute',
-				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) scale(${sunburstScale})`,
+				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) scale(${1 / sunburstScale})`,
 				transition: 'all 500ms',
 			}}
 		>

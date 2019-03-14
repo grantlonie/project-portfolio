@@ -1,4 +1,7 @@
 import React from 'react'
+import Typography from '@material-ui/core/Typography'
+
+import { sunburstScaleDown } from './dimensioning'
 
 const totalHeight = 400
 const itemTopMargin = 2
@@ -34,9 +37,17 @@ interface Props {
 }
 
 const CategoryDetails = (props: Props) => {
-	if (!props.show) return null
+	return (
+		<div style={{ opacity: props.show ? 1 : 0, transition: 'all 500ms', transform: `scale(${sunburstScaleDown})` }}>
+			<div style={{ position: 'absolute', left: skillTranslate + 10, top: -totalHeight / 2 - 40 }}>
+				<Typography variant="h6">Skill</Typography>
+			</div>
 
-	return <div>hi</div>
+			<div style={{ position: 'absolute', left: projectTranslate + 10, top: -totalHeight / 2 - 40 }}>
+				<Typography variant="h6">Project</Typography>
+			</div>
+		</div>
+	)
 }
 
 export default CategoryDetails

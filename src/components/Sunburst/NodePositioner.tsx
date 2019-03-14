@@ -3,6 +3,7 @@ import React from 'react'
 import { ProjectItem } from '../../types'
 import Node from './Node'
 import { categoryInfo } from './CategoryDetails'
+import { sunburstScaleDown } from './dimensioning'
 
 interface Props {
 	/** Type of circle */
@@ -69,7 +70,7 @@ const NodePositioner = (props: Props) => {
 		let projectIsSelected = false
 		if (selectedCategory) {
 			corrRotation = 0
-			scale = 0.7
+			scale = sunburstScaleDown
 			switch (type) {
 				case 'category':
 					translateX = categoryInfo.category.translate
@@ -116,7 +117,7 @@ const NodePositioner = (props: Props) => {
 				style={{
 					position: 'absolute',
 					transform: `
-						scale(${1 / scale})
+						scale(${scale})
 						rotate(${corrRotation}rad) 
 						translate3d(${translateX}px, ${translateY}px, 0)
 					`,

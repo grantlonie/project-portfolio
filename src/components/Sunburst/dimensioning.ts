@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react'
 /** Height of the project details header with description and date */
 export const projectHeaderHeight = 170
 
+/** Factor to scale the sunburst down when category selected */
+export const sunburstScaleDown = 1.4
+
 interface ProjectDetailsPositioning {
 	startX: number
 	startY: number
