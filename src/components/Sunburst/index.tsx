@@ -38,10 +38,14 @@ const Sunburst = (props: Props) => {
 	/** Array of projectSkills that are selected to show more detail */
 	const [selectedProjectSkills, setSelectedProjectSkills] = useState(null as ProjectSkill[])
 	/** Category id that is currently being hovered over */
-	const [hoverCategory, setHoverCategory] = useState(null as string)
+	const [hoverCategoryId, setHoverCategoryId] = useState(null as string)
+	/** Amount to scale the sunburst */
+	const [sunburstScale, setSunburstScale] = useState(1 as number)
+	/** Amount to scale the sunburst */
+	const [selectedCategoryId, setSelectedCategoryId] = useState(null as string)
 
 	const { width: screenWidth } = useWindowSize()
-	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth)
+	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth, selectedCategoryId)
 	const sunburstData = useSunburstData(allCategories, allSkills, projects)
 
 	/**
@@ -71,7 +75,7 @@ const Sunburst = (props: Props) => {
 		setHoveringProjectId(null)
 		clearTimeout(leaveSunburstTimeout.current)
 		leaveSunburstTimeout.current = setTimeout(() => {
-			if (!currentHoverNode.current) setHoverCategory(null)
+			if (!currentHoverNode.current) setHoverCategoryId(null)
 		}, 2000)
 	}
 
@@ -81,6 +85,8 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 */
 	const selectNode = async (id: string, type: string) => {
+		console.log('id: ', id)
+		return
 		if (nodesAreMoving) return
 		if (type !== 'project') return
 
@@ -125,7 +131,12 @@ const Sunburst = (props: Props) => {
 	}
 
 	const handleCategoryHover = categoryId => {
-		setHoverCategory(categoryId)
+		setHoverCategoryId(categoryId)
+	}
+
+	const handleCategorySelect = categoryId => {
+		setSunburstScale(1)
+		setSelectedCategoryId(categoryId)
 	}
 
 	if (sunburstData.length === 0) return <h3>Loading...</h3>
@@ -137,7 +148,8 @@ const Sunburst = (props: Props) => {
 			onMouseLeave={leaveSunburst}
 			style={{
 				position: 'absolute',
-				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px)`,
+				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) scale(${sunburstScale})`,
+				transition: 'all 500ms',
 			}}
 		>
 			{sunburstData.map((category, categoryI) => {
@@ -146,10 +158,18 @@ const Sunburst = (props: Props) => {
 				let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
 				let transform = null
-				if (hoverCategory === category.id) {
+				if (selectedCategoryId === category.id) {
+					const translateAmount = 0
+					transform = `translate(
+						${translateAmount * Math.cos(categoryRotation)}px, 
+						${translateAmount * Math.sin(categoryRotation)}px
+					)`
+				} else if (hoverCategoryId === category.id) {
 					const translateAmount = 40
-					transform = `translate(${translateAmount * Math.cos(categoryRotation)}px, ${translateAmount *
-						Math.sin(categoryRotation)}px)`
+					transform = `translate(
+						${translateAmount * Math.cos(categoryRotation)}px, 
+						${translateAmount * Math.sin(categoryRotation)}px
+					)`
 				}
 
 				const categoryStyle: React.CSSProperties = {
@@ -159,7 +179,12 @@ const Sunburst = (props: Props) => {
 				}
 
 				return (
-					<div key={category.id} onMouseEnter={() => handleCategoryHover(category.id)} style={categoryStyle}>
+					<div
+						key={category.id}
+						onMouseEnter={() => handleCategoryHover(category.id)}
+						onMouseDown={() => handleCategorySelect(category.id)}
+						style={categoryStyle}
+					>
 						<NodePositioner
 							type="category"
 							data={[category]}
@@ -170,6 +195,7 @@ const Sunburst = (props: Props) => {
 							hoveringProjectId={hoveringProjectId}
 							hoverNode={hoverNode}
 							selectNode={selectNode}
+							isCategorySelected={selectedCategoryId === category.id}
 						/>
 
 						<NodePositioner
@@ -182,6 +208,8 @@ const Sunburst = (props: Props) => {
 							hoveringProjectId={hoveringProjectId}
 							hoverNode={hoverNode}
 							selectNode={selectNode}
+							isCategorySelected={selectedCategoryId === category.id}
+							category={category}
 						/>
 
 						{category.skills.map((skill, skillI) => {
@@ -204,6 +232,8 @@ const Sunburst = (props: Props) => {
 										selectedProject={selectedProject}
 										selectedProjectSkills={selectedProjectSkills}
 										projectDetailsPositioning={projectDetailsPositioning}
+										isCategorySelected={selectedCategoryId === category.id}
+										category={category}
 									/>
 								</React.Fragment>
 							)

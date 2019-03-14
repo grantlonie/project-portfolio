@@ -14,6 +14,8 @@ interface Props {
 	outerRadius: number
 	/** Initial Node center rotation angle in degrees */
 	itemRotation: number
+	/** Category of node is selected */
+	isCategorySelected: boolean
 	fontSize: number
 	/** Id of project that is being hovered */
 	hoveringProjectId?: string
@@ -27,7 +29,11 @@ interface Props {
 	selectedProjectSkills?: { id: string; name: string }[]
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
 	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
+	/** Category object of node */
+	category?: any
 }
+
+const categoryHeight = 400
 
 const NodePositioner = (props: Props) => {
 	const {
@@ -38,11 +44,13 @@ const NodePositioner = (props: Props) => {
 		itemRotation,
 		fontSize,
 		hoveringProjectId,
+		isCategorySelected,
 		hoverNode,
 		selectNode,
 		selectedProject,
 		selectedProjectSkills,
 		projectDetailsPositioning,
+		category,
 	} = props
 
 	let rotation = itemRotation
@@ -61,6 +69,28 @@ const NodePositioner = (props: Props) => {
 		// Determine if project skill is selected, hovering or in queue to be selected
 		let skillItemIndex = -1
 		let projectIsSelected = false
+		if (isCategorySelected) {
+			corrRotation = 0
+			switch (type) {
+				case 'category':
+					translateX = 100
+					translateY = 100 * Math.tan(rotation)
+					rectangleShape = { width: 100, height: categoryHeight }
+					break
+				case 'skill':
+					translateX = 300
+					translateY = (categoryHeight * rotation) / category.phi
+					rectangleShape = { width: 100, height: (item.projectCount / category.projectCount) * categoryHeight }
+					break
+				case 'project':
+					translateX = 500
+					translateY = (categoryHeight * rotation) / category.phi
+					rectangleShape = { width: 100, height: (1 / category.projectCount) * categoryHeight }
+
+					break
+			}
+		}
+
 		if (selectedProjectSkills) {
 			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === item.skillId)
 		}

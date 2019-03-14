@@ -50,8 +50,8 @@ const Node = (props: Props) => {
 		c2 = c1
 		y1 = c1 / 2
 		y2 = c2 / 2
-		adjInnerRadius = 100000
-		adjOuterRadius = 100000
+		adjInnerRadius = 10000
+		adjOuterRadius = 10000
 	} else {
 		// Law of cosines to determine thickness at inner and outer radius
 		const cosPhi = Math.cos(phi)
@@ -81,6 +81,13 @@ const Node = (props: Props) => {
 		),
 		[fontSize, text]
 	)
+
+	if (id === '6e83a2af-b527-4593-ad37-3c3660bcbab3') {
+		console.log('y2: ', y2)
+		console.log('x2: ', x2)
+		console.log('y1: ', y1)
+		console.log('x1: ', x1)
+	}
 
 	return (
 		<div>
