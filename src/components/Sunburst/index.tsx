@@ -42,8 +42,10 @@ const Sunburst = (props: Props) => {
 	const [hoverCategoryId, setHoverCategoryId] = useState(null as string)
 	/** Amount to scale the sunburst */
 	const [sunburstScale, setSunburstScale] = useState(1 as number)
-	/** Amount to scale the sunburst */
+	/** Current selected category id and total rotation from 0 (right) clockwise */
 	const [selectedCategoryId, setSelectedCategoryId] = useState(null as string)
+	/** Rotation of the Sunburst */
+	const [sunburstRotation, setSunburstRotation] = useState(0)
 
 	const { width: screenWidth } = useWindowSize()
 	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth, selectedCategoryId)
@@ -136,12 +138,19 @@ const Sunburst = (props: Props) => {
 		}
 	}
 
-	const handleCategorySelect = categoryId => {
+	const handleCategorySelect = async (categoryId: string) => {
 		if (selectedCategoryId) {
 			setSunburstScale(1)
 			setSelectedCategoryId(null)
 		} else {
-			setSunburstScale(sunburstScaleDown)
+			const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
+
+			if (Math.abs(sunburstRotation - rotation) > 0.1) {
+				setSunburstRotation(rotation)
+				setSunburstScale(sunburstScaleDown)
+				await sleep(500)
+			}
+
 			setSelectedCategoryId(categoryId)
 		}
 	}
@@ -152,106 +161,117 @@ const Sunburst = (props: Props) => {
 
 	return (
 		<div
-			onMouseLeave={leaveSunburst}
 			style={{
 				position: 'absolute',
-				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) scale(${1 / sunburstScale})`,
+				transform: `
+					translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) 
+					scale(${1 / sunburstScale})	
+				`,
 				transition: 'all 500ms',
 			}}
 		>
-			{sunburstData.map((category, categoryI) => {
-				// Rotation logic for skills
-				if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
-				let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
-
-				let transform = null
-				if (selectedCategoryId === category.id) {
-					const translateAmount = 0
-					transform = `translate(
-						${translateAmount * Math.cos(categoryRotation)}px, 
-						${translateAmount * Math.sin(categoryRotation)}px
-					)`
-				} else if (hoverCategoryId === category.id) {
-					const translateAmount = 40
-					transform = `translate(
-						${translateAmount * Math.cos(categoryRotation)}px, 
-						${translateAmount * Math.sin(categoryRotation)}px
-					)`
-				}
-
-				const categoryStyle: React.CSSProperties = {
+			<div
+				onMouseLeave={leaveSunburst}
+				style={{
 					position: 'absolute',
-					transform,
+					transform: `rotate(${-sunburstRotation}rad)`,
 					transition: 'all 500ms',
-				}
+				}}
+			>
+				{sunburstData.map((category, categoryI) => {
+					// Rotation logic for skills
+					if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
+					let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
-				let selectedCategory = null
-				if (selectedCategoryId === category.id) {
-					selectedCategory = { phi: category.phi, projectCount: category.projectCount }
-				}
+					let transform = null
+					let parentSelectedCategory = null
+					if (selectedCategoryId && selectedCategoryId === category.id) {
+						const translateAmount = 0
+						parentSelectedCategory = {
+							phi: category.phi,
+							projectCount: category.projectCount,
+							rotation: sunburstRotation,
+						}
+						transform = `translate(
+						${translateAmount * Math.cos(categoryRotation)}px, 
+						${translateAmount * Math.sin(categoryRotation)}px
+					)`
+					} else if (hoverCategoryId === category.id) {
+						const translateAmount = 40
+						transform = `translate(
+						${translateAmount * Math.cos(categoryRotation)}px, 
+						${translateAmount * Math.sin(categoryRotation)}px
+					)`
+					}
 
-				return (
-					<div
-						key={category.id}
-						onMouseEnter={() => handleCategoryHover(category.id)}
-						onMouseDown={() => handleCategorySelect(category.id)}
-						style={categoryStyle}
-					>
-						<NodePositioner
-							type="category"
-							data={[category]}
-							innerRadius={radiuses.category}
-							outerRadius={radiuses.skill}
-							itemRotation={categoryRotation}
-							fontSize={14}
-							hoveringProjectId={hoveringProjectId}
-							hoverNode={hoverNode}
-							selectNode={selectNode}
-							selectedCategory={selectedCategory}
-						/>
+					const categoryStyle: React.CSSProperties = {
+						position: 'absolute',
+						transform,
+						transition: 'all 500ms',
+					}
 
-						<NodePositioner
-							type="skill"
-							data={category.skills}
-							innerRadius={radiuses.skill}
-							outerRadius={radiuses.project}
-							itemRotation={skillRotation}
-							fontSize={12}
-							hoveringProjectId={hoveringProjectId}
-							hoverNode={hoverNode}
-							selectNode={selectNode}
-							selectedCategory={selectedCategory}
-						/>
+					return (
+						<div
+							key={category.id}
+							onMouseEnter={() => handleCategoryHover(category.id)}
+							onMouseDown={() => handleCategorySelect(category.id)}
+							style={categoryStyle}
+						>
+							<NodePositioner
+								type="category"
+								data={[category]}
+								innerRadius={radiuses.category}
+								outerRadius={radiuses.skill}
+								itemRotation={categoryRotation}
+								fontSize={14}
+								hoveringProjectId={hoveringProjectId}
+								hoverNode={hoverNode}
+								selectNode={selectNode}
+								parentSelectedCategory={parentSelectedCategory}
+							/>
 
-						{category.skills.map((skill, skillI) => {
-							// Rotation logic for projects
-							if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
-							const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
+							<NodePositioner
+								type="skill"
+								data={category.skills}
+								innerRadius={radiuses.skill}
+								outerRadius={radiuses.project}
+								itemRotation={skillRotation}
+								fontSize={12}
+								hoveringProjectId={hoveringProjectId}
+								hoverNode={hoverNode}
+								selectNode={selectNode}
+								parentSelectedCategory={parentSelectedCategory}
+							/>
 
-							return (
-								<React.Fragment key={skill.id}>
-									<NodePositioner
-										type="project"
-										data={skill.projects}
-										innerRadius={radiuses.project}
-										outerRadius={radiuses.outer}
-										itemRotation={projectRotation}
-										fontSize={10}
-										hoveringProjectId={hoveringProjectId}
-										hoverNode={hoverNode}
-										selectNode={selectNode}
-										selectedProject={selectedProject}
-										selectedProjectSkills={selectedProjectSkills}
-										projectDetailsPositioning={projectDetailsPositioning}
-										selectedCategory={selectedCategory}
-									/>
-								</React.Fragment>
-							)
-						})}
-					</div>
-				)
-			})}
+							{category.skills.map((skill, skillI) => {
+								// Rotation logic for projects
+								if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
+								const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
 
+								return (
+									<React.Fragment key={skill.id}>
+										<NodePositioner
+											type="project"
+											data={skill.projects}
+											innerRadius={radiuses.project}
+											outerRadius={radiuses.outer}
+											itemRotation={projectRotation}
+											fontSize={10}
+											hoveringProjectId={hoveringProjectId}
+											hoverNode={hoverNode}
+											selectNode={selectNode}
+											selectedProject={selectedProject}
+											selectedProjectSkills={selectedProjectSkills}
+											projectDetailsPositioning={projectDetailsPositioning}
+											parentSelectedCategory={parentSelectedCategory}
+										/>
+									</React.Fragment>
+								)
+							})}
+						</div>
+					)
+				})}
+			</div>
 			<ProjectDetails
 				projectDetailsPositioning={projectDetailsPositioning}
 				selectedProject={selectedProject}
@@ -262,6 +282,28 @@ const Sunburst = (props: Props) => {
 			<CategoryDetails show={Boolean(selectedCategoryId)} />
 		</div>
 	)
+}
+
+/**
+ * Method to calculate the selected category's total rotation from 0 (right) clockwise
+ * @param sunburstData main data object
+ * @param sunburstRotation current sunburst rotation
+ * @param categoryId selected category id
+ */
+function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
+	let rotation = -sunburstData[0].phi / 2
+	for (const category of sunburstData) {
+		if (category.id !== categoryId) rotation += category.phi
+		else {
+			rotation += category.phi / 2
+			break
+		}
+	}
+
+	let deltaRotation = (rotation - sunburstRotation) % (2 * Math.PI)
+	if (Math.abs(deltaRotation) > Math.PI) deltaRotation -= Math.sign(deltaRotation) * 2 * Math.PI
+
+	return sunburstRotation + deltaRotation
 }
 
 const mapStateToProps = ({ projects, allCategories, allSkills }) => ({

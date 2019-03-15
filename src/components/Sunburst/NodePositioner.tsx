@@ -30,7 +30,7 @@ interface Props {
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
 	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
 	/** If category is selected, key positioning props */
-	selectedCategory?: { projectCount: number; phi: number }
+	parentSelectedCategory?: { projectCount: number; phi: number; rotation: number }
 }
 
 const NodePositioner = (props: Props) => {
@@ -47,7 +47,7 @@ const NodePositioner = (props: Props) => {
 		selectedProject,
 		selectedProjectSkills,
 		projectDetailsPositioning,
-		selectedCategory,
+		parentSelectedCategory,
 	} = props
 
 	let rotation = itemRotation
@@ -68,8 +68,9 @@ const NodePositioner = (props: Props) => {
 		// Determine if project skill is selected, hovering or in queue to be selected
 		let skillItemIndex = -1
 		let projectIsSelected = false
-		if (selectedCategory) {
-			corrRotation = 0
+		if (parentSelectedCategory) {
+			corrRotation = parentSelectedCategory.rotation
+			console.log('corrRotation: ', corrRotation)
 			scale = sunburstScaleDown
 			switch (type) {
 				case 'category':
@@ -78,18 +79,19 @@ const NodePositioner = (props: Props) => {
 					break
 				case 'skill':
 					translateX = categoryInfo.skill.translate
-					translateY = (categoryInfo.totalHeight * rotation) / selectedCategory.phi
+					translateY = (categoryInfo.totalHeight * rotation) / parentSelectedCategory.phi
 					rectangle = {
 						width: categoryInfo.skill.width,
-						height: (item.projectCount / selectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
+						height:
+							(item.projectCount / parentSelectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
 					}
 					break
 				case 'project':
 					translateX = categoryInfo.project.translate
-					translateY = (categoryInfo.totalHeight * rotation) / selectedCategory.phi
+					translateY = (categoryInfo.totalHeight * rotation) / parentSelectedCategory.phi
 					rectangle = {
 						width: categoryInfo.project.width,
-						height: (1 / selectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
+						height: (1 / parentSelectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
 					}
 					break
 			}
