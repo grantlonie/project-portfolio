@@ -143,11 +143,11 @@ const Sunburst = (props: Props) => {
 			setSunburstScale(1)
 			setSelectedCategoryId(null)
 		} else {
-			const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
+			setSunburstScale(sunburstScaleDown)
 
+			const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
 			if (Math.abs(sunburstRotation - rotation) > 0.1) {
 				setSunburstRotation(rotation)
-				setSunburstScale(sunburstScaleDown)
 				await sleep(500)
 			}
 

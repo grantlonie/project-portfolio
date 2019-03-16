@@ -54,7 +54,6 @@ const NodePositioner = (props: Props) => {
 
 	return data.map((item, itemI) => {
 		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + item.phi / 2
-		if (rotation > Math.PI) rotation -= Math.PI * 2
 
 		let translateX = innerRadius
 		let translateY = 0
@@ -65,13 +64,12 @@ const NodePositioner = (props: Props) => {
 		let displayFontSize = fontSize
 		let scale = 1
 
-		// Determine if project skill is selected, hovering or in queue to be selected
-		let skillItemIndex = -1
-		let projectIsSelected = false
+		// Position Nodes for selected category
 		if (parentSelectedCategory) {
-			corrRotation = parentSelectedCategory.rotation
-			console.log('corrRotation: ', corrRotation)
+			corrRotation = parentSelectedCategory.rotation % (2 * Math.PI)
+			if (corrRotation < 0) corrRotation += 2 * Math.PI
 			scale = sunburstScaleDown
+
 			switch (type) {
 				case 'category':
 					translateX = categoryInfo.category.translate
@@ -79,7 +77,7 @@ const NodePositioner = (props: Props) => {
 					break
 				case 'skill':
 					translateX = categoryInfo.skill.translate
-					translateY = (categoryInfo.totalHeight * rotation) / parentSelectedCategory.phi
+					translateY = (categoryInfo.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
 					rectangle = {
 						width: categoryInfo.skill.width,
 						height:
@@ -88,7 +86,7 @@ const NodePositioner = (props: Props) => {
 					break
 				case 'project':
 					translateX = categoryInfo.project.translate
-					translateY = (categoryInfo.totalHeight * rotation) / parentSelectedCategory.phi
+					translateY = (categoryInfo.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
 					rectangle = {
 						width: categoryInfo.project.width,
 						height: (1 / parentSelectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
@@ -97,7 +95,11 @@ const NodePositioner = (props: Props) => {
 			}
 		}
 
+		// Determine if project skill is selected, hovering or in queue to be selected
+		let skillItemIndex = -1
+		let projectIsSelected = false
 		if (selectedProjectSkills) {
+			if (rotation > Math.PI) rotation -= Math.PI * 2
 			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === item.skillId)
 		}
 		if (skillItemIndex === -1 && selectedProject) projectIsSelected = item.id === selectedProject.id
