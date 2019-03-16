@@ -19,10 +19,10 @@ interface Props {
 	fontSize: number
 	/** Id of project that is being hovered */
 	hoveringProjectId?: string
-	/** List of all projects needed for projects circle */
-	hoverNode: (id: string, type: this['type']) => void
+	/** Fires when hovering starts over project */
+	hoverNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Fires when node is clicked */
-	selectNode: (id: string, type: this['type']) => void
+	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** project selected to show additional details. If null, don't display */
 	selectedProject?: ProjectItem
 	/** Array of projectSkillIds that are selected to show more detail */
@@ -142,6 +142,7 @@ const NodePositioner = (props: Props) => {
 					id={item.id}
 					hoverNode={hoverNode}
 					selectNode={selectNode}
+					inSelectedCategory={Boolean(parentSelectedCategory)}
 				/>
 			</div>
 		)

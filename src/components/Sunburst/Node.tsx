@@ -25,11 +25,13 @@ interface Props {
 	/** id of the Node - category, skill or project */
 	id: string
 	/** Fires when hovering starts over project */
-	hoverNode: (id: string, type: this['type']) => void
+	hoverNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Fires when node is clicked */
-	selectNode: (id: string, type: this['type']) => void
+	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Material UI withStyles classes object */
 	classes: any
+	/** Node is in a selected category */
+	inSelectedCategory: boolean
 }
 
 const styles = createStyles({
@@ -53,6 +55,7 @@ const Node = (props: Props) => {
 		selectNode,
 		rectangle,
 		trapezoid,
+		inSelectedCategory,
 		classes,
 	} = props
 
@@ -118,8 +121,8 @@ const Node = (props: Props) => {
 					cursor="pointer"
 					fill={fill}
 					className={classes.svgPath}
-					onMouseOver={() => hoverNode(id, type)}
-					onMouseUp={() => selectNode(id, type)}
+					onMouseOver={() => hoverNode(id, type, inSelectedCategory)}
+					onMouseUp={() => selectNode(id, type, inSelectedCategory)}
 					d={`
 						M${x1} ${-y1}
 						A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 

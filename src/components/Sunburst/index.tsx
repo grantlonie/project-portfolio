@@ -29,13 +29,13 @@ const Sunburst = (props: Props) => {
 	const currentHoverNode: { current: { id: string; type: string } } = useRef(null)
 	/** Disable hovering over categories */
 	const disableCategoryHover = useRef(false)
+	/** track when Nodes are moving to prevent additional hover-renders */
+	const nodesAreMoving = useRef(false)
 
 	/** Project the user is hovering over */
 	const [hoveringProjectId, setHoveringProjectId] = useState(null as string)
 	/** Selected project to show more details */
 	const [selectedProject, setSelectedProject] = useState(null as ProjectItem)
-	/** track when Nodes are moving to prevent additional hover-renders */
-	const [nodesAreMoving, setNodesAreMoving] = useState(null as boolean)
 	/** track when Nodes are in a hover transition to prevent additional hover-renders */
 	const [inHoverTransition, setInHoverTransition] = useState(false as boolean)
 	/** Array of projectSkills that are selected to show more detail */
@@ -55,14 +55,14 @@ const Sunburst = (props: Props) => {
 
 	/**
 	 * Method called after user hovers over a node
-	 * @param id - Node id
-	 * @param type - Type of node - category, skill or project
+	 * @param id Node id
+	 * @param type Type of node - category, skill or project
+	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const hoverNode = (id: string, type: string) => {
+	const hoverNode = (id: string, type: string, inSelectedCategory: boolean) => {
 		currentHoverNode.current = { id, type }
-		return
-		if (type !== 'project') return
-		if (nodesAreMoving || inHoverTransition) return
+		if (type !== 'project' || !inSelectedCategory) return
+		if (nodesAreMoving.current || inHoverTransition) return
 
 		setHoveringProjectId(currentHoverNode.current.id)
 
@@ -88,10 +88,11 @@ const Sunburst = (props: Props) => {
 	 * Method called after user clicks a node
 	 * @param id Node id
 	 * @param type Type of node - category, skill or project
+	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const selectNode = async (id: string, type: string) => {
+	const selectNode = async (id: string, type: string, inSelectedCategory: boolean) => {
 		return
-		if (nodesAreMoving) return
+		if (nodesAreMoving.current) return
 		if (type !== 'project') return
 
 		if (selectedProject) {
@@ -117,7 +118,7 @@ const Sunburst = (props: Props) => {
 		let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
 		setHoveringProjectId(null)
 		setSelectedProject(newSelectedProject)
-		setNodesAreMoving(projectSkills.length < 2 ? false : true)
+		if (projectSkills.length > 1) nodesAreMoving.current = true
 		setSelectedProjectSkills(newSelectedProjectSkills)
 
 		// Slowly add project skills to selectedProjectSkills
@@ -128,7 +129,7 @@ const Sunburst = (props: Props) => {
 			setSelectedProjectSkills(newSelectedProjectSkills)
 			i++
 			if (i === projectSkills.length) {
-				setNodesAreMoving(false)
+				nodesAreMoving.current = false
 				clearInterval(projectSkillInterval)
 			}
 		}, 100)
