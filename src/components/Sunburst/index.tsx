@@ -27,6 +27,8 @@ const Sunburst = (props: Props) => {
 
 	/** Track which Node user is currently hovering over */
 	const currentHoverNode: { current: { id: string; type: string } } = useRef(null)
+	/** Disable hovering over categories */
+	const disableCategoryHover = useRef(false)
 
 	/** Project the user is hovering over */
 	const [hoveringProjectId, setHoveringProjectId] = useState(null as string)
@@ -133,24 +135,27 @@ const Sunburst = (props: Props) => {
 	}
 
 	const handleCategoryHover = categoryId => {
-		if (!selectedCategoryId) {
+		if (!disableCategoryHover.current) {
 			setHoverCategoryId(categoryId)
 		}
 	}
 
 	const handleCategorySelect = async (categoryId: string) => {
+		if (categoryId === selectedCategoryId) return
+
 		if (selectedCategoryId) {
+			disableCategoryHover.current = false
 			setSunburstScale(1)
 			setSelectedCategoryId(null)
 		} else {
-			setSunburstScale(sunburstScaleDown)
-
+			disableCategoryHover.current = true
 			const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
 			if (Math.abs(sunburstRotation - rotation) > 0.1) {
 				setSunburstRotation(rotation)
 				await sleep(500)
 			}
 
+			setSunburstScale(sunburstScaleDown)
 			setSelectedCategoryId(categoryId)
 		}
 	}
