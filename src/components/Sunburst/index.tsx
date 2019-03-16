@@ -31,13 +31,13 @@ const Sunburst = (props: Props) => {
 	const disableCategoryHover = useRef(false)
 	/** track when Nodes are moving to prevent additional hover-renders */
 	const nodesAreMoving = useRef(false)
+	/** track when Nodes are in a hover transition to prevent additional hover-renders */
+	const inHoverTransition = useRef(false)
 
 	/** Project the user is hovering over */
 	const [hoveringProjectId, setHoveringProjectId] = useState(null as string)
 	/** Selected project to show more details */
 	const [selectedProject, setSelectedProject] = useState(null as ProjectItem)
-	/** track when Nodes are in a hover transition to prevent additional hover-renders */
-	const [inHoverTransition, setInHoverTransition] = useState(false as boolean)
 	/** Array of projectSkills that are selected to show more detail */
 	const [selectedProjectSkills, setSelectedProjectSkills] = useState(null as ProjectSkill[])
 	/** Category id that is currently being hovered over */
@@ -61,15 +61,16 @@ const Sunburst = (props: Props) => {
 	 */
 	const hoverNode = (id: string, type: string, inSelectedCategory: boolean) => {
 		currentHoverNode.current = { id, type }
-		if (type !== 'project' || !inSelectedCategory) return
-		if (nodesAreMoving.current || inHoverTransition) return
+		if (type !== 'project' || !inSelectedCategory || nodesAreMoving.current || inHoverTransition.current) return
 
 		setHoveringProjectId(currentHoverNode.current.id)
 
-		setInHoverTransition(true)
+		inHoverTransition.current = true
 		setTimeout(() => {
-			setHoveringProjectId(currentHoverNode.current ? currentHoverNode.current.id : null)
-			setInHoverTransition(false)
+			inHoverTransition.current = false
+			setHoveringProjectId(
+				currentHoverNode.current && currentHoverNode.current.type === 'project' ? currentHoverNode.current.id : null
+			)
 		}, 300)
 	}
 
