@@ -3,17 +3,16 @@ import LinesEllipsis from 'react-lines-ellipsis'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
 import { ProjectItem } from '../../types'
+import { ProjectDetailsPositioning } from './types'
 import '../../styles/ProjectDetails.css'
 
 interface Props {
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills and overall width */
-	projectDetailsPositioning: { startX: number; startY: number; spacing: number; width: number }
+	projectDetailsPositioning: ProjectDetailsPositioning
 	/** project selected to show additional details. If null, don't display */
 	selectedProject: ProjectItem
 	/** Array of projectSkills that are selected to show more detail */
 	selectedProjectSkills?: { id: string; name: string }[]
-	/** Height of the project details header with description and date */
-	projectHeaderHeight: number
 }
 
 class ProjectDetails extends Component<Props> {
@@ -30,13 +29,8 @@ class ProjectDetails extends Component<Props> {
 	}
 
 	render() {
-		const {
-			projectDetailsPositioning,
-			selectedProject,
-			projectHeaderHeight,
-			selectedProjectSkills,
-		} = this.props
-		const { startX, startY, spacing } = projectDetailsPositioning
+		const { projectDetailsPositioning, selectedProject, selectedProjectSkills } = this.props
+		const { startX, startY, itemMargin, headerHeight, itemHeight, projectWidth, textWidth } = projectDetailsPositioning
 
 		const Header = function() {
 			if (!selectedProject) return null
@@ -48,9 +42,10 @@ class ProjectDetails extends Component<Props> {
 					<div
 						style={{
 							position: 'absolute',
-							width: projectDetailsPositioning.width,
+							width: projectWidth + textWidth,
 							transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
-						}}>
+						}}
+					>
 						<h3>{name}</h3>
 						<p>Project date: {date}</p>
 						<p>{description}</p>
@@ -59,7 +54,7 @@ class ProjectDetails extends Component<Props> {
 			)
 		}
 
-		const headerTransitionY = startY - projectHeaderHeight
+		const headerTransitionY = startY - headerHeight
 
 		return (
 			<div>
@@ -68,9 +63,10 @@ class ProjectDetails extends Component<Props> {
 				<div
 					style={{
 						position: 'absolute',
-						width: projectDetailsPositioning.width - 120 + 'px',
-						transform: `translate3d(${startX + 125}px, ${startY}px, 0)`,
-					}}>
+						width: textWidth + 'px',
+						transform: `translate3d(${startX + projectWidth}px, ${startY}px, 0)`,
+					}}
+				>
 					<TransitionGroup>
 						{!selectedProjectSkills
 							? null
@@ -82,7 +78,7 @@ class ProjectDetails extends Component<Props> {
 									return (
 										<CSSTransition key={id} timeout={500} classNames="list">
 											<LinesEllipsis
-												style={{ height: spacing }}
+												style={{ height: itemHeight + itemMargin }}
 												text={description || ''}
 												maxLine={2}
 												trimRight

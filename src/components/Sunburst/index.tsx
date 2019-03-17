@@ -7,7 +7,7 @@ import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 import NodePositioner from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import CategoryDetails from './CategoryDetails'
-import { useSunburstDimensioning, projectHeaderHeight, sunburstScaleDown } from './dimensioning'
+import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import stateService from './state'
 import { nodeTypes } from './types'
@@ -51,7 +51,7 @@ const Sunburst = (props: Props) => {
 	const [sunburstRotation, setSunburstRotation] = useState(0)
 
 	const { width: screenWidth } = useWindowSize()
-	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(
+	const { projectDetailsPositioning, categoryDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(
 		screenWidth,
 		selectedCategoryId,
 		selectedProject
@@ -237,6 +237,7 @@ const Sunburst = (props: Props) => {
 								hoveringProjectId={hoveringProjectId}
 								hoverNode={hoverNode}
 								selectNode={selectNode}
+								categoryDetailsPositioning={categoryDetailsPositioning}
 								parentSelectedCategory={parentSelectedCategory}
 							/>
 
@@ -250,6 +251,7 @@ const Sunburst = (props: Props) => {
 								hoveringProjectId={hoveringProjectId}
 								hoverNode={hoverNode}
 								selectNode={selectNode}
+								categoryDetailsPositioning={categoryDetailsPositioning}
 								parentSelectedCategory={parentSelectedCategory}
 							/>
 
@@ -270,6 +272,7 @@ const Sunburst = (props: Props) => {
 											hoveringProjectId={hoveringProjectId}
 											hoverNode={hoverNode}
 											selectNode={selectNode}
+											categoryDetailsPositioning={categoryDetailsPositioning}
 											selectedProject={selectedProject}
 											selectedProjectSkills={selectedProjectSkills}
 											projectDetailsPositioning={projectDetailsPositioning}
@@ -286,10 +289,9 @@ const Sunburst = (props: Props) => {
 				projectDetailsPositioning={projectDetailsPositioning}
 				selectedProject={selectedProject}
 				selectedProjectSkills={selectedProjectSkills}
-				projectHeaderHeight={projectHeaderHeight}
 			/>
 
-			<CategoryDetails show={Boolean(selectedCategoryId)} />
+			<CategoryDetails categoryDetailsPositioning={categoryDetailsPositioning} show={Boolean(selectedCategoryId)} />
 		</div>
 	)
 }

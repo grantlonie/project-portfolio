@@ -2,9 +2,8 @@ import React from 'react'
 
 import { ProjectItem } from '../../types'
 import Node from './Node'
-import { categoryInfo } from './CategoryDetails'
 import { sunburstScaleDown } from './dimensioning'
-import { nodeTypes } from './types'
+import { nodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
 
 interface Props {
 	/** Type of Node grouping */
@@ -24,12 +23,14 @@ interface Props {
 	hoverNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Fires when node is clicked */
 	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
+	/** positioning details for nodes of selected category */
+	categoryDetailsPositioning: CategoryDetailsPositioning
 	/** project selected to show additional details. If null, don't display */
 	selectedProject?: ProjectItem
 	/** Array of projectSkillIds that are selected to show more detail */
 	selectedProjectSkills?: { id: string; name: string }[]
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
-	projectDetailsPositioning?: { startX: number; startY: number; spacing: number }
+	projectDetailsPositioning?: ProjectDetailsPositioning
 	/** If category is selected, key positioning props */
 	parentSelectedCategory?: { projectCount: number; phi: number; rotation: number }
 }
@@ -49,6 +50,7 @@ const NodePositioner = (props: Props) => {
 		selectedProjectSkills,
 		projectDetailsPositioning,
 		parentSelectedCategory,
+		categoryDetailsPositioning,
 	} = props
 
 	let rotation = itemRotation
@@ -75,11 +77,11 @@ const NodePositioner = (props: Props) => {
 		if (skillItemIndex === -1 && selectedProject) projectIsSelected = item.id === selectedProject.id
 
 		if (skillItemIndex > -1) {
-			const { startX, startY, spacing } = projectDetailsPositioning
+			const { startX, startY, itemHeight, itemMargin, projectWidth } = projectDetailsPositioning
 			text = selectedProjectSkills[skillItemIndex].name
-			rectangle = { width: 100, height: 50 }
+			rectangle = { width: projectWidth, height: itemHeight }
 			translateX = startX
-			translateY = startY + rectangle.height / 2 + spacing * skillItemIndex
+			translateY = startY + rectangle.height / 2 + (itemHeight + itemMargin) * skillItemIndex
 			corrRotation = 0
 			displayFontSize = 14
 		} else if (projectIsSelected) translateX += 30
@@ -93,24 +95,31 @@ const NodePositioner = (props: Props) => {
 
 			switch (type) {
 				case 'category':
-					translateX = categoryInfo.category.translate
-					trapezoid = { width: categoryInfo.category.width, innerHeight: 50, outerHeight: categoryInfo.totalHeight }
+					translateX = categoryDetailsPositioning.category.translate
+					trapezoid = {
+						width: categoryDetailsPositioning.category.width,
+						innerHeight: 50,
+						outerHeight: categoryDetailsPositioning.totalHeight,
+					}
 					break
 				case 'skill':
-					translateX = categoryInfo.skill.translate
-					translateY = (categoryInfo.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
+					translateX = categoryDetailsPositioning.skill.translate
+					translateY = (categoryDetailsPositioning.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
 					rectangle = {
-						width: categoryInfo.skill.width,
+						width: categoryDetailsPositioning.skill.width,
 						height:
-							(item.projectCount / parentSelectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
+							(item.projectCount / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
+							categoryDetailsPositioning.itemTopMargin,
 					}
 					break
 				case 'project':
-					translateX = categoryInfo.project.translate
-					translateY = (categoryInfo.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
+					translateX = categoryDetailsPositioning.project.translate
+					translateY = (categoryDetailsPositioning.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
 					rectangle = {
-						width: categoryInfo.project.width,
-						height: (1 / parentSelectedCategory.projectCount) * categoryInfo.totalHeight - categoryInfo.itemTopMargin,
+						width: categoryDetailsPositioning.project.width,
+						height:
+							(1 / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
+							categoryDetailsPositioning.itemTopMargin,
 					}
 					break
 			}
