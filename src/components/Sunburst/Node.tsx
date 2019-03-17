@@ -3,9 +3,11 @@ import { createStyles, withStyles } from '@material-ui/core/styles'
 import LinesEllipsis from 'react-lines-ellipsis'
 import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
 
+import { nodeTypes } from './types'
+
 interface Props {
 	/** Type of Node */
-	type: 'category' | 'skill' | 'project'
+	type: nodeTypes
 	/** If used, change node into rectangle with given values, else take the shape to fit in Sunburst */
 	rectangle?: { width: number; height: number }
 	/** If used, change node into trapezoid with given values, else take the shape to fit in Sunburst */

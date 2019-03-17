@@ -4,10 +4,11 @@ import { ProjectItem } from '../../types'
 import Node from './Node'
 import { categoryInfo } from './CategoryDetails'
 import { sunburstScaleDown } from './dimensioning'
+import { nodeTypes } from './types'
 
 interface Props {
-	/** Type of circle */
-	type: 'category' | 'skill' | 'project'
+	/** Type of Node grouping */
+	type: nodeTypes
 	/** Contains data needed to make Sunburst Circle */
 	data: any
 	/** Distance to inner radius of Node */
@@ -64,8 +65,28 @@ const NodePositioner = (props: Props) => {
 		let displayFontSize = fontSize
 		let scale = 1
 
+		// Determine if project skill is selected, hovering or in queue to be selected
+		let projectIsSelected = false
+		let skillItemIndex = -1
+		if (selectedProjectSkills) {
+			if (rotation > Math.PI) rotation -= Math.PI * 2
+			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === item.skillId)
+		}
+		if (skillItemIndex === -1 && selectedProject) projectIsSelected = item.id === selectedProject.id
+
+		if (skillItemIndex > -1) {
+			const { startX, startY, spacing } = projectDetailsPositioning
+			text = selectedProjectSkills[skillItemIndex].name
+			rectangle = { width: 100, height: 50 }
+			translateX = startX
+			translateY = startY + rectangle.height / 2 + spacing * skillItemIndex
+			corrRotation = 0
+			displayFontSize = 14
+		} else if (projectIsSelected) translateX += 30
+		else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
+
 		// Position Nodes for selected category
-		if (parentSelectedCategory) {
+		if (!projectIsSelected && parentSelectedCategory) {
 			corrRotation = parentSelectedCategory.rotation % (2 * Math.PI)
 			if (corrRotation < 0) corrRotation += 2 * Math.PI
 			scale = sunburstScaleDown
@@ -94,26 +115,6 @@ const NodePositioner = (props: Props) => {
 					break
 			}
 		}
-
-		// Determine if project skill is selected, hovering or in queue to be selected
-		let skillItemIndex = -1
-		let projectIsSelected = false
-		if (selectedProjectSkills) {
-			if (rotation > Math.PI) rotation -= Math.PI * 2
-			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === item.skillId)
-		}
-		if (skillItemIndex === -1 && selectedProject) projectIsSelected = item.id === selectedProject.id
-
-		if (skillItemIndex > -1) {
-			const { startX, startY, spacing } = projectDetailsPositioning
-			text = selectedProjectSkills[skillItemIndex].name
-			rectangle = { width: 100, height: 50 }
-			translateX = startX
-			translateY = startY + rectangle.height / 2 + spacing * skillItemIndex
-			corrRotation = 0
-			displayFontSize = 14
-		} else if (projectIsSelected) translateX += 30
-		else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
 
 		return (
 			<div

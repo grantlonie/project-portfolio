@@ -10,6 +10,7 @@ import CategoryDetails from './CategoryDetails'
 import { useSunburstDimensioning, projectHeaderHeight, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import stateService from './state'
+import { nodeTypes } from './types'
 
 interface Props {
 	projects: ProjectItem[]
@@ -26,7 +27,7 @@ const Sunburst = (props: Props) => {
 	const { allCategories, allSkills, projects } = props
 
 	/** Track which Node user is currently hovering over */
-	const currentHoverNode: { current: { id: string; type: string } } = useRef(null)
+	const currentHoverNode: { current: { id: string; type: nodeTypes } } = useRef(null)
 	/** Disable hovering over categories */
 	const disableCategoryHover = useRef(false)
 	/** track when Nodes are moving to prevent additional hover-renders */
@@ -50,7 +51,11 @@ const Sunburst = (props: Props) => {
 	const [sunburstRotation, setSunburstRotation] = useState(0)
 
 	const { width: screenWidth } = useWindowSize()
-	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(screenWidth, selectedCategoryId)
+	const { projectDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(
+		screenWidth,
+		selectedCategoryId,
+		selectedProject
+	)
 	const sunburstData = useSunburstData(allCategories, allSkills, projects)
 
 	/**
@@ -59,7 +64,7 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const hoverNode = (id: string, type: string, inSelectedCategory: boolean) => {
+	const hoverNode = (id: string, type: nodeTypes, inSelectedCategory: boolean) => {
 		currentHoverNode.current = { id, type }
 		if (type !== 'project' || !inSelectedCategory || nodesAreMoving.current || inHoverTransition.current) return
 
@@ -91,10 +96,8 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const selectNode = async (id: string, type: string, inSelectedCategory: boolean) => {
-		return
-		if (nodesAreMoving.current) return
-		if (type !== 'project') return
+	const selectNode = async (id: string, type: nodeTypes, inSelectedCategory: boolean) => {
+		if (type !== 'project' || nodesAreMoving.current || !inSelectedCategory) return
 
 		if (selectedProject) {
 			// prevent selecting already selected project skill

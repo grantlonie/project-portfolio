@@ -21,7 +21,7 @@ interface Radiuses {
 }
 
 /** Set sunburst and associated text positions and sizes */
-export function useSunburstDimensioning(screenWidth, selectedCategoryId) {
+export function useSunburstDimensioning(screenWidth, selectedCategoryId, selectedProject) {
 	/** Where the project details are positioned relative the sunburst center */
 	const [projectDetailsPositioning, setProjectDetailsPositioning] = useState(null as ProjectDetailsPositioning)
 	/** x and y sunburst center position */
@@ -67,7 +67,7 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId) {
 			project: (sunBurstDiameter * 0.8) / 2,
 			outer: sunBurstDiameter / 2,
 		})
-	}, [screenWidth, selectedCategoryId])
+	}, [screenWidth, selectedCategoryId, Boolean(selectedProject)])
 
 	return { projectDetailsPositioning, sunburstPosition, radiuses }
 }
