@@ -1,29 +1,9 @@
 import { useState, useEffect } from 'react'
 
+import { SunburstData } from './types'
+
 /** Colors for the categories and associated skills and projects */
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959', '#f682ff']
-
-interface SunburstData {
-	id: string
-	name: string
-	fill: string
-	phi: number
-	projectCount: number
-	skills: {
-		id: string
-		name: string
-		fill: string
-		phi: number
-		projectCount: number
-		projects: {
-			id: string
-			name: string
-			skillId: string
-			fill: string
-			phi: number
-		}[]
-	}[]
-}
 
 /** This method creates the sunburst data by looping through categories, skills and projects */
 export default function useSunburstData(allCategories, allSkills, projects) {

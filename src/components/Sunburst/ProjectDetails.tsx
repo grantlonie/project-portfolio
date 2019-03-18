@@ -43,7 +43,7 @@ class ProjectDetails extends Component<Props> {
 						style={{
 							position: 'absolute',
 							width: projectWidth + textWidth,
-							transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
+							transform: `translate3d(${startX + projectWidth}px, ${headerTransitionY}px, 0)`,
 						}}
 					>
 						<h3>{name}</h3>
@@ -64,6 +64,7 @@ class ProjectDetails extends Component<Props> {
 					style={{
 						position: 'absolute',
 						width: textWidth + 'px',
+						paddingLeft: '10px',
 						transform: `translate3d(${startX + projectWidth}px, ${startY}px, 0)`,
 					}}
 				>

@@ -1,7 +1,6 @@
 import React from 'react'
 import Typography from '@material-ui/core/Typography'
 
-import { sunburstScaleDown } from './dimensioning'
 import { CategoryDetailsPositioning } from './types'
 
 interface Props {
@@ -14,7 +13,7 @@ const CategoryDetails = (props: Props) => {
 	const { skill, project, totalHeight } = categoryDetailsPositioning
 
 	return (
-		<div style={{ opacity: show ? 1 : 0, transition: 'all 500ms', transform: `scale(${sunburstScaleDown})` }}>
+		<div style={{ opacity: show ? 1 : 0, transition: 'all 500ms' }}>
 			<div style={{ position: 'absolute', left: skill.translate + 10, top: -totalHeight / 2 - 40 }}>
 				<Typography variant="h6">Skill</Typography>
 			</div>

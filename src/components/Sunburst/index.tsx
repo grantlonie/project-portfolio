@@ -173,10 +173,7 @@ const Sunburst = (props: Props) => {
 		<div
 			style={{
 				position: 'absolute',
-				transform: `
-					translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) 
-					scale(${1 / sunburstScale})	
-				`,
+				transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) `,
 				transition: 'all 500ms',
 			}}
 		>
@@ -184,7 +181,7 @@ const Sunburst = (props: Props) => {
 				onMouseLeave={leaveSunburst}
 				style={{
 					position: 'absolute',
-					transform: `rotate(${-sunburstRotation}rad)`,
+					transform: `scale(${1 / sunburstScale})	rotate(${-sunburstRotation}rad)`,
 					transition: 'all 500ms',
 				}}
 			>
@@ -200,7 +197,6 @@ const Sunburst = (props: Props) => {
 						parentSelectedCategory = {
 							phi: category.phi,
 							projectCount: category.projectCount,
-							rotation: sunburstRotation,
 						}
 						transform = `translate(
 						${translateAmount * Math.cos(categoryRotation)}px, 
@@ -239,6 +235,7 @@ const Sunburst = (props: Props) => {
 								selectNode={selectNode}
 								categoryDetailsPositioning={categoryDetailsPositioning}
 								parentSelectedCategory={parentSelectedCategory}
+								sunburstRotation={sunburstRotation}
 							/>
 
 							<NodePositioner
@@ -253,6 +250,7 @@ const Sunburst = (props: Props) => {
 								selectNode={selectNode}
 								categoryDetailsPositioning={categoryDetailsPositioning}
 								parentSelectedCategory={parentSelectedCategory}
+								sunburstRotation={sunburstRotation}
 							/>
 
 							{category.skills.map((skill, skillI) => {
@@ -277,6 +275,7 @@ const Sunburst = (props: Props) => {
 											selectedProjectSkills={selectedProjectSkills}
 											projectDetailsPositioning={projectDetailsPositioning}
 											parentSelectedCategory={parentSelectedCategory}
+											sunburstRotation={sunburstRotation}
 										/>
 									</React.Fragment>
 								)

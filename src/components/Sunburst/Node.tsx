@@ -74,7 +74,7 @@ const Node = (props: Props) => {
 		y1 = c1 / 2
 		y2 = c2 / 2
 		adjInnerRadius = 10000
-		adjOuterRadius = 10000
+		adjOuterRadius = 100000
 	} else if (rectangle) {
 		width = rectangle.width
 		x1 = 0

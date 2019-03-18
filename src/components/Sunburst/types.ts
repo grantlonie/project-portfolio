@@ -10,7 +10,7 @@ interface CategoryNodeTypePosition {
 
 export interface CategoryDetailsPositioning {
 	totalHeight: number
-	itemTopMargin: number
+	itemMargin: number
 	category: CategoryNodeTypePosition
 	skill: CategoryNodeTypePosition
 	project: CategoryNodeTypePosition
@@ -24,4 +24,25 @@ export interface ProjectDetailsPositioning {
 	itemMargin: number
 	projectWidth: number
 	textWidth: number
+}
+
+interface NodeData {
+	id: string
+	name: string
+	fill: string
+	phi: number
+}
+
+export interface ProjectData extends NodeData {
+	skillId: string
+}
+
+export interface SkillData extends NodeData {
+	projectCount: number
+	projects: ProjectData[]
+}
+
+export interface SunburstData extends NodeData {
+	projectCount: number
+	skills: SkillData[]
 }
