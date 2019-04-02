@@ -3,16 +3,7 @@ import { connect } from 'react-redux'
 import { Auth } from 'aws-amplify'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 import { withAuthenticator } from 'aws-amplify-react'
-import {
-	AppBar,
-	Toolbar,
-	Typography,
-	Button,
-	IconButton,
-	Drawer,
-	List,
-	ListItem,
-} from '@material-ui/core'
+import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 
 import Sunburst from './Sunburst'
@@ -85,7 +76,8 @@ class App extends Component<Props, State> {
 								style={{ margin: '0 20px 0 -12px' }}
 								color="inherit"
 								aria-label="Menu"
-								onClick={this.toggleDrawer.bind(this)}>
+								onClick={this.toggleDrawer.bind(this)}
+							>
 								<MenuIcon />
 							</IconButton>
 
@@ -100,11 +92,7 @@ class App extends Component<Props, State> {
 					</AppBar>
 
 					<Drawer open={this.state.showDrawer} onClose={this.toggleDrawer.bind(this)}>
-						<div
-							tabIndex={0}
-							role="button"
-							onClick={this.toggleDrawer.bind(this)}
-							onKeyDown={this.toggleDrawer.bind(this)}>
+						<div tabIndex={0} role="button" onClick={this.toggleDrawer.bind(this)} onKeyDown={this.toggleDrawer.bind(this)}>
 							<List>
 								{drawerLinks.map(page => (
 									<Link key={page.text} to={page.link}>
@@ -140,9 +128,9 @@ const mapDispatchToProps = dispatch => {
 	}
 }
 
-export default withAuthenticator(
-	connect(
-		null,
-		mapDispatchToProps
-	)(App)
-)
+const connectedApp = connect(
+	null,
+	mapDispatchToProps
+)(App)
+
+export default (process.env.REACT_APP_USE_LOCAL_DATA ? connectedApp : withAuthenticator(connectedApp))
