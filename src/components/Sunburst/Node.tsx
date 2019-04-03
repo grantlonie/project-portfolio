@@ -13,13 +13,13 @@ export interface NodeProps {
 	/** If used, change node into trapezoid with given values, else take the shape to fit in Sunburst */
 	trapezoid?: { width: number; innerHeight: number; outerHeight: number }
 	/** The displayed text */
-	text: string
+	name: string
 	/** Inner radius of the node */
-	innerRadius: number
+	innerRadius?: number
 	/** The arc angle in degrees that determines the Node's width */
-	phi: number
+	phi?: number
 	/** Outer radius of the node */
-	outerRadius: number
+	outerRadius?: number
 	/** For text */
 	fontSize: number
 	/** Color of Node */
@@ -46,7 +46,7 @@ const styles = createStyles({
 const Node = (props: NodeProps) => {
 	const {
 		type,
-		text,
+		name,
 		innerRadius,
 		phi,
 		outerRadius,
@@ -108,12 +108,12 @@ const Node = (props: NodeProps) => {
 			<ResponsiveEllipsis
 				className={classes.text}
 				style={{ lineHeight: fontSize + 'px', fontSize }}
-				text={text}
+				text={name}
 				maxLine={Math.floor(c1 / fontSize)}
 				basedOn="letters"
 			/>
 		)
-	}, [fontSize, text, rectangle])
+	}, [fontSize, name, rectangle])
 
 	return (
 		<div>

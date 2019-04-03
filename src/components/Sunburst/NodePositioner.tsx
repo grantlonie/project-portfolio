@@ -1,6 +1,5 @@
 import React from 'react'
 
-import { ProjectItem } from '../../types'
 import Node, { NodeProps } from './Node'
 import { sunburstScaleDown } from './dimensioning'
 import { nodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
@@ -16,6 +15,7 @@ interface Props {
 	outerRadius: number
 	/** Initial Node center rotation angle in degrees */
 	itemRotation: number
+	/** font size of node text */
 	fontSize: number
 	/** Id of project that is being hovered */
 	hoveringProjectId?: string
@@ -25,8 +25,6 @@ interface Props {
 	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** positioning details for nodes of selected category */
 	categoryDetailsPositioning: CategoryDetailsPositioning
-	/** project selected to show additional details. If null, don't display */
-	selectedProject?: ProjectItem
 	/** Array of projectSkillIds that are selected to show more detail */
 	selectedProjectSkills?: { id: string; name: string }[]
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills */
@@ -48,7 +46,6 @@ const NodePositioner = (props: Props) => {
 		hoveringProjectId,
 		hoverNode,
 		selectNode,
-		selectedProject,
 		selectedProjectSkills,
 		projectDetailsPositioning,
 		parentSelectedCategory,
@@ -63,17 +60,14 @@ const NodePositioner = (props: Props) => {
 
 		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + phi / 2
 
-		let translateX = innerRadius
-		let translateY = 0
-		let corrRotation = rotation
-		let scale = 1
+		let translateX
+		let translateY
+		let corrRotation
+		let scale
 
-		const nodeProps: NodeProps = {
+		let nodeProps: NodeProps = {
 			type,
-			text: name,
-			innerRadius,
-			phi,
-			outerRadius,
+			name,
 			fontSize,
 			fill,
 			id,
@@ -83,28 +77,23 @@ const NodePositioner = (props: Props) => {
 		}
 
 		let skillItemIndex = -1
+		if (selectedProjectSkills) skillItemIndex = selectedProjectSkills.findIndex(i => i.id === skillId)
 
-		if (selectedProjectSkills) {
-			// if (rotation > Math.PI) rotation -= Math.PI * 2
-			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === skillId)
-		}
-
-		// Position Nodes for selected project
+		// Position Node for selected project
 		if (skillItemIndex > -1) {
-			scale = sunburstScaleDown
-			corrRotation = horizontalCorrection(sunburstRotation)
-
 			const { startX, startY, itemHeight, itemMargin, projectWidth } = projectDetailsPositioning
 
+			scale = sunburstScaleDown
+			corrRotation = horizontalCorrection(sunburstRotation)
 			translateX = startX
 			translateY = startY + itemHeight / 2 + (itemHeight + itemMargin) * skillItemIndex
 
-			nodeProps.text = selectedProjectSkills[skillItemIndex].name
+			nodeProps.name = selectedProjectSkills[skillItemIndex].name
 			nodeProps.rectangle = { width: projectWidth, height: itemHeight }
 			nodeProps.fontSize = 14
 		}
 
-		// Position Nodes for selected category
+		// Position Node for selected category
 		else if (parentSelectedCategory) {
 			scale = sunburstScaleDown
 			corrRotation = horizontalCorrection(sunburstRotation)
@@ -112,6 +101,7 @@ const NodePositioner = (props: Props) => {
 			switch (type) {
 				case 'category':
 					translateX = categoryDetailsPositioning.category.translate
+					translateY = 0
 					nodeProps.trapezoid = {
 						width: categoryDetailsPositioning.category.width,
 						innerHeight: 50,
@@ -141,6 +131,16 @@ const NodePositioner = (props: Props) => {
 					}
 					break
 			}
+		}
+
+		// Position Node around Sunburst
+		else {
+			translateX = innerRadius
+			translateY = 0
+			corrRotation = rotation
+			scale = 1
+
+			nodeProps = { ...nodeProps, innerRadius, outerRadius, phi }
 		}
 
 		// Apply project hovering

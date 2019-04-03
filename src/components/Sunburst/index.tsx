@@ -271,7 +271,6 @@ const Sunburst = (props: Props) => {
 											hoverNode={hoverNode}
 											selectNode={selectNode}
 											categoryDetailsPositioning={categoryDetailsPositioning}
-											selectedProject={selectedProject}
 											selectedProjectSkills={selectedProjectSkills}
 											projectDetailsPositioning={projectDetailsPositioning}
 											parentSelectedCategory={parentSelectedCategory}
