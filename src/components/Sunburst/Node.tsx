@@ -5,7 +5,7 @@ import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
 
 import { nodeTypes } from './types'
 
-interface Props {
+export interface NodeProps {
 	/** Type of Node */
 	type: nodeTypes
 	/** If used, change node into rectangle with given values, else take the shape to fit in Sunburst */
@@ -30,10 +30,10 @@ interface Props {
 	hoverNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Fires when node is clicked */
 	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
-	/** Material UI withStyles classes object */
-	classes: any
 	/** Node is in a selected category */
 	inSelectedCategory: boolean
+	/** Material UI withStyles classes object */
+	classes?: any
 }
 
 const styles = createStyles({
@@ -43,7 +43,7 @@ const styles = createStyles({
 	text: { position: 'relative', top: '50%', transform: 'translateY(-50%)' },
 })
 
-const Node = (props: Props) => {
+const Node = (props: NodeProps) => {
 	const {
 		type,
 		text,

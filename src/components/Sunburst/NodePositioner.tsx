@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { ProjectItem } from '../../types'
-import Node from './Node'
+import Node, { NodeProps } from './Node'
 import { sunburstScaleDown } from './dimensioning'
 import { nodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
 
@@ -59,73 +59,84 @@ const NodePositioner = (props: Props) => {
 	let rotation = itemRotation
 
 	return data.map((item, itemI) => {
-		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + item.phi / 2
+		const { id, name, phi, fill, skillId, projectCount } = item
+
+		if (itemI > 0) rotation += data[itemI - 1].phi / 2 + phi / 2
 
 		let translateX = innerRadius
 		let translateY = 0
 		let corrRotation = rotation
-		let rectangle = null
-		let trapezoid = null
-		let text = item.name
-		let displayFontSize = fontSize
 		let scale = 1
 
-		// Determine if project skill is selected, hovering or in queue to be selected
+		const nodeProps: NodeProps = {
+			type,
+			text: name,
+			innerRadius,
+			phi,
+			outerRadius,
+			fontSize,
+			fill,
+			id,
+			hoverNode,
+			selectNode,
+			inSelectedCategory: Boolean(parentSelectedCategory),
+		}
+
 		let projectIsSelected = false
-		let skillItemIndex = -1
-		if (type === 'project') {
-			if (selectedProjectSkills) {
-				if (rotation > Math.PI) rotation -= Math.PI * 2
-				skillItemIndex = selectedProjectSkills.findIndex(i => i.id === item.skillId)
+		let projectIsQueued = false
 
-				if (skillItemIndex === -1) {
-					projectIsSelected = item.id === selectedProject.id
-					if (projectIsSelected) translateX += 30
-				} else {
-					scale = sunburstScaleDown
+		// Determine if project skill is selected, hovering or in queue to be selected
+		if (selectedProjectSkills) {
+			// if (rotation > Math.PI) rotation -= Math.PI * 2
+			let skillItemIndex = selectedProjectSkills.findIndex(i => i.id === skillId)
+			if (skillItemIndex > -1) projectIsSelected = true
+			else if (id === selectedProject.id) projectIsQueued = true
 
-					const { startX, startY, itemHeight, itemMargin, projectWidth } = projectDetailsPositioning
-					text = selectedProjectSkills[skillItemIndex].name
-					rectangle = { width: projectWidth, height: itemHeight }
-					translateX = startX
-					translateY = startY + rectangle.height / 2 + (itemHeight + itemMargin) * skillItemIndex
-					corrRotation = sunburstRotation % (2 * Math.PI)
-					if (corrRotation < 0) corrRotation += 2 * Math.PI
+			if (projectIsSelected) {
+				scale = sunburstScaleDown
+				corrRotation = horizontalCorrection(sunburstRotation)
 
-					displayFontSize = 14
-				}
-			} else if (hoveringProjectId && hoveringProjectId === item.id) translateX += 10
+				const { startX, startY, itemHeight, itemMargin, projectWidth } = projectDetailsPositioning
+
+				translateX = startX
+				translateY = startY + itemHeight / 2 + (itemHeight + itemMargin) * skillItemIndex
+
+				nodeProps.text = selectedProjectSkills[skillItemIndex].name
+				nodeProps.rectangle = { width: projectWidth, height: itemHeight }
+				nodeProps.fontSize = 14
+			} else if (projectIsQueued) translateX += 30
 		}
 
 		// Position Nodes for selected category
-		if (!projectIsSelected && parentSelectedCategory) {
-			corrRotation = sunburstRotation % (2 * Math.PI) // TODO: remove duplicate
-			if (corrRotation < 0) corrRotation += 2 * Math.PI
+		if (parentSelectedCategory && !projectIsSelected) {
+			corrRotation = horizontalCorrection(sunburstRotation)
 			scale = sunburstScaleDown
 
 			switch (type) {
 				case 'category':
 					translateX = categoryDetailsPositioning.category.translate
-					trapezoid = {
+					nodeProps.trapezoid = {
 						width: categoryDetailsPositioning.category.width,
 						innerHeight: 50,
 						outerHeight: categoryDetailsPositioning.totalHeight,
 					}
 					break
+
 				case 'skill':
 					translateX = categoryDetailsPositioning.skill.translate
 					translateY = (categoryDetailsPositioning.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
-					rectangle = {
+					nodeProps.rectangle = {
 						width: categoryDetailsPositioning.skill.width,
 						height:
-							(item.projectCount / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
+							(projectCount / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
 							categoryDetailsPositioning.itemMargin,
 					}
 					break
+
 				case 'project':
-					translateX = categoryDetailsPositioning.project.translate
+					translateX = categoryDetailsPositioning.project.translate + (projectIsQueued ? 30 : 0)
 					translateY = (categoryDetailsPositioning.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
-					rectangle = {
+					nodeProps.rectangle = {
 						width: categoryDetailsPositioning.project.width,
 						height:
 							(1 / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
@@ -135,9 +146,12 @@ const NodePositioner = (props: Props) => {
 			}
 		}
 
+		// Apply project hovering
+		if (hoveringProjectId && hoveringProjectId === id) translateX += 10
+
 		return (
 			<div
-				key={item.id}
+				key={id}
 				style={{
 					position: 'absolute',
 					transform: `
@@ -149,24 +163,21 @@ const NodePositioner = (props: Props) => {
 					transformOrigin: '0 0',
 				}}
 			>
-				<Node
-					type={type}
-					rectangle={rectangle}
-					trapezoid={trapezoid}
-					text={text}
-					innerRadius={innerRadius}
-					phi={item.phi}
-					outerRadius={outerRadius}
-					fontSize={displayFontSize}
-					fill={item.fill}
-					id={item.id}
-					hoverNode={hoverNode}
-					selectNode={selectNode}
-					inSelectedCategory={Boolean(parentSelectedCategory)}
-				/>
+				<Node {...nodeProps} />
 			</div>
 		)
 	})
+}
+
+/**
+ * Offset the rotation of the sunburst to obtain a horizontal Node
+ * @param sunburstRotation current rotation of the sunburst in radians
+ */
+function horizontalCorrection(sunburstRotation: number) {
+	let corrRotation = sunburstRotation % (2 * Math.PI)
+	if (corrRotation < 0) corrRotation += 2 * Math.PI
+
+	return corrRotation
 }
 
 export default NodePositioner
