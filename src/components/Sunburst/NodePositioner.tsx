@@ -82,33 +82,32 @@ const NodePositioner = (props: Props) => {
 			inSelectedCategory: Boolean(parentSelectedCategory),
 		}
 
-		let projectIsSelected = false
+		let skillItemIndex = -1
 
-		// Determine if project skill is selected, hovering or in queue to be selected
 		if (selectedProjectSkills) {
 			// if (rotation > Math.PI) rotation -= Math.PI * 2
-			let skillItemIndex = selectedProjectSkills.findIndex(i => i.id === skillId)
-			if (skillItemIndex > -1) projectIsSelected = true
+			skillItemIndex = selectedProjectSkills.findIndex(i => i.id === skillId)
+		}
 
-			if (projectIsSelected) {
-				scale = sunburstScaleDown
-				corrRotation = horizontalCorrection(sunburstRotation)
+		// Position Nodes for selected project
+		if (skillItemIndex > -1) {
+			scale = sunburstScaleDown
+			corrRotation = horizontalCorrection(sunburstRotation)
 
-				const { startX, startY, itemHeight, itemMargin, projectWidth } = projectDetailsPositioning
+			const { startX, startY, itemHeight, itemMargin, projectWidth } = projectDetailsPositioning
 
-				translateX = startX
-				translateY = startY + itemHeight / 2 + (itemHeight + itemMargin) * skillItemIndex
+			translateX = startX
+			translateY = startY + itemHeight / 2 + (itemHeight + itemMargin) * skillItemIndex
 
-				nodeProps.text = selectedProjectSkills[skillItemIndex].name
-				nodeProps.rectangle = { width: projectWidth, height: itemHeight }
-				nodeProps.fontSize = 14
-			}
+			nodeProps.text = selectedProjectSkills[skillItemIndex].name
+			nodeProps.rectangle = { width: projectWidth, height: itemHeight }
+			nodeProps.fontSize = 14
 		}
 
 		// Position Nodes for selected category
-		if (parentSelectedCategory && !projectIsSelected) {
-			corrRotation = horizontalCorrection(sunburstRotation)
+		else if (parentSelectedCategory) {
 			scale = sunburstScaleDown
+			corrRotation = horizontalCorrection(sunburstRotation)
 
 			switch (type) {
 				case 'category':
