@@ -9,8 +9,7 @@ import ProjectDetails from './ProjectDetails'
 import CategoryDetails from './CategoryDetails'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
-import stateService from './state'
-import { nodeTypes, SunburstData } from './types'
+import { nodeTypes } from './types'
 
 interface Props {
 	projects: ProjectItem[]
