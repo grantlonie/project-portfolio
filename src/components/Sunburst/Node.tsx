@@ -29,7 +29,7 @@ export interface NodeProps {
 	/** Fires when hovering starts over project */
 	hoverNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Fires when node is clicked */
-	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
+	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean, event) => void
 	/** Node is in a selected category */
 	inSelectedCategory: boolean
 	/** Material UI withStyles classes object */
@@ -124,7 +124,7 @@ const Node = (props: NodeProps) => {
 					fill={fill}
 					className={classes.svgPath}
 					onMouseOver={() => hoverNode(id, type, inSelectedCategory)}
-					onMouseUp={() => selectNode(id, type, inSelectedCategory)}
+					onMouseUp={e => selectNode(id, type, inSelectedCategory, e)}
 					d={`
 						M${x1} ${-y1}
 						A ${adjInnerRadius} ${adjInnerRadius} 0 0 1 ${x1} ${y1} L${x2} ${y2} 

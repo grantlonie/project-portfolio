@@ -10,7 +10,7 @@ import CategoryDetails from './CategoryDetails'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import stateService from './state'
-import { nodeTypes } from './types'
+import { nodeTypes, SunburstData } from './types'
 
 interface Props {
 	projects: ProjectItem[]
@@ -38,7 +38,7 @@ const Sunburst = (props: Props) => {
 	/** Project the user is hovering over */
 	const [hoveringProjectId, setHoveringProjectId] = useState(null as string)
 	/** Selected project to show more details */
-	const [selectedProject, setSelectedProject] = useState(null as ProjectItem)
+	const [selectedProject, setSelectedProject] = useState(undefined as ProjectItem)
 	/** Array of projectSkills that are selected to show more detail */
 	const [selectedProjectSkills, setSelectedProjectSkills] = useState(null as ProjectSkill[])
 	/** Category id that is currently being hovered over */
@@ -96,72 +96,89 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const selectNode = async (id: string, type: nodeTypes, inSelectedCategory: boolean) => {
-		if (type !== 'project' || nodesAreMoving.current || !inSelectedCategory) return
+	const selectNode = async (id: string, type: nodeTypes, inSelectedCategory: boolean, event) => {
+		if (nodesAreMoving.current) return
 
-		if (selectedProject) {
-			// prevent selecting already selected project skill
-			if (selectedProject.id === id) return
-			// Close current project first and rerun with new project
-			else {
-				setSelectedProject(null)
+		const transition = getTransition(id, type, inSelectedCategory, selectedCategoryId, selectedProject)
+
+		switch (transition) {
+			case 'select category':
+				// allow event propagation for handleCategorySelect to fire
+				return
+
+			case 'select project':
+				// Close current project first and rerun with new project
+				if (selectedProject) {
+					setSelectedProject(null)
+					setSelectedProjectSkills(null)
+					await sleep(300)
+				}
+
+				// Find selected project and create list of project skills from selected project
+				const newSelectedProject = props.projects.find(project => project.id === id)
+
+				const projectSkills = newSelectedProject.skills.items.map(projectSkill => {
+					const name = allSkills.find(skill => skill.id === projectSkill.skillId).name
+					return { id: projectSkill.id, name }
+				})
+
+				// Add first project skill to selectedProjectSkills
+				let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
+				setHoveringProjectId(null)
+				setSelectedProject(newSelectedProject)
+				if (projectSkills.length > 1) nodesAreMoving.current = true
+				setSelectedProjectSkills(newSelectedProjectSkills)
+
+				// Slowly add project skills to selectedProjectSkills
+				if (projectSkills.length < 2) return
+				let i = 1
+				let projectSkillInterval = setInterval(() => {
+					newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
+					setSelectedProjectSkills(newSelectedProjectSkills)
+					i++
+					if (i === projectSkills.length) {
+						nodesAreMoving.current = false
+						clearInterval(projectSkillInterval)
+					}
+				}, 100)
+				break
+
+			case 'collapse project':
+				setSelectedProject(undefined)
 				setSelectedProjectSkills(null)
-				await sleep(300)
-			}
+				break
+
+			case 'collapse category':
+				disableCategoryHover.current = false
+				setSunburstScale(1)
+				setSelectedCategoryId(null)
+				setSelectedProject(undefined)
+				setSelectedProjectSkills(null)
+				break
+
+			case 'do nothing':
+				break
 		}
 
-		// Find selected project and create list of project skills from selected project
-		const newSelectedProject = props.projects.find(project => project.id === id)
+		// prevent handleCategorySelect from firing
+		event.stopPropagation()
+	}
 
-		const projectSkills = newSelectedProject.skills.items.map(projectSkill => {
-			const name = allSkills.find(skill => skill.id === projectSkill.skillId).name
-			return { id: projectSkill.id, name }
-		})
+	const handleCategorySelect = async categoryId => {
+		disableCategoryHover.current = true
+		const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
+		if (Math.abs(sunburstRotation - rotation) > 0.1) {
+			setSunburstRotation(rotation)
+			await sleep(500)
+		}
 
-		// Add first project skill to selectedProjectSkills
-		let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
-		setHoveringProjectId(null)
-		setSelectedProject(newSelectedProject)
-		if (projectSkills.length > 1) nodesAreMoving.current = true
-		setSelectedProjectSkills(newSelectedProjectSkills)
-
-		// Slowly add project skills to selectedProjectSkills
-		if (projectSkills.length < 2) return
-		let i = 1
-		let projectSkillInterval = setInterval(() => {
-			newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
-			setSelectedProjectSkills(newSelectedProjectSkills)
-			i++
-			if (i === projectSkills.length) {
-				nodesAreMoving.current = false
-				clearInterval(projectSkillInterval)
-			}
-		}, 100)
+		setSunburstScale(sunburstScaleDown)
+		setSelectedCategoryId(categoryId)
 	}
 
 	const handleCategoryHover = categoryId => {
 		if (!disableCategoryHover.current) {
 			setHoverCategoryId(categoryId)
-		}
-	}
-
-	const handleCategorySelect = async (categoryId: string) => {
-		if (categoryId === selectedCategoryId) return
-
-		if (selectedCategoryId) {
-			disableCategoryHover.current = false
-			setSunburstScale(1)
-			setSelectedCategoryId(null)
-		} else {
-			disableCategoryHover.current = true
-			const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
-			if (Math.abs(sunburstRotation - rotation) > 0.1) {
-				setSunburstRotation(rotation)
-				await sleep(500)
-			}
-
-			setSunburstScale(sunburstScaleDown)
-			setSelectedCategoryId(categoryId)
 		}
 	}
 
@@ -220,7 +237,7 @@ const Sunburst = (props: Props) => {
 						<div
 							key={category.id}
 							onMouseEnter={() => handleCategoryHover(category.id)}
-							onMouseDown={() => handleCategorySelect(category.id)}
+							onMouseUp={() => handleCategorySelect(category.id)}
 							style={categoryStyle}
 						>
 							<NodePositioner
@@ -314,6 +331,27 @@ function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
 	if (Math.abs(deltaRotation) > Math.PI) deltaRotation -= Math.sign(deltaRotation) * 2 * Math.PI
 
 	return sunburstRotation + deltaRotation
+}
+
+/**
+ * Determine the appropriate sunburst transition response after user clicks a node
+ * @param id selected node id
+ * @param type node type
+ * @param inSelectedCategory true if selected node is in a selected category
+ * @param selectedCategoryId the currently selected categogry id
+ * @param selectedProject the currently selected project
+ */
+function getTransition(id, type: nodeTypes, inSelectedCategory, selectedCategoryId, selectedProject) {
+	if (selectedProject && selectedProject.id === id) return 'do nothing'
+
+	if (inSelectedCategory) {
+		if (type === 'project') return 'select project'
+		if (selectedProject) return 'collapse project'
+		return 'do nothing'
+	} else {
+		if (selectedCategoryId) return 'collapse category'
+		return 'select category'
+	}
 }
 
 const mapStateToProps = ({ projects, allCategories, allSkills }) => ({

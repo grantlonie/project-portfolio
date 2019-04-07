@@ -22,7 +22,7 @@ interface Props {
 	/** Fires when hovering starts over project */
 	hoverNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
 	/** Fires when node is clicked */
-	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean) => void
+	selectNode: (id: string, type: this['type'], inSelectedCategory: boolean, event) => void
 	/** positioning details for nodes of selected category */
 	categoryDetailsPositioning: CategoryDetailsPositioning
 	/** Array of projectSkillIds that are selected to show more detail */

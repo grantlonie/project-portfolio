@@ -57,7 +57,7 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 	/** Inner radius for each circle of sunburst */
 	const [radiuses, setRadiuses]: [Radiuses, any] = useState(null as Radiuses)
 
-	const projectIsSelected = Boolean(selectedProject)
+	const projectIsSelected = selectedProject !== undefined
 
 	useEffect(() => {
 		const normalDiameter = 400
