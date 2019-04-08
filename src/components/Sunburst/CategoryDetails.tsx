@@ -14,11 +14,11 @@ const CategoryDetails = (props: Props) => {
 
 	return (
 		<div style={{ opacity: show ? 1 : 0, transition: 'all 500ms' }}>
-			<div style={{ position: 'absolute', left: skill.translate + 10, top: -totalHeight / 2 - 40 }}>
+			<div style={{ position: 'absolute', left: skill.translate + 10, top: -totalHeight / 2 - 30 }}>
 				<Typography variant="h6">Skill</Typography>
 			</div>
 
-			<div style={{ position: 'absolute', left: project.translate + 10, top: -totalHeight / 2 - 40 }}>
+			<div style={{ position: 'absolute', left: project.translate + 10, top: -totalHeight / 2 - 30 }}>
 				<Typography variant="h6">Project</Typography>
 			</div>
 		</div>

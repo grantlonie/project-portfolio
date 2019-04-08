@@ -65,7 +65,15 @@ const Sunburst = (props: Props) => {
 	 */
 	const hoverNode = (id: string, type: nodeTypes, inSelectedCategory: boolean) => {
 		currentHoverNode.current = { id, type }
-		if (type !== 'project' || !inSelectedCategory || nodesAreMoving.current || inHoverTransition.current) return
+
+		if (
+			type !== 'project' ||
+			!inSelectedCategory ||
+			nodesAreMoving.current ||
+			inHoverTransition.current ||
+			(selectedProject && selectedProject.id === id)
+		)
+			return
 
 		setHoveringProjectId(currentHoverNode.current.id)
 

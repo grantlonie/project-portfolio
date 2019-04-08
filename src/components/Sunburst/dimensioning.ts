@@ -6,7 +6,7 @@ import { CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
 export const sunburstScaleDown = 1.4
 
 // Project Details
-const projectHeaderHeight = 170
+const projectHeaderHeight = 130
 const projectDetailsWidth = 100
 const projectDetailsPadding = 40
 
@@ -81,7 +81,7 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 				itemHeight: 50,
 				itemMargin: 10,
 				projectWidth: projectDetailsWidth,
-				textWidth: screenWidth - sunBurstXPosition / sunburstScaleDown - projectDetailsStart - projectWidth - 40,
+				textWidth: screenWidth - sunBurstXPosition / sunburstScaleDown - projectDetailsStart - projectWidth - 20,
 			})
 		} else {
 			sunBurstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)

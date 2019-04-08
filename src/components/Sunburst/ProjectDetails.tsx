@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Typography from '@material-ui/core/Typography'
 import LinesEllipsis from 'react-lines-ellipsis'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 
@@ -43,12 +44,12 @@ class ProjectDetails extends Component<Props> {
 						style={{
 							position: 'absolute',
 							width: projectWidth + textWidth,
-							transform: `translate3d(${startX + projectWidth}px, ${headerTransitionY}px, 0)`,
+							transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
 						}}
 					>
-						<h3>{name}</h3>
-						<p>Project date: {date}</p>
-						<p>{description}</p>
+						<Typography variant="h5">{name}</Typography>
+						<Typography variant="body2">Project date: {date}</Typography>
+						<Typography variant="body1">{description}</Typography>
 					</div>
 				</CSSTransition>
 			)
