@@ -5,6 +5,7 @@ import { Transition, TransitionGroup } from 'react-transition-group'
 
 import { ProjectItem } from '../../types'
 import { ProjectDetailsPositioning } from './types'
+import { Tooltip } from '@material-ui/core'
 
 const transitionDuration = 500
 
@@ -37,7 +38,7 @@ const ProjectDetails = (props: Props) => {
 				style={{
 					position: 'absolute',
 					width: textWidth + 'px',
-					paddingLeft: '10px',
+					marginLeft: '10px',
 					transform: `translate3d(${startX + projectWidth}px, ${startY}px, 0)`,
 				}}
 			>
@@ -53,6 +54,7 @@ const ProjectDetails = (props: Props) => {
 										transitionState={state}
 										itemHeight={itemHeight}
 										itemMargin={itemMargin}
+										textWidth={textWidth}
 										description={description}
 									/>
 								)}
@@ -103,20 +105,29 @@ const skillItemTransitionStyles = {
 	entered: { opacity: 1, transform: 'translateX(0)' },
 }
 
-const SkillContent = memo<any>(({ transitionState, itemHeight, itemMargin, description }) => (
-	<div
-		style={{
-			height: itemHeight + itemMargin,
-			transition: `all ${transitionDuration}ms`,
-			opacity: 0,
-			transform: 'translateX(200px)',
-			...skillItemTransitionStyles[transitionState],
-		}}
-	>
-		<Truncate lines={2}>
-			<Typography variant="body1">{description}</Typography>
-		</Truncate>
-	</div>
-))
+const SkillContent = memo<any>(({ transitionState, itemHeight, itemMargin, textWidth, description }) => {
+	const [showTooltip, setShowTooltip] = useState(false)
+	const onTruncate = state => {
+		setShowTooltip(state)
+	}
+
+	return (
+		<Tooltip disableHoverListener={!showTooltip} title={description}>
+			<div
+				style={{
+					height: itemHeight + itemMargin,
+					transition: `all ${transitionDuration}ms`,
+					opacity: 0,
+					transform: 'translateX(200px)',
+					...skillItemTransitionStyles[transitionState],
+				}}
+			>
+				<Truncate lines={2} width={textWidth} onTruncate={onTruncate}>
+					{description}
+				</Truncate>
+			</div>
+		</Tooltip>
+	)
+})
 
 export default ProjectDetails

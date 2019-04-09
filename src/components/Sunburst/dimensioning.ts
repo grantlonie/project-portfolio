@@ -81,7 +81,7 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 				itemHeight: 50,
 				itemMargin: 10,
 				projectWidth: projectDetailsWidth,
-				textWidth: screenWidth - sunBurstXPosition / sunburstScaleDown - projectDetailsStart - projectWidth - 20,
+				textWidth: screenWidth - sunBurstXPosition / sunburstScaleDown - projectDetailsStart - projectWidth - 50,
 			})
 		} else {
 			sunBurstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
