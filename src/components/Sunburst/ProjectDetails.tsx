@@ -1,11 +1,12 @@
-import React, { Component } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
-import LinesEllipsis from 'react-lines-ellipsis'
-import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import Truncate from 'react-truncate'
+import { Transition, TransitionGroup } from 'react-transition-group'
 
 import { ProjectItem } from '../../types'
 import { ProjectDetailsPositioning } from './types'
-import '../../styles/ProjectDetails.css'
+
+const transitionDuration = 500
 
 interface Props {
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills and overall width */
@@ -16,84 +17,106 @@ interface Props {
 	selectedProjectSkills?: { id: string; name: string }[]
 }
 
-class ProjectDetails extends Component<Props> {
-	shouldComponentUpdate(nextProps) {
-		const { selectedProject, selectedProjectSkills } = this.props
-		// prevent render if no projects are selected
-		if (!selectedProject && !nextProps.selectedProject) return false
-		// prevent render if projectSkills haven't changed
-		if (JSON.stringify(selectedProjectSkills) === JSON.stringify(nextProps.selectedProjectSkills)) {
-			return false
-		}
+const ProjectDetails = (props: Props) => {
+	const { projectDetailsPositioning, selectedProject, selectedProjectSkills } = props
+	const { startX, startY, itemMargin, itemHeight, projectWidth, textWidth } = projectDetailsPositioning
 
-		return true
-	}
+	return (
+		<div>
+			<Transition in={!!selectedProject} timeout={transitionDuration}>
+				{state => (
+					<Header
+						transitionState={state}
+						selectedProject={selectedProject}
+						projectDetailsPositioning={projectDetailsPositioning}
+					/>
+				)}
+			</Transition>
 
-	render() {
-		const { projectDetailsPositioning, selectedProject, selectedProjectSkills } = this.props
-		const { startX, startY, itemMargin, headerHeight, itemHeight, projectWidth, textWidth } = projectDetailsPositioning
+			<div
+				style={{
+					position: 'absolute',
+					width: textWidth + 'px',
+					paddingLeft: '10px',
+					transform: `translate3d(${startX + projectWidth}px, ${startY}px, 0)`,
+				}}
+			>
+				<TransitionGroup>
+					{(selectedProjectSkills || []).map(({ id }) => {
+						let description = ''
+						if (selectedProject) description = selectedProject.skills.items.find(i => i.id === id).description
 
-		const Header = function() {
-			if (!selectedProject) return null
-
-			const { name, date, description } = selectedProject
-
-			return (
-				<CSSTransition timeout={500} classNames="header">
-					<div
-						style={{
-							position: 'absolute',
-							width: projectWidth + textWidth,
-							transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
-						}}
-					>
-						<Typography variant="h5">{name}</Typography>
-						<Typography variant="body2">Project date: {date}</Typography>
-						<Typography variant="body1">{description}</Typography>
-					</div>
-				</CSSTransition>
-			)
-		}
-
-		const headerTransitionY = startY - headerHeight
-
-		return (
-			<div>
-				<TransitionGroup>{Header()}</TransitionGroup>
-
-				<div
-					style={{
-						position: 'absolute',
-						width: textWidth + 'px',
-						paddingLeft: '10px',
-						transform: `translate3d(${startX + projectWidth}px, ${startY}px, 0)`,
-					}}
-				>
-					<TransitionGroup>
-						{!selectedProjectSkills
-							? null
-							: selectedProjectSkills.map(({ id }) => {
-									let description = ''
-									if (!selectedProject) return null
-									description = selectedProject.skills.items.find(i => i.id === id).description
-
-									return (
-										<CSSTransition key={id} timeout={500} classNames="list">
-											<LinesEllipsis
-												style={{ height: itemHeight + itemMargin }}
-												text={description || ''}
-												maxLine={2}
-												trimRight
-												basedOn="letters"
-											/>
-										</CSSTransition>
-									)
-							  })}
-					</TransitionGroup>
-				</div>
+						return (
+							<Transition key={id} in={!!description} timeout={transitionDuration}>
+								{state => (
+									<SkillContent
+										transitionState={state}
+										itemHeight={itemHeight}
+										itemMargin={itemMargin}
+										description={description}
+									/>
+								)}
+							</Transition>
+						)
+					})}
+				</TransitionGroup>
 			</div>
-		)
-	}
+		</div>
+	)
 }
+
+const headerTransitionStyles = {
+	entering: { opacity: 1 },
+	entered: { opacity: 1 },
+}
+
+const Header = memo<any>(({ transitionState, selectedProject, projectDetailsPositioning }) => {
+	const { startX, startY, headerHeight, projectWidth, textWidth } = projectDetailsPositioning
+	const headerTransitionY = startY - headerHeight
+
+	const [header, setHeader] = useState({ name: '', date: '', description: '' })
+	const { name, date, description } = header
+	useEffect(() => {
+		if (selectedProject) setHeader(selectedProject)
+	}, [selectedProject])
+
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				width: projectWidth + textWidth,
+				transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
+				transition: `all ${transitionDuration}ms`,
+				opacity: 0,
+				...headerTransitionStyles[transitionState],
+			}}
+		>
+			<Typography variant="h5">{name}</Typography>
+			<Typography variant="body2">{date}</Typography>
+			<Typography variant="body1">{description}</Typography>
+		</div>
+	)
+})
+
+const skillItemTransitionStyles = {
+	entering: { opacity: 1, transform: 'translateX(0)' },
+	entered: { opacity: 1, transform: 'translateX(0)' },
+}
+
+const SkillContent = memo<any>(({ transitionState, itemHeight, itemMargin, description }) => (
+	<div
+		style={{
+			height: itemHeight + itemMargin,
+			transition: `all ${transitionDuration}ms`,
+			opacity: 0,
+			transform: 'translateX(200px)',
+			...skillItemTransitionStyles[transitionState],
+		}}
+	>
+		<Truncate lines={2}>
+			<Typography variant="body1">{description}</Typography>
+		</Truncate>
+	</div>
+))
 
 export default ProjectDetails
