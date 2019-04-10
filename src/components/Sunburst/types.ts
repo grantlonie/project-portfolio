@@ -3,6 +3,13 @@ export type nodeTypes = 'category' | 'skill' | 'project'
 /** Horizontal or vertical layout based on width of screen */
 export type SunburstLayout = 'horizontal' | 'vertical'
 
+export interface Radiuses {
+	category: number
+	skill: number
+	project: number
+	outer: number
+}
+
 interface CategoryNodeTypePosition {
 	width: number
 	translate: number

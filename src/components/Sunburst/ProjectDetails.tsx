@@ -38,7 +38,7 @@ const ProjectDetails = (props: Props) => {
 				style={{
 					position: 'absolute',
 					width: textWidth + 'px',
-					marginLeft: '10px',
+					marginLeft: itemMargin,
 					transform: `translate3d(${startX + projectWidth}px, ${startY}px, 0)`,
 				}}
 			>
@@ -73,7 +73,7 @@ const headerTransitionStyles = {
 }
 
 const Header = memo<any>(({ transitionState, selectedProject, projectDetailsPositioning }) => {
-	const { startX, startY, headerHeight, projectWidth, textWidth } = projectDetailsPositioning
+	const { startX, startY, headerHeight, projectWidth, textWidth, itemMargin } = projectDetailsPositioning
 	const headerTransitionY = startY - headerHeight
 
 	const [header, setHeader] = useState({ name: '', date: '', description: '' })
@@ -86,7 +86,7 @@ const Header = memo<any>(({ transitionState, selectedProject, projectDetailsPosi
 		<div
 			style={{
 				position: 'absolute',
-				width: projectWidth + textWidth,
+				width: projectWidth + textWidth + itemMargin,
 				transform: `translate3d(${startX}px, ${headerTransitionY}px, 0)`,
 				transition: `all ${transitionDuration}ms`,
 				opacity: 0,

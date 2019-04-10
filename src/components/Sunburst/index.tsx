@@ -179,6 +179,7 @@ const Sunburst = (props: Props) => {
 			await sleep(500)
 		}
 
+		setHoverCategoryId(null)
 		setSunburstScale(sunburstScaleDown)
 		setSelectedCategoryId(categoryId)
 	}
@@ -216,28 +217,19 @@ const Sunburst = (props: Props) => {
 
 					let transform = null
 					let parentSelectedCategory = null
+					let zIndex = 0
 					if (selectedCategoryId && selectedCategoryId === category.id) {
-						const translateAmount = 0
-						parentSelectedCategory = {
-							phi: category.phi,
-							projectCount: category.projectCount,
-						}
-						transform = `translate(
-						${translateAmount * Math.cos(categoryRotation)}px, 
-						${translateAmount * Math.sin(categoryRotation)}px
-					)`
+						parentSelectedCategory = { phi: category.phi, projectCount: category.projectCount }
+						zIndex = 1
 					} else if (hoverCategoryId === category.id) {
-						const translateAmount = 40
-						transform = `translate(
-						${translateAmount * Math.cos(categoryRotation)}px, 
-						${translateAmount * Math.sin(categoryRotation)}px
-					)`
+						transform = `translate(${40 * Math.cos(categoryRotation)}px, ${40 * Math.sin(categoryRotation)}px)`
 					}
 
 					const categoryStyle: React.CSSProperties = {
 						position: 'absolute',
 						transform,
 						transition: 'all 500ms',
+						zIndex,
 					}
 
 					return (
@@ -307,6 +299,7 @@ const Sunburst = (props: Props) => {
 					)
 				})}
 			</div>
+
 			<ProjectDetails
 				projectDetailsPositioning={projectDetailsPositioning}
 				selectedProject={selectedProject}

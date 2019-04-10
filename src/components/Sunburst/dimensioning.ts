@@ -1,52 +1,22 @@
 import { useState, useEffect } from 'react'
+import clamp from 'lodash/clamp'
 
-import { CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
+import { CategoryDetailsPositioning, ProjectDetailsPositioning, Radiuses } from './types'
 
 /** Factor to scale the sunburst down when category selected */
 export const sunburstScaleDown = 1.4
 
-// Project Details
-const projectHeaderHeight = 130
-const projectDetailsWidth = 100
-const projectDetailsPadding = 40
+const minSunburstDiameter = 400
+const maxSunburstDiameter = 650
+const minSideBySideWidth = 1300
+const sunburstMargin = 20
 
-// Category Details
-const totalHeight = 500
-const itemMargin = 2
-
-const categoryWidth = 100
-const skillWidth = 125
-const projectWidth = 150
-const categoryTranslate = 200
-
-const skillTranslate = categoryTranslate + categoryWidth + itemMargin
-const projectTranslate = skillTranslate + skillWidth + itemMargin
-
-export const horizontalCategoryPositioning: CategoryDetailsPositioning = {
-	totalHeight,
-	itemMargin,
-	category: {
-		width: categoryWidth,
-		translate: categoryTranslate,
-	},
-	skill: {
-		width: skillWidth,
-		translate: skillTranslate,
-	},
-	project: {
-		width: projectWidth,
-		translate: projectTranslate,
-	},
-}
-
-interface Radiuses {
-	category: number
-	skill: number
-	project: number
-	outer: number
-}
-
-/** Set sunburst and associated text positions and sizes */
+/**
+ * Set sunburst and associated text positions and sizes
+ * @param screenWidth viewport width
+ * @param selectedCategoryId currently selected category
+ * @param selectedProject currently selected project
+ */
 export function useSunburstDimensioning(screenWidth, selectedCategoryId, selectedProject) {
 	/** Where the project details are positioned relative the sunburst center */
 	const [projectDetailsPositioning, setProjectDetailsPositioning] = useState(null as ProjectDetailsPositioning)
@@ -55,51 +25,72 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 	/** x and y sunburst center position */
 	const [sunburstPosition, setSunburstPosition] = useState(null as { x: number; y: number })
 	/** Inner radius for each circle of sunburst */
-	const [radiuses, setRadiuses]: [Radiuses, any] = useState(null as Radiuses)
+	const [radiuses, setRadiuses] = useState(null as Radiuses)
 
 	const projectIsSelected = selectedProject !== undefined
 
 	useEffect(() => {
-		const normalDiameter = 400
-		const minSideBySideWidth = 1300
-		const sunburstMargin = 20
-		let sunBurstXPosition
-		let sunBurstDiameter
+		let sunBurstXPosition, sunBurstDiameter
 
-		setCategoryDetailsPositioning(horizontalCategoryPositioning)
+		const categoryTotalHeight = 500
+		const categoryItemMargin = 2
+		const categoryCategoryWidth = 100
+		const categorySkillWidth = 125
+		const categoryProjectWidth = 150
+		const categoryCategoryTranslate = 140
+		const categorySkillTranslate = categoryCategoryTranslate + categoryCategoryWidth + categoryItemMargin
+		const categoryProjectTranslate = categorySkillTranslate + categorySkillWidth + categoryItemMargin
+
+		const projectSkillWidth = 100
+		const projectSkillHeight = 50
+		const projectSkillMargin = 10
+		let projectHeaderHeight, projectSkillStartX, projectSkillStartY, projectSkillTextWidth
 
 		if (screenWidth > minSideBySideWidth) {
-			sunBurstDiameter = Math.max(screenWidth * 0.4, normalDiameter)
+			sunBurstDiameter = clamp(screenWidth * 0.4, minSunburstDiameter, maxSunburstDiameter)
 			sunBurstXPosition = screenWidth / 2 - (selectedCategoryId ? 200 : 0) - (projectIsSelected ? 300 : 0)
-			const projectDetailsStart =
-				horizontalCategoryPositioning.project.translate + horizontalCategoryPositioning.project.width + projectDetailsPadding
 
-			setProjectDetailsPositioning({
-				headerHeight: projectHeaderHeight,
-				startX: projectDetailsStart,
-				startY: projectHeaderHeight - sunBurstDiameter / 2,
-				itemHeight: 50,
-				itemMargin: 10,
-				projectWidth: projectDetailsWidth,
-				textWidth: screenWidth - sunBurstXPosition / sunburstScaleDown - projectDetailsStart - projectWidth - 50,
-			})
+			projectHeaderHeight = 130
+			projectSkillStartX = categoryProjectTranslate + categoryProjectWidth + 40
+			projectSkillStartY = projectHeaderHeight - sunBurstDiameter / 2
+			projectSkillTextWidth = screenWidth - sunBurstXPosition - projectSkillStartX - projectSkillWidth - 70
 		} else {
-			sunBurstDiameter = Math.min(normalDiameter, screenWidth - sunburstMargin * 2)
-			sunBurstXPosition = screenWidth / 2
-			setProjectDetailsPositioning({
-				headerHeight: projectHeaderHeight,
-				startX: -sunBurstXPosition,
-				startY: sunBurstDiameter,
-				itemHeight: 50,
-				itemMargin: 10,
-				projectWidth,
-				textWidth: screenWidth - projectWidth,
-			})
+			sunBurstDiameter = clamp(screenWidth - sunburstMargin * 2, 0, maxSunburstDiameter)
+			sunBurstXPosition = screenWidth / 2 - (selectedCategoryId ? 200 : 0)
+
+			projectHeaderHeight = 110
+			projectSkillStartX = -sunBurstXPosition + 50
+			projectSkillStartY = sunBurstDiameter / sunburstScaleDown / 2 + projectHeaderHeight + 40
+			projectSkillTextWidth = screenWidth - projectSkillWidth - 100
 		}
 
-		setSunburstPosition({
-			x: sunBurstXPosition,
-			y: sunBurstDiameter / 2 + sunburstMargin,
+		setSunburstPosition({ x: sunBurstXPosition, y: sunBurstDiameter / 2 + sunburstMargin })
+
+		setCategoryDetailsPositioning({
+			totalHeight: categoryTotalHeight,
+			itemMargin: categoryItemMargin,
+			category: {
+				width: categoryCategoryWidth,
+				translate: categoryCategoryTranslate,
+			},
+			skill: {
+				width: categorySkillWidth,
+				translate: categorySkillTranslate,
+			},
+			project: {
+				width: categoryProjectWidth,
+				translate: categoryProjectTranslate,
+			},
+		})
+
+		setProjectDetailsPositioning({
+			headerHeight: projectHeaderHeight,
+			startX: projectSkillStartX,
+			startY: projectSkillStartY,
+			itemHeight: projectSkillHeight,
+			itemMargin: projectSkillMargin,
+			projectWidth: projectSkillWidth,
+			textWidth: projectSkillTextWidth,
 		})
 
 		setRadiuses({

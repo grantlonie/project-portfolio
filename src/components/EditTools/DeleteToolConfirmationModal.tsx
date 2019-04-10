@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { uniq } from 'lodash-es'
+import uniq from 'lodash/uniq'
 import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Modal,
@@ -65,12 +65,10 @@ class ConfirmationModal extends Component<Props, State> {
 
 		removeTool(tool.id)
 		close()
-		;(API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } })) as Promise<any>).then(
-			({ data }) => {
-				removeToolFromStore(data.deleteTool.id)
-				API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
-			}
-		)
+		;(API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } })) as Promise<any>).then(({ data }) => {
+			removeToolFromStore(data.deleteTool.id)
+			API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
+		})
 	}
 
 	// Method merges tool with the selected tool
@@ -149,10 +147,7 @@ class ConfirmationModal extends Component<Props, State> {
 										))}
 									</Select>
 
-									<Button
-										color="primary"
-										style={{ marginLeft: '20px' }}
-										onClick={this.mergeTool.bind(this)}>
+									<Button color="primary" style={{ marginLeft: '20px' }} onClick={this.mergeTool.bind(this)}>
 										Merge
 									</Button>
 								</div>
@@ -172,15 +167,13 @@ class ConfirmationModal extends Component<Props, State> {
 							<Typography>
 								Type <em>{tool.name}</em> and delete.
 							</Typography>
-							<TextField
-								value={deleteTextValue}
-								onChange={this.handleDeleteTextChange.bind(this)}
-							/>
+							<TextField value={deleteTextValue} onChange={this.handleDeleteTextChange.bind(this)} />
 							<Button
 								color="primary"
 								style={{ marginLeft: '20px' }}
 								disabled={deleteTextValue !== tool.name}
-								onClick={this.deleteTool.bind(this)}>
+								onClick={this.deleteTool.bind(this)}
+							>
 								Delete
 							</Button>
 						</ExpansionPanelDetails>
