@@ -7,6 +7,7 @@ import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 import NodePositioner from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import CategoryDetails from './CategoryDetails'
+import HelpCallouts, { HelpCalloutType } from './HelpCallouts'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import { nodeTypes } from './types'
@@ -48,6 +49,8 @@ const Sunburst = (props: Props) => {
 	const [selectedCategoryId, setSelectedCategoryId] = useState(null as string)
 	/** Rotation of the Sunburst */
 	const [sunburstRotation, setSunburstRotation] = useState(0)
+	/** Help callout on mounting */
+	const [helpCallout, setHelpCallout] = useState('category' as HelpCalloutType)
 
 	const { width: screenWidth } = useWindowSize()
 	const { projectDetailsPositioning, categoryDetailsPositioning, sunburstPosition, radiuses } = useSunburstDimensioning(
@@ -121,6 +124,8 @@ const Sunburst = (props: Props) => {
 					await sleep(300)
 				}
 
+				if (helpCallout === 'project') setHelpCallout(null)
+
 				// Find selected project and create list of project skills from selected project
 				const newSelectedProject = props.projects.find(project => project.id === id)
 
@@ -157,6 +162,7 @@ const Sunburst = (props: Props) => {
 
 			case 'collapse category':
 				disableCategoryHover.current = false
+				if (helpCallout === 'project') setHelpCallout('hide project')
 				setSunburstScale(1)
 				setSelectedCategoryId(null)
 				setSelectedProject(undefined)
@@ -178,6 +184,8 @@ const Sunburst = (props: Props) => {
 			setSunburstRotation(rotation)
 			await sleep(500)
 		}
+
+		if (helpCallout === 'category' || helpCallout === 'hide project') setHelpCallout('project')
 
 		setHoverCategoryId(null)
 		setSunburstScale(sunburstScaleDown)
@@ -307,6 +315,8 @@ const Sunburst = (props: Props) => {
 			/>
 
 			<CategoryDetails categoryDetailsPositioning={categoryDetailsPositioning} show={Boolean(selectedCategoryId)} />
+
+			<HelpCallouts type={helpCallout} categoryDetailsPositioning={categoryDetailsPositioning} sunburstRadius={radiuses.outer} />
 		</div>
 	)
 }
