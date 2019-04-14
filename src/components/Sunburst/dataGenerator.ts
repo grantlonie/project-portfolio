@@ -91,7 +91,7 @@ function getAssociatedProjects(skillId, categoryI, projects) {
 				return projectSkill.skillId === skillId
 			})
 			if (!projectSkill) return null
-			return { id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
+			return { id: skillId + '|' + id, name, skillId: projectSkill.id, phi: null, fill: colors[categoryI] }
 		})
 		.filter(project => project !== null)
 }

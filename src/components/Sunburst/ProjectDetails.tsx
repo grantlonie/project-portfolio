@@ -112,7 +112,7 @@ const SkillContent = memo<any>(({ transitionState, itemHeight, itemMargin, textW
 	}
 
 	return (
-		<Tooltip disableHoverListener={!showTooltip} title={description}>
+		<Tooltip disableHoverListener={!showTooltip} title={description || ''}>
 			<div
 				style={{
 					height: itemHeight + itemMargin,

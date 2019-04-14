@@ -31,6 +31,8 @@ interface Props {
 	projectDetailsPositioning?: ProjectDetailsPositioning
 	/** If category is selected, key positioning props */
 	parentSelectedCategory?: { projectCount: number; phi: number; rotation: number }
+	/** Selected nodes to be displayed in category */
+	selectedCategoryNodes?: string[]
 	/** In radians, the current sunburst rotation */
 	sunburstRotation: number
 }
@@ -49,6 +51,7 @@ const NodePositioner = (props: Props) => {
 		selectedProjectSkills,
 		projectDetailsPositioning,
 		parentSelectedCategory,
+		selectedCategoryNodes,
 		categoryDetailsPositioning,
 		sunburstRotation,
 	} = props
@@ -94,7 +97,7 @@ const NodePositioner = (props: Props) => {
 		}
 
 		// Position Node for selected category
-		else if (parentSelectedCategory) {
+		else if (parentSelectedCategory && selectedCategoryNodes.findIndex(i => i === id) > -1) {
 			scale = sunburstScaleDown
 			corrRotation = horizontalCorrection(sunburstRotation)
 

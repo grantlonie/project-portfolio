@@ -10,7 +10,7 @@ import CategoryDetails from './CategoryDetails'
 import HelpCallouts, { HelpCalloutType } from './HelpCallouts'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
-import { nodeTypes } from './types'
+import { nodeTypes, SunburstData } from './types'
 
 interface Props {
 	projects: ProjectItem[]
@@ -47,6 +47,8 @@ const Sunburst = (props: Props) => {
 	const [sunburstScale, setSunburstScale] = useState(1 as number)
 	/** Current selected category id and total rotation from 0 (right) clockwise */
 	const [selectedCategoryId, setSelectedCategoryId] = useState(null as string)
+	/** Selected nodes to be displayed in category */
+	const [selectedCategoryNodes, setSelectedCategoryNodes] = useState([] as string[])
 	/** Rotation of the Sunburst */
 	const [sunburstRotation, setSunburstRotation] = useState(0)
 	/** Help callout on mounting */
@@ -107,6 +109,7 @@ const Sunburst = (props: Props) => {
 	 * @param inSelectedCategory if node is in a selected category
 	 */
 	const selectNode = async (id: string, type: nodeTypes, inSelectedCategory: boolean, event) => {
+		console.log('id: ', id)
 		if (nodesAreMoving.current) return
 
 		const transition = getTransition(id, type, inSelectedCategory, selectedCategoryId, selectedProject)
@@ -127,32 +130,16 @@ const Sunburst = (props: Props) => {
 				if (helpCallout === 'project') setHelpCallout(null)
 
 				// Find selected project and create list of project skills from selected project
-				const newSelectedProject = props.projects.find(project => project.id === id)
+				const newSelectedProject = props.projects.find(project => project.id === extractProjectId(id))
 
 				const projectSkills = newSelectedProject.skills.items.map(projectSkill => {
 					const name = allSkills.find(skill => skill.id === projectSkill.skillId).name
 					return { id: projectSkill.id, name }
 				})
 
-				// Add first project skill to selectedProjectSkills
-				let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
 				setHoveringProjectId(null)
 				setSelectedProject(newSelectedProject)
-				if (projectSkills.length > 1) nodesAreMoving.current = true
-				setSelectedProjectSkills(newSelectedProjectSkills)
-
-				// Slowly add project skills to selectedProjectSkills
-				if (projectSkills.length < 2) return
-				let i = 1
-				let projectSkillInterval = setInterval(() => {
-					newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
-					setSelectedProjectSkills(newSelectedProjectSkills)
-					i++
-					if (i === projectSkills.length) {
-						nodesAreMoving.current = false
-						clearInterval(projectSkillInterval)
-					}
-				}, 100)
+				slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, nodesAreMoving)
 				break
 
 			case 'collapse project':
@@ -165,6 +152,7 @@ const Sunburst = (props: Props) => {
 				if (helpCallout === 'project') setHelpCallout('hide project')
 				setSunburstScale(1)
 				setSelectedCategoryId(null)
+				setSelectedCategoryNodes([])
 				setSelectedProject(undefined)
 				setSelectedProjectSkills(null)
 				break
@@ -190,6 +178,7 @@ const Sunburst = (props: Props) => {
 		setHoverCategoryId(null)
 		setSunburstScale(sunburstScaleDown)
 		setSelectedCategoryId(categoryId)
+		slowlyAddCategoryNodes(sunburstData, categoryId, setSelectedCategoryNodes)
 	}
 
 	const handleCategoryHover = categoryId => {
@@ -258,6 +247,7 @@ const Sunburst = (props: Props) => {
 								hoverNode={hoverNode}
 								selectNode={selectNode}
 								categoryDetailsPositioning={categoryDetailsPositioning}
+								selectedCategoryNodes={selectedCategoryNodes}
 								parentSelectedCategory={parentSelectedCategory}
 								sunburstRotation={sunburstRotation}
 							/>
@@ -273,6 +263,7 @@ const Sunburst = (props: Props) => {
 								hoverNode={hoverNode}
 								selectNode={selectNode}
 								categoryDetailsPositioning={categoryDetailsPositioning}
+								selectedCategoryNodes={selectedCategoryNodes}
 								parentSelectedCategory={parentSelectedCategory}
 								sunburstRotation={sunburstRotation}
 							/>
@@ -295,6 +286,7 @@ const Sunburst = (props: Props) => {
 											hoverNode={hoverNode}
 											selectNode={selectNode}
 											categoryDetailsPositioning={categoryDetailsPositioning}
+											selectedCategoryNodes={selectedCategoryNodes}
 											selectedProjectSkills={selectedProjectSkills}
 											projectDetailsPositioning={projectDetailsPositioning}
 											parentSelectedCategory={parentSelectedCategory}
@@ -344,6 +336,47 @@ function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
 }
 
 /**
+ * Slowly add skills to selectedProjectSkills to be displayed
+ * @param projectSkills total list of skills
+ * @param setSelectedProjectSkills callback to slowly append skill to list that is displayed
+ * @param nodesAreMoving reference that nodes are in the process of moving
+ */
+function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, nodesAreMoving) {
+	let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
+	if (projectSkills.length > 1) nodesAreMoving.current = true
+	setSelectedProjectSkills(newSelectedProjectSkills)
+
+	// Slowly add project skills to selectedProjectSkills
+	if (projectSkills.length < 2) return
+	let i = 1
+	let projectSkillInterval = setInterval(() => {
+		newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
+		setSelectedProjectSkills(newSelectedProjectSkills)
+		i++
+		if (i === projectSkills.length) {
+			nodesAreMoving.current = false
+			clearInterval(projectSkillInterval)
+		}
+	}, 100)
+}
+
+/**
+ * Slowly add category nodes to display
+ * @param sunburstData sunburst data object
+ * @param selectedCategoryId selected cateogry id
+ * @param setSelectedCategoryNodes callback to set category nodes to display
+ */
+async function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
+	const selectedSkills = sunburstData.find(category => category.id === selectedCategoryId).skills
+	for (const skill of selectedSkills) {
+		for (const project of skill.projects) {
+			setSelectedCategoryNodes(nodes => [...nodes, project.id])
+			await sleep(10)
+		}
+	}
+}
+
+/**
  * Determine the appropriate sunburst transition response after user clicks a node
  * @param id selected node id
  * @param type node type
@@ -362,6 +395,16 @@ function getTransition(id, type: nodeTypes, inSelectedCategory, selectedCategory
 		if (selectedCategoryId) return 'collapse category'
 		return 'select category'
 	}
+}
+
+/**
+ * extract project id from id string
+ * @param id id with form skillId|projectId
+ */
+function extractProjectId(id) {
+	const splitProjectId = id.split('|')
+	if (splitProjectId.length === 0) return null
+	return splitProjectId[1]
 }
 
 const mapStateToProps = ({ projects, allCategories, allSkills }) => ({
