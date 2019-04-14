@@ -105,7 +105,6 @@ const Sunburst = (props: Props) => {
 	 * @param inSelectedCategory if node is in a selected category
 	 */
 	const selectNode = async (id: string, type: nodeTypes, inSelectedCategory: boolean, event) => {
-		console.log('id: ', id)
 		if (nodesAreMoving.current) return
 
 		const transition = getTransition(id, type, inSelectedCategory, selectedCategoryId, selectedProject)

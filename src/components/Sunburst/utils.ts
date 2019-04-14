@@ -55,13 +55,17 @@ export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, 
  * @param setSelectedCategoryNodes callback to set category nodes to display
  */
 export async function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
-	const selectedSkills = sunburstData.find(category => category.id === selectedCategoryId).skills
-	for (const skill of selectedSkills) {
+	const category = sunburstData.find(category => category.id === selectedCategoryId)
+	for (const skill of category.skills) {
 		for (const project of skill.projects) {
 			setSelectedCategoryNodes(nodes => [...nodes, project.id])
 			await sleep(10)
 		}
+		setSelectedCategoryNodes(nodes => [...nodes, skill.id])
+		await sleep(10)
 	}
+	setSelectedCategoryNodes(nodes => [...nodes, category.id])
+	await sleep(10)
 }
 
 /**
