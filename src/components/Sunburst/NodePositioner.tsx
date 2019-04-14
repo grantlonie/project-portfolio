@@ -3,6 +3,7 @@ import React from 'react'
 import Node, { NodeProps } from './Node'
 import { sunburstScaleDown } from './dimensioning'
 import { nodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
+import { extractProjectId } from './utils'
 
 interface Props {
 	/** Type of Node grouping */
@@ -147,7 +148,7 @@ const NodePositioner = (props: Props) => {
 		}
 
 		// Apply project hovering
-		if (hoveringProjectId && hoveringProjectId === id) translateX += 10
+		if (hoveringProjectId && extractProjectId(hoveringProjectId) === extractProjectId(id)) translateX += 10
 
 		return (
 			<div

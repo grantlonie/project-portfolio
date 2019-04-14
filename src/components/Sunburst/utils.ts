@@ -1,0 +1,96 @@
+import sleep from 'sleep-promise'
+
+import { ProjectSkill, nodeTypes, SunburstData } from './types'
+/**
+ * Method to calculate the selected category's total rotation from 0 (right) clockwise
+ * @param sunburstData main data object
+ * @param sunburstRotation current sunburst rotation
+ * @param categoryId selected category id
+ */
+export function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
+	let rotation = -sunburstData[0].phi / 2
+	for (const category of sunburstData) {
+		if (category.id !== categoryId) rotation += category.phi
+		else {
+			rotation += category.phi / 2
+			break
+		}
+	}
+
+	let deltaRotation = (rotation - sunburstRotation) % (2 * Math.PI)
+	if (Math.abs(deltaRotation) > Math.PI) deltaRotation -= Math.sign(deltaRotation) * 2 * Math.PI
+
+	return sunburstRotation + deltaRotation
+}
+
+/**
+ * Slowly add skills to selectedProjectSkills to be displayed
+ * @param projectSkills total list of skills
+ * @param setSelectedProjectSkills callback to slowly append skill to list that is displayed
+ * @param nodesAreMoving reference that nodes are in the process of moving
+ */
+export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, nodesAreMoving) {
+	let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
+	if (projectSkills.length > 1) nodesAreMoving.current = true
+	setSelectedProjectSkills(newSelectedProjectSkills)
+
+	// Slowly add project skills to selectedProjectSkills
+	if (projectSkills.length < 2) return
+	let i = 1
+	let projectSkillInterval = setInterval(() => {
+		newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
+		setSelectedProjectSkills(newSelectedProjectSkills)
+		i++
+		if (i === projectSkills.length) {
+			nodesAreMoving.current = false
+			clearInterval(projectSkillInterval)
+		}
+	}, 100)
+}
+
+/**
+ * Slowly add category nodes to display
+ * @param sunburstData sunburst data object
+ * @param selectedCategoryId selected cateogry id
+ * @param setSelectedCategoryNodes callback to set category nodes to display
+ */
+export async function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
+	const selectedSkills = sunburstData.find(category => category.id === selectedCategoryId).skills
+	for (const skill of selectedSkills) {
+		for (const project of skill.projects) {
+			setSelectedCategoryNodes(nodes => [...nodes, project.id])
+			await sleep(10)
+		}
+	}
+}
+
+/**
+ * Determine the appropriate sunburst transition response after user clicks a node
+ * @param id selected node id
+ * @param type node type
+ * @param inSelectedCategory true if selected node is in a selected category
+ * @param selectedCategoryId the currently selected categogry id
+ * @param selectedProject the currently selected project
+ */
+export function getTransition(id, type: nodeTypes, inSelectedCategory, selectedCategoryId, selectedProject) {
+	if (selectedProject && selectedProject.id === id) return 'do nothing'
+
+	if (inSelectedCategory) {
+		if (type === 'project') return 'select project'
+		if (selectedProject) return 'collapse project'
+		return 'do nothing'
+	} else {
+		if (selectedCategoryId) return 'collapse category'
+		return 'select category'
+	}
+}
+
+/**
+ * extract project id from id string
+ * @param id id with form skillId|projectId
+ */
+export function extractProjectId(id) {
+	const splitProjectId = id.split('|')
+	if (splitProjectId.length === 0) return null
+	return splitProjectId[1]
+}
