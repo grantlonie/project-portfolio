@@ -1,4 +1,5 @@
 import sleep from 'sleep-promise'
+import random from 'lodash/random'
 
 import { ProjectSkill, nodeTypes, SunburstData } from './types'
 
@@ -58,13 +59,52 @@ export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills) 
 export function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
 	return new Promise(async resolve => {
 		const category = sunburstData.find(category => category.id === selectedCategoryId)
-		for (const skill of category.skills) {
-			for (const project of skill.projects) {
-				setSelectedCategoryNodes(nodes => [...nodes, project.id])
-				await sleep(10)
-			}
-			setSelectedCategoryNodes(nodes => [...nodes, skill.id])
+
+		const method = random(1, 3)
+
+		const skillIds = []
+		const projectIds = []
+		category.skills.forEach(skill => {
+			skillIds.push(skill.id)
+			skill.projects.forEach(project => {
+				projectIds.push(project.id)
+			})
+		})
+
+		switch (method) {
+			// pulse
+			case 1:
+				setSelectedCategoryNodes(nodes => [...nodes, ...projectIds])
+				await sleep(150)
+				setSelectedCategoryNodes(nodes => [...nodes, ...skillIds])
+				await sleep(150)
+				break
+
+			// center wave
+			case 2:
+				for (let array of Object.values({ projectIds, skillIds })) {
+					let isEven = array.length % 2 === 0
+					let midPoint = Math.floor(array.length / 2)
+					if (isEven) setSelectedCategoryNodes(nodes => [...nodes, array[midPoint], array[midPoint - 1]])
+					else setSelectedCategoryNodes(nodes => [...nodes, array[midPoint]])
+					for (let i = midPoint - 1; i > -1; i--) {
+						await sleep(10)
+						setSelectedCategoryNodes(nodes => [...nodes, array[i], array[array.length - i - 1]])
+					}
+				}
+				break
+
+			// downward wave
+			case 3:
+				for (const skill of category.skills) {
+					for (const project of skill.projects) {
+						setSelectedCategoryNodes(nodes => [...nodes, project.id])
+						await sleep(10)
+					}
+					setSelectedCategoryNodes(nodes => [...nodes, skill.id])
+				}
 		}
+
 		setSelectedCategoryNodes(nodes => [...nodes, category.id])
 
 		resolve()
