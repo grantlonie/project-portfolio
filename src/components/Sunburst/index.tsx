@@ -110,10 +110,6 @@ const Sunburst = (props: Props) => {
 		const transition = getTransition(id, type, inSelectedCategory, selectedCategoryId, selectedProject)
 
 		switch (transition) {
-			case 'select category':
-				// allow event propagation for handleCategorySelect to fire
-				return
-
 			case 'select project':
 				// Close current project first and rerun with new project
 				if (selectedProject) {
@@ -132,9 +128,13 @@ const Sunburst = (props: Props) => {
 					return { id: projectSkill.id, name }
 				})
 
+				if (projectSkills.length > 1) nodesAreMoving.current = true
+
 				setHoveringProjectId(null)
 				setSelectedProject(newSelectedProject)
-				slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, nodesAreMoving)
+				await slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills)
+
+				nodesAreMoving.current = false
 				break
 
 			case 'collapse project':
@@ -152,15 +152,17 @@ const Sunburst = (props: Props) => {
 				setSelectedProjectSkills(null)
 				break
 
+			case 'select category':
 			case 'do nothing':
 				break
 		}
-
-		// prevent handleCategorySelect from firing
-		event.stopPropagation()
 	}
 
 	const handleCategorySelect = async categoryId => {
+		if (selectedCategoryId || nodesAreMoving.current) return
+
+		nodesAreMoving.current = true
+
 		disableCategoryHover.current = true
 		const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
 		if (Math.abs(sunburstRotation - rotation) > 0.1) {
@@ -173,7 +175,9 @@ const Sunburst = (props: Props) => {
 		setHoverCategoryId(null)
 		setSunburstScale(sunburstScaleDown)
 		setSelectedCategoryId(categoryId)
-		slowlyAddCategoryNodes(sunburstData, categoryId, setSelectedCategoryNodes)
+		await slowlyAddCategoryNodes(sunburstData, categoryId, setSelectedCategoryNodes)
+
+		nodesAreMoving.current = false
 	}
 
 	const handleCategoryHover = categoryId => {

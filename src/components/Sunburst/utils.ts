@@ -1,6 +1,7 @@
 import sleep from 'sleep-promise'
 
 import { ProjectSkill, nodeTypes, SunburstData } from './types'
+
 /**
  * Method to calculate the selected category's total rotation from 0 (right) clockwise
  * @param sunburstData main data object
@@ -27,25 +28,25 @@ export function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
  * Slowly add skills to selectedProjectSkills to be displayed
  * @param projectSkills total list of skills
  * @param setSelectedProjectSkills callback to slowly append skill to list that is displayed
- * @param nodesAreMoving reference that nodes are in the process of moving
  */
-export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, nodesAreMoving) {
-	let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
-	if (projectSkills.length > 1) nodesAreMoving.current = true
-	setSelectedProjectSkills(newSelectedProjectSkills)
-
-	// Slowly add project skills to selectedProjectSkills
-	if (projectSkills.length < 2) return
-	let i = 1
-	let projectSkillInterval = setInterval(() => {
-		newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
+export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills) {
+	return new Promise(resolve => {
+		let newSelectedProjectSkills: ProjectSkill[] = [projectSkills[0]]
 		setSelectedProjectSkills(newSelectedProjectSkills)
-		i++
-		if (i === projectSkills.length) {
-			nodesAreMoving.current = false
-			clearInterval(projectSkillInterval)
-		}
-	}, 100)
+
+		// Slowly add project skills to selectedProjectSkills
+		if (projectSkills.length < 2) return
+		let i = 1
+		let projectSkillInterval = setInterval(() => {
+			newSelectedProjectSkills = [...newSelectedProjectSkills, projectSkills[i]]
+			setSelectedProjectSkills(newSelectedProjectSkills)
+			i++
+			if (i === projectSkills.length) {
+				clearInterval(projectSkillInterval)
+				resolve()
+			}
+		}, 100)
+	})
 }
 
 /**
@@ -54,18 +55,20 @@ export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills, 
  * @param selectedCategoryId selected cateogry id
  * @param setSelectedCategoryNodes callback to set category nodes to display
  */
-export async function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
-	const category = sunburstData.find(category => category.id === selectedCategoryId)
-	for (const skill of category.skills) {
-		for (const project of skill.projects) {
-			setSelectedCategoryNodes(nodes => [...nodes, project.id])
-			await sleep(10)
+export function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
+	return new Promise(async resolve => {
+		const category = sunburstData.find(category => category.id === selectedCategoryId)
+		for (const skill of category.skills) {
+			for (const project of skill.projects) {
+				setSelectedCategoryNodes(nodes => [...nodes, project.id])
+				await sleep(10)
+			}
+			setSelectedCategoryNodes(nodes => [...nodes, skill.id])
 		}
-		setSelectedCategoryNodes(nodes => [...nodes, skill.id])
-		await sleep(10)
-	}
-	setSelectedCategoryNodes(nodes => [...nodes, category.id])
-	await sleep(10)
+		setSelectedCategoryNodes(nodes => [...nodes, category.id])
+
+		resolve()
+	})
 }
 
 /**
