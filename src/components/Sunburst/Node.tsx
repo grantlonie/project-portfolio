@@ -3,11 +3,11 @@ import { createStyles, withStyles } from '@material-ui/core/styles'
 import LinesEllipsis from 'react-lines-ellipsis'
 import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
 
-import { nodeTypes } from './types'
+import { NodeTypes } from './types'
 
 export interface NodeProps {
 	/** Type of Node */
-	type: nodeTypes
+	type: NodeTypes
 	/** If used, change node into rectangle with given values, else take the shape to fit in Sunburst */
 	rectangle?: { width: number; height: number }
 	/** If used, change node into trapezoid with given values, else take the shape to fit in Sunburst */

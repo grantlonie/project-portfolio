@@ -1,15 +1,16 @@
 import sleep from 'sleep-promise'
 import random from 'lodash/random'
 
-import { ProjectSkill, nodeTypes, SunburstData } from './types'
+import { ProjectSkill, NodeTypes, SunburstData } from './types'
 
 /**
- * Method to calculate the selected category's total rotation from 0 (right) clockwise
+ * Method to calculate the selected category's total rotation clockwise from specified reference angle
  * @param sunburstData main data object
  * @param sunburstRotation current sunburst rotation
  * @param categoryId selected category id
+ * @param reference angle from right clockwise to use as reference point
  */
-export function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
+export function sunburstRotater(sunburstData, sunburstRotation, categoryId, reference) {
 	let rotation = -sunburstData[0].phi / 2
 	for (const category of sunburstData) {
 		if (category.id !== categoryId) rotation += category.phi
@@ -19,7 +20,7 @@ export function sunburstRotater(sunburstData, sunburstRotation, categoryId) {
 		}
 	}
 
-	let deltaRotation = (rotation - sunburstRotation) % (2 * Math.PI)
+	let deltaRotation = (reference + rotation - sunburstRotation) % (2 * Math.PI)
 	if (Math.abs(deltaRotation) > Math.PI) deltaRotation -= Math.sign(deltaRotation) * 2 * Math.PI
 
 	return sunburstRotation + deltaRotation
@@ -55,12 +56,19 @@ export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills) 
  * @param sunburstData sunburst data object
  * @param selectedCategoryId selected cateogry id
  * @param setSelectedCategoryNodes callback to set category nodes to display
+ * @param rotationReference angle from the right clockwise that category will eject from
  */
-export function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCategoryId, setSelectedCategoryNodes) {
+export function slowlyAddCategoryNodes(
+	sunburstData: SunburstData[],
+	selectedCategoryId,
+	setSelectedCategoryNodes,
+	rotationReference
+) {
 	return new Promise(async resolve => {
 		const category = sunburstData.find(category => category.id === selectedCategoryId)
 
-		const method = random(1, 3)
+		// Animation method that category nodes will take. If rotation reference is not zero, only use pulse
+		const method = rotationReference === 0 ? random(1, 3) : 1
 
 		const skillIds = []
 		const projectIds = []
@@ -119,7 +127,7 @@ export function slowlyAddCategoryNodes(sunburstData: SunburstData[], selectedCat
  * @param selectedCategoryId the currently selected categogry id
  * @param selectedProject the currently selected project
  */
-export function getTransition(id, type: nodeTypes, inSelectedCategory, selectedCategoryId, selectedProject) {
+export function getTransition(id, type: NodeTypes, inSelectedCategory, selectedCategoryId, selectedProject) {
 	if (selectedProject && selectedProject.id === id) return 'do nothing'
 
 	if (inSelectedCategory) {

@@ -2,12 +2,12 @@ import React from 'react'
 
 import Node, { NodeProps } from './Node'
 import { sunburstScaleDown } from './dimensioning'
-import { nodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
+import { NodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
 import { extractProjectId } from './utils'
 
 interface Props {
 	/** Type of Node grouping */
-	type: nodeTypes
+	type: NodeTypes
 	/** Contains data needed to make Sunburst Circle */
 	data: any
 	/** Distance to inner radius of Node */
@@ -36,6 +36,8 @@ interface Props {
 	selectedCategoryNodes?: string[]
 	/** In radians, the current sunburst rotation */
 	sunburstRotation: number
+	/** In radians, the reference rotation angle from right clockwise */
+	sunburstRotationReference: number
 }
 
 const NodePositioner = (props: Props) => {
@@ -55,6 +57,7 @@ const NodePositioner = (props: Props) => {
 		selectedCategoryNodes,
 		categoryDetailsPositioning,
 		sunburstRotation,
+		sunburstRotationReference,
 	} = props
 
 	let rotation = itemRotation
@@ -113,6 +116,7 @@ const NodePositioner = (props: Props) => {
 
 			scale = sunburstScaleDown
 			corrRotation = horizontalCorrection(sunburstRotation)
+			if (sunburstRotationReference && corrRotation + sunburstRotationReference >= Math.PI) corrRotation -= 2 * Math.PI
 
 			switch (type) {
 				case 'category':
@@ -123,7 +127,7 @@ const NodePositioner = (props: Props) => {
 
 				case 'skill':
 					translateX = skillStart
-					translateY = startY + (totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
+					translateY = startY + (totalHeight * (sunburstRotationReference + rotation - corrRotation)) / parentSelectedCategory.phi
 					nodeProps.rectangle = {
 						width: skillWidth,
 						height: (projectCount / parentSelectedCategory.projectCount) * totalHeight - itemMargin,
@@ -132,7 +136,7 @@ const NodePositioner = (props: Props) => {
 
 				case 'project':
 					translateX = projectStart
-					translateY = startY + (totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
+					translateY = startY + (totalHeight * (sunburstRotationReference + rotation - corrRotation)) / parentSelectedCategory.phi
 					nodeProps.rectangle = {
 						width: projectWidth,
 						height: (1 / parentSelectedCategory.projectCount) * totalHeight - itemMargin,
@@ -178,7 +182,7 @@ const NodePositioner = (props: Props) => {
  * Offset the rotation of the sunburst to obtain a horizontal Node
  * @param sunburstRotation current rotation of the sunburst in radians
  */
-function horizontalCorrection(sunburstRotation: number) {
+function horizontalCorrection(sunburstRotation) {
 	let corrRotation = sunburstRotation % (2 * Math.PI)
 	if (corrRotation < 0) corrRotation += 2 * Math.PI
 

@@ -10,7 +10,7 @@ import CategoryDetails from './CategoryDetails'
 import HelpCallouts, { HelpCalloutType } from './HelpCallouts'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
-import { nodeTypes, ProjectSkill } from './types'
+import { NodeTypes, ProjectSkill } from './types'
 import { getTransition, extractProjectId, slowlyAddCategoryNodes, slowlyAddProjectSkills, sunburstRotater } from './utils'
 
 interface Props {
@@ -23,7 +23,7 @@ const Sunburst = (props: Props) => {
 	const { allCategories, allSkills, projects } = props
 
 	/** Track which Node user is currently hovering over */
-	const currentHoverNode: { current: { id: string; type: nodeTypes } } = useRef(null)
+	const currentHoverNode: { current: { id: string; type: NodeTypes } } = useRef(null)
 	/** Disable hovering over categories */
 	const disableCategoryHover = useRef(false)
 	/** track when Nodes are moving to prevent additional hover-renders */
@@ -64,7 +64,7 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const hoverNode = (id: string, type: nodeTypes, inSelectedCategory: boolean) => {
+	const hoverNode = (id: string, type: NodeTypes, inSelectedCategory: boolean) => {
 		currentHoverNode.current = { id, type }
 
 		if (
@@ -104,7 +104,7 @@ const Sunburst = (props: Props) => {
 	 * @param type Type of node - category, skill or project
 	 * @param inSelectedCategory if node is in a selected category
 	 */
-	const selectNode = async (id: string, type: nodeTypes, inSelectedCategory: boolean, event) => {
+	const selectNode = async (id: string, type: NodeTypes, inSelectedCategory: boolean, event) => {
 		if (nodesAreMoving.current) return
 
 		const transition = getTransition(id, type, inSelectedCategory, selectedCategoryId, selectedProject)
@@ -162,9 +162,10 @@ const Sunburst = (props: Props) => {
 		if (selectedCategoryId || nodesAreMoving.current) return
 
 		nodesAreMoving.current = true
-
 		disableCategoryHover.current = true
-		const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId)
+
+		const { rotationReference } = sunburstPosition
+		const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId, rotationReference)
 		if (Math.abs(sunburstRotation - rotation) > 0.1) {
 			setSunburstRotation(rotation)
 			await sleep(500)
@@ -175,7 +176,7 @@ const Sunburst = (props: Props) => {
 		setHoverCategoryId(null)
 		setSunburstScale(sunburstScaleDown)
 		setSelectedCategoryId(categoryId)
-		await slowlyAddCategoryNodes(sunburstData, categoryId, setSelectedCategoryNodes)
+		await slowlyAddCategoryNodes(sunburstData, categoryId, setSelectedCategoryNodes, rotationReference)
 
 		nodesAreMoving.current = false
 	}
@@ -249,6 +250,7 @@ const Sunburst = (props: Props) => {
 								selectedCategoryNodes={selectedCategoryNodes}
 								parentSelectedCategory={parentSelectedCategory}
 								sunburstRotation={sunburstRotation}
+								sunburstRotationReference={sunburstPosition.rotationReference}
 							/>
 
 							<NodePositioner
@@ -265,6 +267,7 @@ const Sunburst = (props: Props) => {
 								selectedCategoryNodes={selectedCategoryNodes}
 								parentSelectedCategory={parentSelectedCategory}
 								sunburstRotation={sunburstRotation}
+								sunburstRotationReference={sunburstPosition.rotationReference}
 							/>
 
 							{category.skills.map((skill, skillI) => {
@@ -290,6 +293,7 @@ const Sunburst = (props: Props) => {
 											projectDetailsPositioning={projectDetailsPositioning}
 											parentSelectedCategory={parentSelectedCategory}
 											sunburstRotation={sunburstRotation}
+											sunburstRotationReference={sunburstPosition.rotationReference}
 										/>
 									</React.Fragment>
 								)
