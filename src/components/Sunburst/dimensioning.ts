@@ -37,9 +37,9 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 		const categoryCategoryWidth = 100
 		const categorySkillWidth = 125
 		const categoryProjectWidth = 150
-		const categoryCategoryTranslate = 140
-		const categorySkillTranslate = categoryCategoryTranslate + categoryCategoryWidth + categoryItemMargin
-		const categoryProjectTranslate = categorySkillTranslate + categorySkillWidth + categoryItemMargin
+		const categoryStartX = 140
+		const categorySkillStart = categoryStartX + categoryCategoryWidth + categoryItemMargin
+		const categoryProjectStart = categorySkillStart + categorySkillWidth + categoryItemMargin
 
 		const projectSkillWidth = 100
 		const projectSkillHeight = 50
@@ -51,7 +51,7 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 			sunBurstXPosition = screenWidth / 2 - (selectedCategoryId ? 200 : 0) - (projectIsSelected ? 300 : 0)
 
 			projectHeaderHeight = 130
-			projectSkillStartX = categoryProjectTranslate + categoryProjectWidth + 40
+			projectSkillStartX = categoryProjectStart + categoryProjectWidth + 40
 			projectSkillStartY = projectHeaderHeight - sunBurstDiameter / 2
 			projectSkillTextWidth = screenWidth - sunBurstXPosition - projectSkillStartX - projectSkillWidth - 70
 		} else {
@@ -69,18 +69,13 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 		setCategoryDetailsPositioning({
 			totalHeight: categoryTotalHeight,
 			itemMargin: categoryItemMargin,
-			category: {
-				width: categoryCategoryWidth,
-				translate: categoryCategoryTranslate,
-			},
-			skill: {
-				width: categorySkillWidth,
-				translate: categorySkillTranslate,
-			},
-			project: {
-				width: categoryProjectWidth,
-				translate: categoryProjectTranslate,
-			},
+			startX: categoryStartX,
+			startY: 0,
+			categoryWidth: categoryCategoryWidth,
+			skillStart: categorySkillStart,
+			skillWidth: categorySkillWidth,
+			projectStart: categoryProjectStart,
+			projectWidth: categoryProjectWidth,
 		})
 
 		setProjectDetailsPositioning({

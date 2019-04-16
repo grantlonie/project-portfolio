@@ -99,39 +99,43 @@ const NodePositioner = (props: Props) => {
 
 		// Position Node for selected category
 		else if (parentSelectedCategory && selectedCategoryNodes.findIndex(i => i === id) > -1) {
+			const {
+				startX,
+				startY,
+				categoryWidth,
+				skillStart,
+				skillWidth,
+				projectStart,
+				projectWidth,
+				totalHeight,
+				itemMargin,
+			} = categoryDetailsPositioning
+
 			scale = sunburstScaleDown
 			corrRotation = horizontalCorrection(sunburstRotation)
 
 			switch (type) {
 				case 'category':
-					translateX = categoryDetailsPositioning.category.translate
-					translateY = 0
-					nodeProps.trapezoid = {
-						width: categoryDetailsPositioning.category.width,
-						innerHeight: 50,
-						outerHeight: categoryDetailsPositioning.totalHeight,
-					}
+					translateX = startX
+					translateY = startY
+					nodeProps.trapezoid = { width: categoryWidth, innerHeight: 50, outerHeight: totalHeight }
 					break
 
 				case 'skill':
-					translateX = categoryDetailsPositioning.skill.translate
-					translateY = (categoryDetailsPositioning.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
+					translateX = skillStart
+					translateY = startY + (totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
 					nodeProps.rectangle = {
-						width: categoryDetailsPositioning.skill.width,
-						height:
-							(projectCount / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
-							categoryDetailsPositioning.itemMargin,
+						width: skillWidth,
+						height: (projectCount / parentSelectedCategory.projectCount) * totalHeight - itemMargin,
 					}
 					break
 
 				case 'project':
-					translateX = categoryDetailsPositioning.project.translate
-					translateY = (categoryDetailsPositioning.totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
+					translateX = projectStart
+					translateY = startY + (totalHeight * (rotation - corrRotation)) / parentSelectedCategory.phi
 					nodeProps.rectangle = {
-						width: categoryDetailsPositioning.project.width,
-						height:
-							(1 / parentSelectedCategory.projectCount) * categoryDetailsPositioning.totalHeight -
-							categoryDetailsPositioning.itemMargin,
+						width: projectWidth,
+						height: (1 / parentSelectedCategory.projectCount) * totalHeight - itemMargin,
 					}
 					break
 			}

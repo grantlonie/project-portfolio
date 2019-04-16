@@ -10,17 +10,16 @@ export interface Radiuses {
 	outer: number
 }
 
-interface CategoryNodeTypePosition {
-	width: number
-	translate: number
-}
-
 export interface CategoryDetailsPositioning {
 	totalHeight: number
 	itemMargin: number
-	category: CategoryNodeTypePosition
-	skill: CategoryNodeTypePosition
-	project: CategoryNodeTypePosition
+	startX: number
+	startY: number
+	categoryWidth: number
+	skillStart: number
+	skillWidth: number
+	projectStart: number
+	projectWidth: number
 }
 
 export interface ProjectDetailsPositioning {

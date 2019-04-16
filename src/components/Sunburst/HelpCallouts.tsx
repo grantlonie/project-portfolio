@@ -49,8 +49,8 @@ const HelpCallouts = (props: Props) => {
 		style.bottom = 0.7 * sunburstRadius * Math.sin(0.5)
 	} else if (type === 'project') {
 		text = 'Click for project details!'
-		const { project, totalHeight } = categoryDetailsPositioning
-		style.left = project.translate + project.width - 20
+		const { projectStart, projectWidth, totalHeight } = categoryDetailsPositioning
+		style.left = projectStart + projectWidth - 20
 		style.bottom = totalHeight * 0.1
 	}
 
