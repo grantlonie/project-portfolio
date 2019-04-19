@@ -128,7 +128,7 @@ export function slowlyAddCategoryNodes(
  * @param selectedProject the currently selected project
  */
 export function getTransition(id, type: NodeTypes, inSelectedCategory, selectedCategoryId, selectedProject) {
-	if (selectedProject && selectedProject.id === id) return 'do nothing'
+	if (selectedProject && selectedProject.id === extractProjectId(id)) return 'do nothing'
 
 	if (inSelectedCategory) {
 		if (type === 'project') return 'select project'
