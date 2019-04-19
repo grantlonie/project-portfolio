@@ -311,7 +311,12 @@ const Sunburst = (props: Props) => {
 
 			<CategoryDetails categoryDetailsPositioning={categoryDetailsPositioning} show={Boolean(selectedCategoryId)} />
 
-			<HelpCallouts type={helpCallout} categoryDetailsPositioning={categoryDetailsPositioning} sunburstRadius={radiuses.outer} />
+			<HelpCallouts
+				type={helpCallout}
+				categoryDetailsPositioning={categoryDetailsPositioning}
+				sunburstRadius={radiuses.outer}
+				sunburstRotationReference={sunburstPosition.rotationReference}
+			/>
 		</div>
 	)
 }

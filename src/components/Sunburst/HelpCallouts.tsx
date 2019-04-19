@@ -27,12 +27,13 @@ interface Props {
 	type: HelpCalloutType
 	sunburstRadius: number
 	categoryDetailsPositioning: CategoryDetailsPositioning
+	sunburstRotationReference: number
 }
 
 const HelpCallouts = (props: Props) => {
-	const { type, sunburstRadius, categoryDetailsPositioning } = props
+	const { type, sunburstRadius, categoryDetailsPositioning, sunburstRotationReference } = props
 
-	if (!type || type === 'hide project') return null
+	if (!type || type === 'hide project' || sunburstRotationReference !== 0) return null
 
 	let text
 	const style: React.CSSProperties = {

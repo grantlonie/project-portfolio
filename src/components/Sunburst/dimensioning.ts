@@ -35,8 +35,8 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 
 		const categoryTotalHeight = 500
 		const categoryItemMargin = 2
-		const categoryCategoryWidth = 100
-		const categorySkillWidth = 125
+		const categoryCategoryWidth = 90
+		const categorySkillWidth = 100
 		const categoryProjectWidth = 150
 		let categoryStartX, categoryStartY, categorySkillStart, categoryProjectStart
 
@@ -70,23 +70,23 @@ export function useSunburstDimensioning(screenWidth, selectedCategoryId, selecte
 			categoryProjectStart = categorySkillStart + categorySkillWidth + categoryItemMargin
 
 			projectHeaderHeight = 110
-			projectSkillStartX = -sunburstXPosition + 50
+			projectSkillStartX = -sunburstXPosition + 20
 			projectSkillStartY = sunburstDiameter / sunburstScaleDown / 2 + projectHeaderHeight + 40
-			projectSkillTextWidth = screenWidth - projectSkillWidth - 100
+			projectSkillTextWidth = screenWidth - projectSkillWidth - 50
 		} else {
 			sunburstDiameter = clamp(screenWidth - sunburstMargin * 2, 0, maxSunburstDiameter)
 			sunburstXPosition = screenWidth / 2
 			sunburstRotationReference = -Math.PI / 2
 
-			categoryStartX = -sunburstXPosition + 50
+			categoryStartX = -sunburstXPosition + 20
 			categoryStartY = sunburstDiameter / sunburstScaleDown / 2 + categoryTotalHeight / 2
 			categorySkillStart = categoryStartX + categoryCategoryWidth + categoryItemMargin
 			categoryProjectStart = categorySkillStart + categorySkillWidth + categoryItemMargin
 
 			projectHeaderHeight = 110
-			projectSkillStartX = -sunburstXPosition + 50
+			projectSkillStartX = -sunburstXPosition + 20
 			projectSkillStartY = categoryStartY + categoryTotalHeight / 2 + projectHeaderHeight + 40
-			projectSkillTextWidth = screenWidth - projectSkillWidth - 100
+			projectSkillTextWidth = screenWidth - projectSkillWidth - 50
 		}
 
 		setSunburstPosition({
