@@ -184,6 +184,16 @@ const Sunburst = (props: Props) => {
 
 	let categoryRotation = 0
 
+	const nodePositionerProps: any = {
+		hoverNode,
+		selectNode,
+		categoryDetailsPositioning,
+		selectedCategoryNodes,
+		sunburstRotation,
+		hoveringProjectId,
+		sunburstRotationReference: sunburstPosition.rotationReference,
+	}
+
 	return (
 		<div
 			style={{
@@ -222,6 +232,28 @@ const Sunburst = (props: Props) => {
 						zIndex,
 					}
 
+					const categoryPositionerProps = {
+						...nodePositionerProps,
+						parentSelectedCategory,
+						type: 'category',
+						data: [category],
+						innerRadius: radiuses.category,
+						outerRadius: radiuses.skill,
+						itemRotation: categoryRotation,
+						fontSize: 14,
+					}
+
+					const skillPositionerProps = {
+						...nodePositionerProps,
+						parentSelectedCategory,
+						type: 'skill',
+						data: category.skills,
+						innerRadius: radiuses.skill,
+						outerRadius: radiuses.project,
+						itemRotation: skillRotation,
+						fontSize: 12,
+					}
+
 					return (
 						<div
 							key={category.id}
@@ -229,67 +261,29 @@ const Sunburst = (props: Props) => {
 							onMouseUp={() => handleCategorySelect(category.id)}
 							style={categoryStyle}
 						>
-							<NodePositioner
-								type="category"
-								data={[category]}
-								innerRadius={radiuses.category}
-								outerRadius={radiuses.skill}
-								itemRotation={categoryRotation}
-								fontSize={14}
-								hoveringProjectId={hoveringProjectId}
-								hoverNode={hoverNode}
-								selectNode={selectNode}
-								categoryDetailsPositioning={categoryDetailsPositioning}
-								selectedCategoryNodes={selectedCategoryNodes}
-								parentSelectedCategory={parentSelectedCategory}
-								sunburstRotation={sunburstRotation}
-								sunburstRotationReference={sunburstPosition.rotationReference}
-							/>
+							<NodePositioner {...categoryPositionerProps} />
 
-							<NodePositioner
-								type="skill"
-								data={category.skills}
-								innerRadius={radiuses.skill}
-								outerRadius={radiuses.project}
-								itemRotation={skillRotation}
-								fontSize={12}
-								hoveringProjectId={hoveringProjectId}
-								hoverNode={hoverNode}
-								selectNode={selectNode}
-								categoryDetailsPositioning={categoryDetailsPositioning}
-								selectedCategoryNodes={selectedCategoryNodes}
-								parentSelectedCategory={parentSelectedCategory}
-								sunburstRotation={sunburstRotation}
-								sunburstRotationReference={sunburstPosition.rotationReference}
-							/>
+							<NodePositioner {...skillPositionerProps} />
 
 							{category.skills.map((skill, skillI) => {
 								// Rotation logic for projects
 								if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
 								const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
 
-								return (
-									<React.Fragment key={skill.id}>
-										<NodePositioner
-											type="project"
-											data={skill.projects}
-											innerRadius={radiuses.project}
-											outerRadius={radiuses.outer}
-											itemRotation={projectRotation}
-											fontSize={10}
-											hoveringProjectId={hoveringProjectId}
-											hoverNode={hoverNode}
-											selectNode={selectNode}
-											categoryDetailsPositioning={categoryDetailsPositioning}
-											selectedCategoryNodes={selectedCategoryNodes}
-											selectedProjectSkills={selectedProjectSkills}
-											projectDetailsPositioning={projectDetailsPositioning}
-											parentSelectedCategory={parentSelectedCategory}
-											sunburstRotation={sunburstRotation}
-											sunburstRotationReference={sunburstPosition.rotationReference}
-										/>
-									</React.Fragment>
-								)
+								const projectPositionerProps = {
+									...nodePositionerProps,
+									parentSelectedCategory,
+									type: 'project',
+									data: skill.projects,
+									innerRadius: radiuses.project,
+									outerRadius: radiuses.outer,
+									itemRotation: projectRotation,
+									fontSize: 10,
+									selectedProjectSkills,
+									projectDetailsPositioning,
+								}
+
+								return <NodePositioner key={skill.id} {...projectPositionerProps} />
 							})}
 						</div>
 					)
