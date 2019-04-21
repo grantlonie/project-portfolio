@@ -5,7 +5,7 @@ import { sunburstScaleDown } from './dimensioning'
 import { NodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
 import { extractProjectId } from './utils'
 
-interface Props {
+export interface NodePositionerProps {
 	/** Type of Node grouping */
 	type: NodeTypes
 	/** Contains data needed to make Sunburst Circle */
@@ -40,7 +40,7 @@ interface Props {
 	sunburstRotationReference: number
 }
 
-const NodePositioner = (props: Props) => {
+const NodePositioner = (props: NodePositionerProps) => {
 	const {
 		type,
 		data,

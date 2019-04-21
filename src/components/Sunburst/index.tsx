@@ -4,7 +4,7 @@ import sleep from 'sleep-promise'
 import { useWindowSize } from 'react-use'
 
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
-import NodePositioner from './NodePositioner'
+import NodePositioner, { NodePositionerProps } from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import CategoryDetails from './CategoryDetails'
 import HelpCallouts, { HelpCalloutType } from './HelpCallouts'
@@ -184,7 +184,7 @@ const Sunburst = (props: Props) => {
 
 	let categoryRotation = 0
 
-	const nodePositionerProps: any = {
+	const nodePositionerProps = {
 		hoverNode,
 		selectNode,
 		categoryDetailsPositioning,
@@ -232,7 +232,7 @@ const Sunburst = (props: Props) => {
 						zIndex,
 					}
 
-					const categoryPositionerProps = {
+					const categoryPositionerProps: NodePositionerProps = {
 						...nodePositionerProps,
 						parentSelectedCategory,
 						type: 'category',
@@ -243,7 +243,7 @@ const Sunburst = (props: Props) => {
 						fontSize: 14,
 					}
 
-					const skillPositionerProps = {
+					const skillPositionerProps: NodePositionerProps = {
 						...nodePositionerProps,
 						parentSelectedCategory,
 						type: 'skill',
@@ -270,7 +270,7 @@ const Sunburst = (props: Props) => {
 								if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
 								const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
 
-								const projectPositionerProps = {
+								const projectPositionerProps: NodePositionerProps = {
 									...nodePositionerProps,
 									parentSelectedCategory,
 									type: 'project',
