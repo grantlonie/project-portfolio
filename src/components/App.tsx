@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Auth } from 'aws-amplify'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
@@ -30,31 +30,25 @@ interface Props {
 	updateAllData: (data: any) => null
 }
 
-interface State {
-	showDrawer: boolean
+const bodyStyle: React.CSSProperties = {
+	margin: 'auto',
+	maxWidth: '1000px',
+	padding: '20px',
 }
 
-class App extends Component<Props, State> {
-	private bodyStyle: any
+const App = (props: Props) => {
+	const { updateAllData } = props
 
-	constructor(props) {
-		super(props)
-
-		this.bodyStyle = {
-			margin: 'auto',
-			maxWidth: '1000px',
-			padding: '20px',
-		}
-
+	useEffect(() => {
 		// Get user and project data and update redux
 		getAllData().then(data => {
-			this.props.updateAllData(data)
+			updateAllData(data)
 		})
+	}, [])
 
-		this.state = { showDrawer: false }
-	}
+	const [showDrawer, setShowDrawer] = useState(false)
 
-	handleLogout() {
+	function handleLogout() {
 		Auth.signOut()
 			.then(data => {
 				window.location.reload(true)
@@ -62,62 +56,56 @@ class App extends Component<Props, State> {
 			.catch(err => console.log(err))
 	}
 
-	toggleDrawer() {
-		this.setState({ showDrawer: !this.state.showDrawer })
-	}
+	return (
+		<Router>
+			<div>
+				<AppBar position="static">
+					<Toolbar>
+						<IconButton
+							style={{ margin: '0 20px 0 -12px' }}
+							color="inherit"
+							aria-label="Menu"
+							onClick={() => setShowDrawer(true)}
+						>
+							<MenuIcon />
+						</IconButton>
 
-	render() {
-		return (
-			<Router>
-				<div>
-					<AppBar position="static">
-						<Toolbar>
-							<IconButton
-								style={{ margin: '0 20px 0 -12px' }}
-								color="inherit"
-								aria-label="Menu"
-								onClick={this.toggleDrawer.bind(this)}
-							>
-								<MenuIcon />
-							</IconButton>
+						<Typography style={{ flexGrow: 1 }} variant="h6" color="inherit">
+							Project Porfolio
+						</Typography>
 
-							<Typography style={{ flexGrow: 1 }} variant="h6" color="inherit">
-								Project Porfolio
-							</Typography>
+						<Button color="inherit" onClick={() => handleLogout()}>
+							Logout
+						</Button>
+					</Toolbar>
+				</AppBar>
 
-							<Button color="inherit" onClick={this.handleLogout.bind(this)}>
-								Logout
-							</Button>
-						</Toolbar>
-					</AppBar>
-
-					<Drawer open={this.state.showDrawer} onClose={this.toggleDrawer.bind(this)}>
-						<div tabIndex={0} role="button" onClick={this.toggleDrawer.bind(this)} onKeyDown={this.toggleDrawer.bind(this)}>
-							<List>
-								{drawerLinks.map(page => (
-									<Link key={page.text} to={page.link}>
-										<ListItem button>{page.text}</ListItem>
-									</Link>
-								))}
-							</List>
-						</div>
-					</Drawer>
-
-					<Route exact path="/" component={Sunburst} />
-
-					<div style={this.bodyStyle}>
-						<Route path="/listProjects" component={ListProjects} />
-						<Route path="/projects" component={Projects} />
-						<Route path="/editProject/:id/:isNew?" component={EditProject} />
-						<Route path="/skills" component={EditSkills} />
-						<Route path="/tools" component={EditTools} />
+				<Drawer open={showDrawer} onClose={() => setShowDrawer(false)}>
+					<div tabIndex={0} role="button" onClick={() => setShowDrawer(false)} onKeyDown={() => setShowDrawer(false)}>
+						<List>
+							{drawerLinks.map(page => (
+								<Link key={page.text} to={page.link}>
+									<ListItem button>{page.text}</ListItem>
+								</Link>
+							))}
+						</List>
 					</div>
+				</Drawer>
 
-					<Spinner />
+				<Route exact path="/" component={Sunburst} />
+
+				<div style={bodyStyle}>
+					<Route path="/listProjects" component={ListProjects} />
+					<Route path="/projects" component={Projects} />
+					<Route path="/editProject/:id/:isNew?" component={EditProject} />
+					<Route path="/skills" component={EditSkills} />
+					<Route path="/tools" component={EditTools} />
 				</div>
-			</Router>
-		)
-	}
+
+				<Spinner />
+			</div>
+		</Router>
+	)
 }
 
 const mapDispatchToProps = dispatch => {
