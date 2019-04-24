@@ -1,39 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Auth } from 'aws-amplify'
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import { withAuthenticator } from 'aws-amplify-react'
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 
-import Sunburst from './Sunburst'
-import ListProjects from './ListProjects'
-import Projects from './Projects'
-import EditProject from './EditProject'
-import EditSkills from './EditSkills'
-import EditTools from './EditTools'
+import routes from '../js/routes'
 import Spinner from './Spinner'
 
 import '../styles/body.css'
 
 import { getAllData } from '../js/apiInterface'
 
-const drawerLinks = [
-	{ link: '/', text: 'Sunburst' },
-	{ link: '/listProjects', text: 'List Projects' },
-	{ link: '/projects', text: 'Projects' },
-	{ link: '/skills', text: 'Edit Skills' },
-	{ link: '/tools', text: 'Edit Tools' },
-]
-
 interface Props {
 	updateAllData: (data: any) => null
-}
-
-const bodyStyle: React.CSSProperties = {
-	margin: 'auto',
-	maxWidth: '1000px',
-	padding: '20px',
 }
 
 const App = (props: Props) => {
@@ -83,30 +64,36 @@ const App = (props: Props) => {
 				<Drawer open={showDrawer} onClose={() => setShowDrawer(false)}>
 					<div tabIndex={0} role="button" onClick={() => setShowDrawer(false)} onKeyDown={() => setShowDrawer(false)}>
 						<List>
-							{drawerLinks.map(page => (
-								<Link key={page.text} to={page.link}>
-									<ListItem button>{page.text}</ListItem>
-								</Link>
-							))}
+							{Object.values(routes).map(({ drawerText, path }) => {
+								if (!drawerText) return null
+
+								return (
+									<Link key={path} to={path}>
+										<ListItem button>{drawerText}</ListItem>
+									</Link>
+								)
+							})}
 						</List>
 					</div>
 				</Drawer>
 
-				<Route exact path="/" component={Sunburst} />
-
-				<div style={bodyStyle}>
-					<Route path="/listProjects" component={ListProjects} />
-					<Route path="/projects" component={Projects} />
-					<Route path="/editProject/:id/:isNew?" component={EditProject} />
-					<Route path="/skills" component={EditSkills} />
-					<Route path="/tools" component={EditTools} />
-				</div>
+				<Switch>
+					{Object.values(routes).map(({ path, component, addBodyWrapper }) => (
+						<Route key={path} exact path={path} component={addBodyWrapper ? withBodyWrapper(component) : component} />
+					))}
+				</Switch>
 
 				<Spinner />
 			</div>
 		</Router>
 	)
 }
+
+const withBodyWrapper = Component => () => (
+	<div style={{ margin: 'auto', maxWidth: '1000px', padding: '20px' }}>
+		<Component />
+	</div>
+)
 
 const mapDispatchToProps = dispatch => {
 	return {
