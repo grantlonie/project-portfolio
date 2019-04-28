@@ -149,3 +149,6 @@ export function extractProjectId(id) {
 	if (splitProjectId.length === 0) return null
 	return splitProjectId[1]
 }
+
+/** Standard time in ms to transition between states */
+export const transitionDuration = 500

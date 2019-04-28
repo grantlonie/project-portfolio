@@ -3,7 +3,7 @@ import React from 'react'
 import Node, { NodeProps } from './Node'
 import { sunburstScaleDown } from './dimensioning'
 import { NodeTypes, CategoryDetailsPositioning, ProjectDetailsPositioning } from './types'
-import { extractProjectId } from './utils'
+import { extractProjectId, transitionDuration } from './utils'
 
 export interface NodePositionerProps {
 	/** Type of Node grouping */
@@ -168,7 +168,7 @@ const NodePositioner = (props: NodePositionerProps) => {
 						rotate(${corrRotation}rad) 
 						translate3d(${translateX}px, ${translateY}px, 0)
 					`,
-					transition: 'all 500ms',
+					transition: `all ${transitionDuration}ms`,
 					transformOrigin: '0 0',
 				}}
 			>

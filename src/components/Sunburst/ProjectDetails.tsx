@@ -6,8 +6,7 @@ import { Transition, TransitionGroup } from 'react-transition-group'
 import { ProjectItem } from '../../types'
 import { ProjectDetailsPositioning } from './types'
 import { Tooltip } from '@material-ui/core'
-
-const transitionDuration = 500
+import { transitionDuration } from './utils'
 
 interface Props {
 	/** Where the project details list x and y position are wrt to Sunburst center and spacing between skills and overall width */

@@ -11,7 +11,14 @@ import HelpCallouts, { HelpCalloutType } from './HelpCallouts'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import { NodeTypes, ProjectSkill } from './types'
-import { getTransition, extractProjectId, slowlyAddCategoryNodes, slowlyAddProjectSkills, sunburstRotater } from './utils'
+import {
+	getTransition,
+	extractProjectId,
+	slowlyAddCategoryNodes,
+	slowlyAddProjectSkills,
+	sunburstRotater,
+	transitionDuration,
+} from './utils'
 
 interface Props {
 	projects: ProjectItem[]
@@ -161,7 +168,7 @@ const Sunburst = (props: Props) => {
 		const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId, rotationReference)
 		if (Math.abs(sunburstRotation - rotation) > 0.1) {
 			setSunburstRotation(rotation)
-			await sleep(500)
+			await sleep(transitionDuration + 30)
 		}
 
 		if (helpCallout === 'category' || helpCallout === 'hide project') setHelpCallout('project')
@@ -200,7 +207,7 @@ const Sunburst = (props: Props) => {
 				style={{
 					position: 'absolute',
 					transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) `,
-					transition: 'all 500ms',
+					transition: `all ${transitionDuration}ms`,
 				}}
 			>
 				<div
@@ -208,7 +215,7 @@ const Sunburst = (props: Props) => {
 					style={{
 						position: 'absolute',
 						transform: `scale(${1 / sunburstScale})	rotate(${-sunburstRotation}rad)`,
-						transition: 'all 500ms',
+						transition: `all ${transitionDuration}ms`,
 					}}
 				>
 					{sunburstData.map((category, categoryI) => {
@@ -229,7 +236,7 @@ const Sunburst = (props: Props) => {
 						const categoryStyle: React.CSSProperties = {
 							position: 'absolute',
 							transform,
-							transition: 'all 500ms',
+							transition: `all ${transitionDuration}ms`,
 							zIndex,
 						}
 

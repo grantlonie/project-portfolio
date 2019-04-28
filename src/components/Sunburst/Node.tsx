@@ -4,6 +4,7 @@ import LinesEllipsis from 'react-lines-ellipsis'
 import responsiveHOC from 'react-lines-ellipsis/lib/responsiveHOC'
 
 import { NodeTypes } from './types'
+import { transitionDuration } from './utils'
 
 export interface NodeProps {
 	/** Type of Node */
@@ -38,7 +39,7 @@ export interface NodeProps {
 
 const styles = createStyles({
 	svg: { position: 'absolute', overflow: 'visible' },
-	svgPath: { transition: 'all 500ms' },
+	svgPath: { transition: `all ${transitionDuration}ms` },
 	textWrapper: { pointerEvents: 'none', userSelect: 'none', position: 'absolute', paddingLeft: '5px' },
 	text: { position: 'relative', top: '50%', transform: 'translateY(-50%)' },
 })

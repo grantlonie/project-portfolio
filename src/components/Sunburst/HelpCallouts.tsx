@@ -2,6 +2,7 @@ import React from 'react'
 
 import { CategoryDetailsPositioning } from './types'
 import { Typography } from '@material-ui/core'
+import { transitionDuration } from './utils'
 
 const Callout = props => (
 	<svg xmlns="http://www.w3.org/2000/svg" width="200px" height="100px" viewBox="0 0 200 100">
@@ -41,7 +42,7 @@ const HelpCallouts = (props: Props) => {
 		userSelect: 'none',
 		width: '160px',
 		pointerEvents: 'none',
-		transition: 'all 500ms',
+		transition: `all ${transitionDuration}ms`,
 	}
 
 	if (type === 'category') {
