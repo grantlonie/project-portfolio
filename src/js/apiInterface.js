@@ -1,14 +1,7 @@
 import API, { graphqlOperation } from '@aws-amplify/api'
 import { Auth } from 'aws-amplify'
 
-import {
-	listProjects,
-	listCategorys,
-	listSkills,
-	listTools,
-	listProjectSkills,
-	getUser,
-} from '../graphql/queries'
+import { listProjects, listCategorys, listSkills, listTools, listProjectSkills, getUser } from '../graphql/queries'
 import { updateProjectSkill, deleteProjectSkill, updateUser } from '../graphql/mutations'
 
 function getUserId() {
@@ -19,54 +12,30 @@ function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
 }
 
-function getCategories(userId) {
+function endpoint(query, userId) {
 	return API.graphql(
-		graphqlOperation(listCategorys, {
+		graphqlOperation(query, {
 			filter: { userId: { eq: userId } },
 			limit: 1000,
 		})
-	).then(data => data.data.listCategorys.items)
+	)
 }
 
-function getSkills(userId) {
-	return API.graphql(
-		graphqlOperation(listSkills, {
-			filter: { userId: { eq: userId } },
-			limit: 1000,
-		})
-	).then(data => data.data.listSkills.items)
+export function update(query, input) {
+	return API.graphql(graphqlOperation(query, { input }))
 }
 
-export function getTools(userId) {
-	return API.graphql(
-		graphqlOperation(listTools, {
-			filter: { userId: { eq: userId } },
-			limit: 1000,
-		})
-	).then(data => data.data.listTools.items)
-}
+const getCategories = userId => endpoint(listCategorys, userId).then(data => data.data.listCategorys.items)
 
-function getProjects(userId) {
-	return API.graphql(
-		graphqlOperation(listProjects, {
-			filter: { userId: { eq: userId } },
-			limit: 1000,
-		})
-	).then(data => data.data.listProjects.items)
-}
+const getSkills = userId => endpoint(listSkills, userId).then(data => data.data.listSkills.items)
 
-function getProjectSkills(userId) {
-	return API.graphql(
-		graphqlOperation(listProjectSkills, {
-			filter: { userId: { eq: userId } },
-			limit: 1000,
-		})
-	).then(data => data.data.listProjectSkills.items)
-}
+export const getTools = userId => endpoint(listTools, userId).then(data => data.data.listTools.items)
 
-function getUserData(id) {
-	return API.graphql(graphqlOperation(getUser, { id })).then(data => data.data.getUser)
-}
+const getProjects = userId => endpoint(listProjects, userId).then(data => data.data.listProjects.items)
+
+const getProjectSkills = userId => endpoint(listProjectSkills, userId).then(data => data.data.listProjectSkills.items)
+
+const getUserData = id => API.graphql(graphqlOperation(getUser, { id })).then(data => data.data.getUser)
 
 // This method checks to see if dirty tables exist and cleans them
 async function cleanupDirtyTables(userId, allSkills, allTools) {
