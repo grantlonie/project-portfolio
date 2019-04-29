@@ -26,6 +26,7 @@
     "react-truncate": "^2.4.0",
     "react-use": "^5.5.4",
     "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
     "sleep-promise": "^8.0.1",
     "typescript": "^3.3.3333",
     "why-did-you-update": "^1.0.6",

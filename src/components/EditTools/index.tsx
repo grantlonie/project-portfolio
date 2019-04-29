@@ -1,21 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import API, { graphqlOperation } from '@aws-amplify/api'
-import {
-	Typography,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	TextField,
-	Button,
-} from '@material-ui/core'
+import { Typography, Table, TableBody, TableCell, TableHead, TableRow, TextField, Button } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createTool, updateTool } from '../../graphql/mutations'
 import DeleteToolConfirmationModal from './DeleteToolConfirmationModal'
 import { ToolItem } from '../../types'
+import { addTool, updateTools } from '../../js/actions'
 
 const headers = [{ id: 'name', label: 'Name' }, { id: 'website', label: 'Website' }]
 
@@ -25,9 +15,8 @@ const updateCheckTime = 5000 // [ms] how long to wait after editting to update t
 interface Props {
 	allTools: ToolItem[]
 	userId: string
-	showSpinner: (show: boolean) => null
-	addToolToStore: (tool: ToolItem) => null
-	updateToolInStore: (tool: ToolItem) => null
+	addTool: (tool: string) => null
+	updateTools: (tools: ToolItem[]) => null
 }
 
 interface State {
@@ -52,9 +41,7 @@ class EditTools extends Component<Props, State> {
 	componentDidUpdate(prevProps) {
 		// if tools change in redux, update state
 		if (JSON.stringify(prevProps.allTools) !== JSON.stringify(this.props.allTools)) {
-			let modalTool = this.state.modalTool
-				? this.props.allTools.find(i => i.id === this.state.modalTool.id)
-				: null
+			let modalTool = this.state.modalTool ? this.props.allTools.find(i => i.id === this.state.modalTool.id) : null
 
 			this.setState({ tools: this.props.allTools, modalTool })
 		}
@@ -65,34 +52,13 @@ class EditTools extends Component<Props, State> {
 	}
 
 	handleAddTool() {
-		const { userId, showSpinner, addToolToStore } = this.props
-
-		showSpinner(true)
-		;(API.graphql(
-			graphqlOperation(createTool, {
-				input: { userId, name: this.state.newTool },
-			})
-		) as Promise<any>).then(({ data: { createTool } }) => {
-			addToolToStore(createTool)
-			showSpinner(false)
-		})
-
+		this.props.addTool(this.state.newTool)
 		this.setState({ newTool: '', hideAddToolButton: true })
 	}
 
 	updateTools() {
 		clearTimeout(updateTimeout)
-
-		this.state.tools.forEach(tool => {
-			if (tool.isUpdated) {
-				delete tool.isUpdated
-				;(API.graphql(graphqlOperation(updateTool, { input: tool })) as Promise<any>).then(
-					({ data }) => {
-						this.props.updateToolInStore(data.updateTool)
-					}
-				)
-			}
-		})
+		this.props.updateTools(this.state.tools)
 	}
 
 	handlePropChange(id, { target }) {
@@ -174,19 +140,11 @@ class EditTools extends Component<Props, State> {
 									</TableCell>
 
 									<TableCell padding="dense">
-										<TextField
-											name="name"
-											value={tool.name}
-											onChange={this.handlePropChange.bind(this, tool.id)}
-										/>
+										<TextField name="name" value={tool.name} onChange={this.handlePropChange.bind(this, tool.id)} />
 									</TableCell>
 
 									<TableCell padding="dense">
-										<TextField
-											name="website"
-											value={tool.website || ''}
-											onChange={this.handlePropChange.bind(this, tool.id)}
-										/>
+										<TextField name="website" value={tool.website || ''} onChange={this.handlePropChange.bind(this, tool.id)} />
 									</TableCell>
 								</TableRow>
 							)
@@ -195,18 +153,15 @@ class EditTools extends Component<Props, State> {
 						<TableRow>
 							<TableCell />
 							<TableCell padding="dense">
-								<TextField
-									value={newTool}
-									placeholder="New Tool"
-									onChange={this.handleNewToolChange.bind(this)}
-								/>
+								<TextField value={newTool} placeholder="New Tool" onChange={this.handleNewToolChange.bind(this)} />
 							</TableCell>
 							<TableCell>
 								<Button
 									color="secondary"
 									variant="contained"
 									disabled={hideAddToolButton}
-									onClick={this.handleAddTool.bind(this)}>
+									onClick={this.handleAddTool.bind(this)}
+								>
 									Create
 								</Button>
 							</TableCell>
@@ -222,15 +177,8 @@ const mapStateToProps = ({ allTools, userId }) => ({ allTools, userId })
 
 const mapDispatchToProps = dispatch => {
 	return {
-		updateToolInStore: tool => {
-			dispatch({ type: 'UPDATE_TOOL', tool })
-		},
-		addToolToStore: tool => {
-			dispatch({ type: 'ADD_TOOL', tool })
-		},
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
+		addTool: tool => dispatch(addTool(tool)),
+		updateTools: tools => dispatch(updateTools(tools)),
 	}
 }
 

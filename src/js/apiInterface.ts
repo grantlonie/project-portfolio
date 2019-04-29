@@ -18,24 +18,29 @@ function endpoint(query, userId) {
 			filter: { userId: { eq: userId } },
 			limit: 1000,
 		})
-	)
+	) as Promise<any>
 }
 
+/**
+ * update - delete or modify, a record in the AWS database using graphql
+ * @param query graphql query string
+ * @param input input object for query string
+ */
 export function update(query, input) {
-	return API.graphql(graphqlOperation(query, { input }))
+	return API.graphql(graphqlOperation(query, { input })) as Promise<any>
 }
 
 const getCategories = userId => endpoint(listCategorys, userId).then(data => data.data.listCategorys.items)
 
 const getSkills = userId => endpoint(listSkills, userId).then(data => data.data.listSkills.items)
 
-export const getTools = userId => endpoint(listTools, userId).then(data => data.data.listTools.items)
+const getTools = userId => endpoint(listTools, userId).then(data => data.data.listTools.items)
 
 const getProjects = userId => endpoint(listProjects, userId).then(data => data.data.listProjects.items)
 
 const getProjectSkills = userId => endpoint(listProjectSkills, userId).then(data => data.data.listProjectSkills.items)
 
-const getUserData = id => API.graphql(graphqlOperation(getUser, { id })).then(data => data.data.getUser)
+const getUserData = id => (API.graphql(graphqlOperation(getUser, { id })) as Promise<any>).then(data => data.data.getUser)
 
 // This method checks to see if dirty tables exist and cleans them
 async function cleanupDirtyTables(userId, allSkills, allTools) {
