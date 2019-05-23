@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Typography } from '@material-ui/core'
 import API, { graphqlOperation } from '@aws-amplify/api'
@@ -6,14 +7,9 @@ import API, { graphqlOperation } from '@aws-amplify/api'
 import MainProps from './MainProps'
 import Skills from './Skills'
 import { getProject } from '../../graphql/queries'
-import {
-	updateProject,
-	updateProjectSkill,
-	createProjectSkill,
-	deleteProjectSkill,
-} from '../../graphql/mutations'
+import { updateProjectSkill, createProjectSkill, deleteProjectSkill } from '../../graphql/mutations'
 import { ProjectItem } from '../../types'
-import { addProject } from '../../js/helpers'
+import { addProject, modifyProject } from '../../js/actions'
 
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
@@ -25,11 +21,21 @@ const contentStyle: any = {
 	gridGap: '20px 20px',
 }
 
+export interface ProjectMetaData {
+	id: string
+	name: string
+	date: string
+	company: string
+	description: string
+}
+
 interface Props {
 	match: any
 	history: any
 	projects: ProjectItem[]
 	userId: string
+	addProject: () => string
+	modifyProject: (project: ProjectMetaData) => void
 	addProjectSkillToStore: (skill: any) => null
 	removeSkillFromProject: (skill: any) => null
 	updateProjectInStore: (project: any) => null
@@ -90,10 +96,7 @@ class Edit extends Component<Props, State> {
 
 	componentDidUpdate(prevProps: Props) {
 		// if project data comes in or new id parameter, update state to the new project id
-		if (
-			prevProps.userId !== this.props.userId ||
-			prevProps.match.params.id !== this.props.match.params.id
-		) {
+		if (prevProps.userId !== this.props.userId || prevProps.match.params.id !== this.props.match.params.id) {
 			this.setState(this.freshState())
 		}
 	}
@@ -171,28 +174,13 @@ class Edit extends Component<Props, State> {
 	}
 
 	updateProject() {
-		const {
-			id,
-			name,
-			date,
-			company,
-			description,
-			skills,
-			mainPropsAreUpdated,
-			skillsAreUpdated,
-		} = this.state
-		const { userId, updateProjectInStore } = this.props
+		const { id, name, date, company, description, skills, mainPropsAreUpdated, skillsAreUpdated } = this.state
+		const { modifyProject, updateProjectInStore } = this.props
 
 		clearTimeout(updateTimeout)
 
 		if (mainPropsAreUpdated) {
-			;(API.graphql(
-				graphqlOperation(updateProject, {
-					input: { id, userId, name, company, date, description },
-				})
-			) as Promise<any>).then(({ data: { updateProject } }) => {
-				updateProjectInStore(updateProject)
-			})
+			modifyProject({ id, name, date, company, description })
 
 			this.setState({ mainPropsAreUpdated: false })
 		}
@@ -210,11 +198,9 @@ class Edit extends Component<Props, State> {
 						})
 					) as Promise<any>).then(({ data: { updateProjectSkill } }) => {
 						const { id } = updateProjectSkill.project
-						;(API.graphql(graphqlOperation(getProject, { id })) as Promise<any>).then(
-							({ data }) => {
-								updateProjectInStore(data.getProject)
-							}
-						)
+						;(API.graphql(graphqlOperation(getProject, { id })) as Promise<any>).then(({ data }) => {
+							updateProjectInStore(data.getProject)
+						})
 					})
 				}
 
@@ -226,7 +212,7 @@ class Edit extends Component<Props, State> {
 	}
 
 	async addAnotherProject() {
-		const projectId = await addProject()
+		const projectId = await this.props.addProject()
 		this.props.history.replace(`/editProject/${projectId}/true`)
 	}
 
@@ -269,24 +255,24 @@ class Edit extends Component<Props, State> {
 
 const mapStateToProps = ({ projects, userId }) => ({ projects, userId })
 
-const mapDispatchToProps = dispatch => {
-	return {
-		updateProjectInStore: project => {
-			dispatch({ type: 'UPDATE_PROJECT', project })
-		},
-		addProjectSkillToStore: skill => {
-			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
-		},
-		removeSkillFromProject: skill => {
-			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
-		},
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	addProject: () => dispatch(addProject()),
+	modifyProject: project => dispatch(modifyProject(project)),
+	updateProjectInStore: project => {
+		dispatch({ type: 'UPDATE_PROJECT', project })
+	},
+	addProjectSkillToStore: skill => {
+		dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
+	},
+	removeSkillFromProject: skill => {
+		dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
+	},
+	showSpinner: show => {
+		dispatch({ type: 'SHOW_SPINNER', show })
+	},
+})
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Edit)
+)(withRouter(Edit))

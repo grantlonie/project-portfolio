@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import API, { graphqlOperation } from '@aws-amplify/api'
+import { withRouter } from 'react-router-dom'
 import {
 	Table,
 	TableBody,
@@ -14,10 +14,9 @@ import {
 } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { deleteProject, deleteProjectSkill } from '../graphql/mutations'
 import { ProjectItem } from '../types'
 import DeleteProjectModal from './DeleteProjectModal'
-import { addProject } from '../js/helpers'
+import { addProject, removeProject } from '../js/actions'
 
 const headers = [
 	{ id: 'date', label: 'Date' },
@@ -28,9 +27,8 @@ const headers = [
 
 interface Props {
 	history: any
-	userId: string
-	removeProjectFromStore: (projectId: string) => null
-	showSpinner: (show: boolean) => null
+	addProject: () => Promise<string>
+	removeProject: (projectId: ProjectItem) => void
 	projects: ProjectItem[]
 }
 
@@ -82,9 +80,7 @@ class Projects extends Component<Props, State> {
 	}
 
 	getSorting(order, orderBy) {
-		return order === 'desc'
-			? (a, b) => this.desc(a, b, orderBy)
-			: (a, b) => -this.desc(a, b, orderBy)
+		return order === 'desc' ? (a, b) => this.desc(a, b, orderBy) : (a, b) => -this.desc(a, b, orderBy)
 	}
 
 	desc(a, b, orderBy) {
@@ -106,31 +102,15 @@ class Projects extends Component<Props, State> {
 	}
 
 	async handleAddProject() {
-		const projectId = await addProject()
+		const projectId = await this.props.addProject()
 		this.props.history.push(`/editProject/${projectId}/true`)
 	}
 
 	async handleRemoveProject(confirm) {
-		const { showSpinner, removeProjectFromStore } = this.props
+		const { removeProject } = this.props
 		const { confirmDeleteModal } = this.state
 
-		if (confirm) {
-			showSpinner(true)
-
-			// Delete all ProjectSkills in the project
-			for (const skill of confirmDeleteModal.skills.items) {
-				await API.graphql(graphqlOperation(deleteProjectSkill, { input: { id: skill.id } }))
-			}
-
-			// Delete project once all related ProjectSkills are gone and update store
-			const data = await API.graphql(
-				graphqlOperation(deleteProject, { input: { id: confirmDeleteModal.id } })
-			)
-
-			removeProjectFromStore(data['data']['deleteProject']['id'])
-
-			showSpinner(false)
-		}
+		if (confirm) removeProject(confirmDeleteModal)
 
 		this.setState({ confirmDeleteModal: null })
 	}
@@ -155,10 +135,7 @@ class Projects extends Component<Props, State> {
 		return (
 			<div>
 				{confirmDeleteModal ? (
-					<DeleteProjectModal
-						project={confirmDeleteModal}
-						close={this.handleRemoveProject.bind(this)}
-					/>
+					<DeleteProjectModal project={confirmDeleteModal} close={this.handleRemoveProject.bind(this)} />
 				) : null}
 
 				<div style={this.headerStyle}>
@@ -195,7 +172,8 @@ class Projects extends Component<Props, State> {
 											<TableSortLabel
 												active={orderBy === header.id}
 												direction={order}
-												onClick={this.handleRequestSort.bind(this, header.id)}>
+												onClick={this.handleRequestSort.bind(this, header.id)}
+											>
 												{header.label}
 											</TableSortLabel>
 										</Tooltip>
@@ -210,19 +188,14 @@ class Projects extends Component<Props, State> {
 							.slice(page * this.rowsPerPage, page * this.rowsPerPage + this.rowsPerPage)
 							.map(project => {
 								return (
-									<TableRow
-										hover
-										key={project.id}
-										onClick={this.handleClickRow.bind(this, project.id)}>
+									<TableRow hover key={project.id} onClick={this.handleClickRow.bind(this, project.id)}>
 										<TableCell padding="dense">
 											<DeleteIcon onClick={this.handleRequestRemoveProject.bind(this, project)} />
 										</TableCell>
 										<TableCell padding="dense">{project.date}</TableCell>
 										<TableCell padding="dense">{project.name}</TableCell>
 										<TableCell padding="dense">{project.company}</TableCell>
-										{viewPortWidth < 1000 ? null : (
-											<TableCell padding="dense">{project.description}</TableCell>
-										)}
+										{viewPortWidth < 1000 ? null : <TableCell padding="dense">{project.description}</TableCell>}
 									</TableRow>
 								)
 							})}
@@ -248,20 +221,14 @@ class Projects extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ projects, userId }) => ({ projects, userId })
+const mapStateToProps = ({ projects }) => ({ projects })
 
-const mapDispatchToProps = dispatch => {
-	return {
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		removeProjectFromStore: projectId => {
-			dispatch({ type: 'REMOVE_PROJECT', projectId })
-		},
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	addProject: () => dispatch(addProject()),
+	removeProject: project => dispatch(removeProject(project)),
+})
 
 export default connect(
 	mapStateToProps,
 	mapDispatchToProps
-)(Projects)
+)(withRouter(Projects))

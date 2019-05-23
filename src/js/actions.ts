@@ -19,11 +19,12 @@ import {
 	deleteSkill,
 } from '../graphql/mutations'
 import { update } from './apiInterface'
-import { ToolItem, ProjectSkillItem, CategoryItem, SkillItem } from '../types'
+import { ToolItem, ProjectSkillItem, CategoryItem, SkillItem, ProjectItem } from '../types'
 import { State } from './reducers'
 import { SkillToUpdate } from '../components/EditSkills'
 import { CategoryToUpdate } from '../components/EditSkills/CategoriesModal'
 import { ToolToUpdate } from '../components/EditTools'
+import { ProjectMetaData } from '../components/EditProject'
 
 type GetState = () => State
 
@@ -210,5 +211,54 @@ export const mergeSkill = (fromId: string, toId: string) => async (dispatch, get
 	}
 
 	dispatch(removeSkill(fromId))
+	dispatch(showSpinner(false))
+}
+
+/**
+ * PROJECT ACTIONS
+ */
+
+const addProjectToStore = (project: ProjectItem) => ({ type: 'ADD_PROJECT', project })
+const updateProjectInStore = (project: ProjectItem) => ({ type: 'UPDATE_PROJECT', project })
+const removeProjectFromStore = (projectId: ProjectItem['id']) => ({ type: 'REMOVE_PROJECT', projectId })
+
+export const addProject = () => (dispatch, getState) =>
+	new Promise(async resolve => {
+		dispatch(showSpinner(true))
+		const { userId } = getState()
+
+		const date = new Date()
+		const year = date.getFullYear()
+		let month = ('0' + (date.getMonth() + 1)).slice(-2)
+		let day = ('0' + date.getDate()).slice(-2)
+
+		const emptyProject = { userId, date: `${year}-${month}-${day}` }
+
+		update(createProject, emptyProject).then(({ data: { createProject } }) => {
+			dispatch(addProjectToStore(createProject))
+			dispatch(showSpinner(false))
+
+			resolve(createProject.id)
+		})
+	})
+
+export const modifyProject = (projectMetaData: ProjectMetaData) => dispatch => {
+	update(updateProject, projectMetaData).then(({ data: { updateProject } }) => {
+		dispatch(updateProjectInStore(updateProject))
+	})
+}
+
+export const removeProject = (project: ProjectItem) => async dispatch => {
+	dispatch(showSpinner(true))
+
+	// Delete all ProjectSkills in the project
+	for (const skill of project.skills.items) {
+		await update(deleteProjectSkill, { id: skill.id })
+	}
+
+	// Delete project once all related ProjectSkills are gone and update store
+	const data = await update(deleteProject, { id: project.id })
+
+	dispatch(removeProjectFromStore(data['data']['deleteProject']['id']))
 	dispatch(showSpinner(false))
 }
