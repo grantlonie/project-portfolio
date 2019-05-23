@@ -1,8 +1,25 @@
 import uniq from 'lodash/uniq'
 
-import { updateUser, createTool, updateTool, deleteTool, updateProjectSkill } from '../graphql/mutations'
+import {
+	updateUser,
+	createTool,
+	updateTool,
+	deleteTool,
+	createCategory,
+	updateCategory,
+	deleteCategory,
+	createProjectSkill,
+	updateProjectSkill,
+	deleteProjectSkill,
+	createProject,
+	updateProject,
+	deleteProject,
+	createSkill,
+	updateSkill,
+	deleteSkill,
+} from '../graphql/mutations'
 import { update } from './apiInterface'
-import { ToolItem, ProjectSkillItem } from '../types'
+import { ToolItem, ProjectSkillItem, CategoryItem } from '../types'
 import { State } from './reducers'
 
 type GetState = () => State
@@ -12,6 +29,10 @@ const showSpinner = (show: boolean) => ({ type: 'SHOW_SPINNER', show })
 /**
  * TOOL ACTIONS
  */
+
+interface ToolToUpdate extends ToolItem {
+	isUpdated?: boolean
+}
 
 const addToolToStore = (tool: ToolItem) => ({ type: 'ADD_TOOL', tool })
 const updateToolInStore = (tool: ToolItem) => ({ type: 'UPDATE_TOOL', tool })
@@ -27,7 +48,7 @@ export const addTool = (name: string) => (dispatch, getState) => {
 	})
 }
 
-export const updateTools = tools => dispatch => {
+export const updateTools = (tools: ToolToUpdate[]) => dispatch => {
 	tools.forEach(tool => {
 		if (tool.isUpdated) {
 			delete tool.isUpdated
@@ -84,3 +105,43 @@ export const mergeTool = (fromId: string, toId: string) => async (dispatch, getS
  */
 
 const updateProjectSkillInStore = (projectSkill: ProjectSkillItem) => ({ type: 'UPDATE_PROJECT_SKILL', projectSkill })
+
+/**
+ * CATEGORY ACTIONS
+ */
+
+interface CategoryToUpdate extends CategoryItem {
+	isUpdated?: boolean
+}
+
+const addCategoryToStore = (category: CategoryItem) => ({ type: 'ADD_CATEGORY', category })
+const updateCategoryInStore = (category: CategoryItem) => ({ type: 'UPDATE_CATEGORY', category })
+const removeCategoryFromStore = (categoryId: CategoryItem['id']) => ({ type: 'REMOVE_CATEGORY', categoryId })
+
+export const addCategory = (name: string) => (dispatch, getState) => {
+	dispatch(showSpinner(true))
+	const userId = getState().userId
+
+	update(createCategory, { name, userId }).then(({ data: { createCategory } }) => {
+		dispatch(addCategoryToStore(createCategory))
+		dispatch(showSpinner(false))
+	})
+}
+
+export const updateCategories = (categories: CategoryToUpdate[]) => dispatch => {
+	categories.forEach(category => {
+		const { isUpdated, id, name } = category
+		if (isUpdated) {
+			update(updateCategory, { id, name }).then(({ data: { updateCategory } }) => {
+				dispatch(updateCategoryInStore(updateCategory))
+			})
+		}
+	})
+}
+
+export const removeCategory = id => (dispatch, getState: GetState) => {
+	update(deleteCategory, { id }).then(({ data: { deleteCategory } }) => {
+		dispatch(removeCategoryFromStore(deleteCategory.id))
+		update(updateUser, { id: getState().userId, dirtyTables: true })
+	})
+}

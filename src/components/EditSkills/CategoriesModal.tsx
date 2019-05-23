@@ -1,34 +1,19 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import API, { graphqlOperation } from '@aws-amplify/api'
-import {
-	Modal,
-	Typography,
-	Paper,
-	Table,
-	TableHead,
-	TableBody,
-	TableRow,
-	TableCell,
-	TextField,
-	Tooltip,
-} from '@material-ui/core'
+import { Modal, Typography, Paper, Table, TableHead, TableBody, TableRow, TableCell, TextField, Tooltip } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
 import ValidationPopover from './ValidationPopover'
-
 import { CategoryItem } from '../../types'
-import { createCategory, updateCategory, deleteCategory, updateUser } from '../../graphql/mutations'
+import { addCategory, updateCategories, removeCategory } from '../../js/actions'
 
 interface Props {
 	categories: CategoryItem[]
-	userId: string
 	nullCategory: CategoryItem
-	removeCategory: (categoryId: string) => null
-	showSpinner: (show: boolean) => null
-	updateCategoryInStore: (category: CategoryItem) => null
-	addCategoryToStore: (category: { id: string; name: string; userId: string }) => null
-	close: () => null
+	addCategory: (name: string) => void
+	updateCategories: (categories: CategoryItem[]) => void
+	removeCategory: (categoryId: string) => void
+	close: () => void
 }
 
 interface State {
@@ -82,19 +67,11 @@ class CategoriesModal extends Component<Props, State> {
 	handleRemoveCategory(categoryId) {
 		const categories = this.state.categories.filter(category => category.id !== categoryId)
 		this.setState({ categories })
-		;(API.graphql(graphqlOperation(deleteCategory, { input: { id: categoryId } })) as Promise<
-			any
-		>).then(({ data }) => {
-			this.props.removeCategory(data.deleteCategory.id)
-
-			API.graphql(
-				graphqlOperation(updateUser, { input: { id: this.props.userId, dirtyTables: true } })
-			)
-		})
+		this.props.removeCategory(categoryId)
 	}
 
 	handleNewCategory(e) {
-		const { categories, showSpinner, userId, addCategoryToStore, nullCategory } = this.props
+		const { categories, nullCategory, addCategory } = this.props
 		const { newCategory } = this.state
 
 		if (newCategory === nullCategory.name) {
@@ -108,36 +85,14 @@ class CategoriesModal extends Component<Props, State> {
 				popoverContent: `Category name ${newCategory} is already used. Choose another..`,
 			})
 		} else {
-			showSpinner(true)
-			;(API.graphql(
-				graphqlOperation(createCategory, {
-					input: { userId, name: newCategory },
-				})
-			) as Promise<any>).then(({ data: { createCategory } }) => {
-				const { id, name, userId } = createCategory
-				const newCategory = { id, name, userId }
-
-				addCategoryToStore(newCategory)
-				showSpinner(false)
-				this.setState({ newCategory: '' })
-			})
+			addCategory(newCategory)
+			this.setState({ newCategory: '' })
 		}
 	}
 
 	closeModal() {
-		const { close, updateCategoryInStore } = this.props
-
-		this.state.categories.forEach(category => {
-			if (category.isUpdated) {
-				const { id, name } = category
-				;(API.graphql(graphqlOperation(updateCategory, { input: { id, name } })) as Promise<
-					any
-				>).then(({ data }) => {
-					updateCategoryInStore(data.updateCategory)
-				})
-			}
-		})
-
+		const { close, updateCategories } = this.props
+		updateCategories(this.state.categories)
 		close()
 	}
 
@@ -180,10 +135,7 @@ class CategoriesModal extends Component<Props, State> {
 											<DeleteIcon onClick={this.handleRemoveCategory.bind(this, category.id)} />
 										</TableCell>
 										<TableCell>
-											<TextField
-												value={category.name}
-												onChange={this.handleNameChange.bind(this, category.id)}
-											/>
+											<TextField value={category.name} onChange={this.handleNameChange.bind(this, category.id)} />
 										</TableCell>
 									</TableRow>
 								)
@@ -205,37 +157,22 @@ class CategoriesModal extends Component<Props, State> {
 						</TableBody>
 					</Table>
 
-					<ValidationPopover
-						element={popoverElement}
-						content={popoverContent}
-						close={this.handleClosePopover.bind(this)}
-					/>
+					<ValidationPopover element={popoverElement} content={popoverContent} close={this.handleClosePopover.bind(this)} />
 				</Paper>
 			</Modal>
 		)
 	}
 }
 
-const mapStateToProps = ({ userId }) => ({ userId })
-
 const mapDispatchToProps = dispatch => {
 	return {
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		updateCategoryInStore: category => {
-			dispatch({ type: 'UPDATE_CATEGORY', category })
-		},
-		addCategoryToStore: category => {
-			dispatch({ type: 'ADD_CATEGORY', category })
-		},
-		removeCategory: categoryId => {
-			dispatch({ type: 'REMOVE_CATEGORY', categoryId })
-		},
+		addCategory: name => dispatch(addCategory(name)),
+		updateCategories: categories => dispatch(updateCategories(categories)),
+		removeCategory: id => dispatch(removeCategory(id)),
 	}
 }
 
 export default connect(
-	mapStateToProps,
+	null,
 	mapDispatchToProps
 )(CategoriesModal)
