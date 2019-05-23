@@ -18,9 +18,13 @@ interface Props {
 	updateTools: (tools: ToolItem[]) => null
 }
 
+export interface ToolToUpdate extends ToolItem {
+	isUpdated?: boolean
+}
+
 interface State {
 	modalTool: ToolItem
-	tools: (ToolItem & { isUpdated?: boolean })[]
+	tools: ToolToUpdate[]
 	newTool: string
 	hideAddToolButton: boolean
 }

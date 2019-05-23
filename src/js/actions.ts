@@ -19,8 +19,11 @@ import {
 	deleteSkill,
 } from '../graphql/mutations'
 import { update } from './apiInterface'
-import { ToolItem, ProjectSkillItem, CategoryItem } from '../types'
+import { ToolItem, ProjectSkillItem, CategoryItem, SkillItem } from '../types'
 import { State } from './reducers'
+import { SkillToUpdate } from '../components/EditSkills'
+import { CategoryToUpdate } from '../components/EditSkills/CategoriesModal'
+import { ToolToUpdate } from '../components/EditTools'
 
 type GetState = () => State
 
@@ -29,10 +32,6 @@ const showSpinner = (show: boolean) => ({ type: 'SHOW_SPINNER', show })
 /**
  * TOOL ACTIONS
  */
-
-interface ToolToUpdate extends ToolItem {
-	isUpdated?: boolean
-}
 
 const addToolToStore = (tool: ToolItem) => ({ type: 'ADD_TOOL', tool })
 const updateToolInStore = (tool: ToolItem) => ({ type: 'UPDATE_TOOL', tool })
@@ -110,10 +109,6 @@ const updateProjectSkillInStore = (projectSkill: ProjectSkillItem) => ({ type: '
  * CATEGORY ACTIONS
  */
 
-interface CategoryToUpdate extends CategoryItem {
-	isUpdated?: boolean
-}
-
 const addCategoryToStore = (category: CategoryItem) => ({ type: 'ADD_CATEGORY', category })
 const updateCategoryInStore = (category: CategoryItem) => ({ type: 'UPDATE_CATEGORY', category })
 const removeCategoryFromStore = (categoryId: CategoryItem['id']) => ({ type: 'REMOVE_CATEGORY', categoryId })
@@ -144,4 +139,76 @@ export const removeCategory = id => (dispatch, getState: GetState) => {
 		dispatch(removeCategoryFromStore(deleteCategory.id))
 		update(updateUser, { id: getState().userId, dirtyTables: true })
 	})
+}
+
+/**
+ * SKILL ACTIONS
+ */
+
+const addSkillToStore = (skill: SkillItem) => ({ type: 'ADD_SKILL', skill })
+const updateSkillInStore = (skill: SkillItem) => ({ type: 'UPDATE_SKILL', skill })
+const removeSkillFromStore = (skillId: SkillItem['id']) => ({ type: 'REMOVE_SKILL', skillId })
+const addSkillToProject = (skill: SkillItem) => ({ type: 'ADD_SKILL_TO_PROJECT', skill })
+const removeSkillFromProject = (skill: SkillItem) => ({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
+
+export const addSkill = (name: string) => (dispatch, getState) => {
+	dispatch(showSpinner(true))
+	const userId = getState().userId
+
+	update(createSkill, { name, userId }).then(({ data: { createSkill } }) => {
+		dispatch(addSkillToStore(createSkill))
+		dispatch(showSpinner(false))
+	})
+}
+
+export const updateSkills = (skills: SkillToUpdate[], nullCategoryId: string) => dispatch => {
+	skills.forEach(skill => {
+		const { id, name, skillCategoryId, isUpdated } = skill
+
+		if (isUpdated) {
+			const input: any = { id, name }
+
+			if (skillCategoryId) {
+				input.skillCategoryId = skillCategoryId === nullCategoryId ? null : skillCategoryId
+			}
+
+			update(updateSkill, input).then(({ data: { updateSkill } }) => {
+				dispatch(updateSkillInStore(updateSkill))
+			})
+		}
+	})
+}
+
+export const removeSkill = id => (dispatch, getState: GetState) => {
+	update(deleteSkill, { id }).then(({ data: { deleteSkill } }) => {
+		dispatch(removeSkillFromStore(deleteSkill.id))
+		update(updateUser, { id: getState().userId, dirtyTables: true })
+	})
+}
+
+/**
+ * Merge a skill with another existing skill
+ * @param fromId skill id to remove
+ * @param toId skill id to merge the removed skill with
+ */
+export const mergeSkill = (fromId: string, toId: string) => async (dispatch, getState: GetState) => {
+	dispatch(showSpinner(true))
+
+	const { projects } = getState()
+
+	// Find and merge old with new skill in each project
+	for (const project of projects) {
+		for (const projectSkill of project.skills.items) {
+			if (projectSkill.skillId === fromId) {
+				const data = await update(updateProjectSkill, { id: projectSkill.id, skillId: toId })
+				const skill = data['data']['updateProjectSkill']
+
+				dispatch(addSkillToProject(skill))
+				dispatch(removeSkillFromProject(skill))
+			}
+		}
+	}
+
+	dispatch(removeSkill(fromId))
+	dispatch(showSpinner(false))
 }

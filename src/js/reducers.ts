@@ -122,7 +122,7 @@ const rootReducer = (state: State = initialState, action) =>
 				return
 
 			case 'UPDATE_SKILL':
-				draft.allSkills = draft.allSkills.map(skill => (skill.id === action.updatedSkill.id ? action.updatedSkill : skill))
+				draft.allSkills = draft.allSkills.map(skill => (skill.id === action.skill.id ? action.skill : skill))
 				return
 
 			case 'UPDATE_TOOL':

@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { updateTool, updateProjectSkill, deleteSkill, updateUser } from '../../graphql/mutations'
-import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Modal,
 	Typography,
@@ -16,18 +14,14 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { SkillItem, ProjectItem, ToolItem } from '../../types'
+import { SkillItem } from '../../types'
+import { removeSkill, mergeSkill } from '../../js/actions'
 
 interface Props {
-	userId: string
 	skill: SkillItem
-	projects: ProjectItem[]
-	removeSkillFromStore: (skillId: string) => null
 	removeSkill: (skillId: string) => null
+	mergeSkill: (fromId: string, toId: string) => null
 	close: () => null
-	showSpinner: (show: boolean) => null
-	addProjectSkillToStore: (skill: SkillItem) => null
-	removeSkillFromProject: (skill: SkillItem) => null
 }
 
 interface State {
@@ -60,53 +54,17 @@ class ConfirmationModal extends Component<Props, State> {
 		this.state = { deleteTextValue: '', mergeSkillId }
 	}
 
-	deleteSkill() {
-		const { removeSkillFromStore, removeSkill, userId, skill, close } = this.props
-
+	removeSkill() {
+		const { removeSkill, skill, close } = this.props
 		removeSkill(skill.id)
 		close()
-		;(API.graphql(graphqlOperation(deleteSkill, { input: { id: skill.id } })) as Promise<any>).then(
-			({ data }) => {
-				removeSkillFromStore(data.deleteSkill.id)
-				API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
-			}
-		)
 	}
 
 	// Method merges skill with the selected skill
-	async mergeSkill() {
-		const {
-			skill,
-			projects,
-			removeSkillFromProject,
-			addProjectSkillToStore,
-			showSpinner,
-		} = this.props
-		const { mergeSkillId } = this.state
-
-		showSpinner(true)
-
-		// Link ProjectSkill to new skillId
-		for (const project of projects) {
-			for (const projectSkill of project.skills.items) {
-				if (projectSkill.skillId === skill.id) {
-					const data = await API.graphql(
-						graphqlOperation(updateProjectSkill, {
-							input: { id: projectSkill.id, skillId: mergeSkillId },
-						})
-					)
-
-					// Update redux
-					removeSkillFromProject(data['data']['updateProjectSkill'])
-					addProjectSkillToStore(data['data']['updateProjectSkill'])
-				}
-			}
-		}
-
-		showSpinner(false)
-
-		// Delete Skill
-		this.deleteSkill()
+	mergeSkill() {
+		const { close, skill, mergeSkill } = this.props
+		mergeSkill(skill.id, this.state.mergeSkillId)
+		close()
 	}
 
 	handleDeleteTextChange({ target }) {
@@ -147,10 +105,7 @@ class ConfirmationModal extends Component<Props, State> {
 										))}
 									</Select>
 
-									<Button
-										color="primary"
-										style={{ marginLeft: '20px' }}
-										onClick={this.mergeSkill.bind(this)}>
+									<Button color="primary" style={{ marginLeft: '20px' }} onClick={this.mergeSkill.bind(this)}>
 										Merge
 									</Button>
 								</div>
@@ -163,23 +118,20 @@ class ConfirmationModal extends Component<Props, State> {
 					<ExpansionPanel>
 						<ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
 							<Typography>
-								Delete <em>{skill.name}</em> and all associated tools and relations within a project
-								(not recommended)
+								Delete <em>{skill.name}</em> and all associated tools and relations within a project (not recommended)
 							</Typography>
 						</ExpansionPanelSummary>
 						<ExpansionPanelDetails style={{ display: 'block' }}>
 							<Typography>
 								Type <em>{skill.name}</em> and delete.
 							</Typography>
-							<TextField
-								value={deleteTextValue}
-								onChange={this.handleDeleteTextChange.bind(this)}
-							/>
+							<TextField value={deleteTextValue} onChange={this.handleDeleteTextChange.bind(this)} />
 							<Button
 								color="primary"
 								style={{ marginLeft: '20px' }}
 								disabled={deleteTextValue !== skill.name}
-								onClick={this.deleteSkill.bind(this)}>
+								onClick={this.removeSkill.bind(this)}
+							>
 								Delete
 							</Button>
 						</ExpansionPanelDetails>
@@ -190,26 +142,12 @@ class ConfirmationModal extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allSkills, projects, userId }) => ({ allSkills, projects, userId })
-
-const mapDispatchToProps = dispatch => {
-	return {
-		removeSkillFromStore: skillId => {
-			dispatch({ type: 'REMOVE_SKILL', skillId })
-		},
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		addProjectSkillToStore: skill => {
-			dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
-		},
-		removeSkillFromProject: skill => {
-			dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
-		},
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	removeSkill: skillId => dispatch(removeSkill(skillId)),
+	mergeSkill: (fromId, toId) => dispatch(mergeSkill(fromId, toId)),
+})
 
 export default connect(
-	mapStateToProps,
+	null,
 	mapDispatchToProps
 )(ConfirmationModal)

@@ -16,8 +16,12 @@ interface Props {
 	close: () => void
 }
 
+export interface CategoryToUpdate extends CategoryItem {
+	isUpdated?: boolean
+}
+
 interface State {
-	categories: (CategoryItem & { isUpdated?: boolean })[]
+	categories: CategoryToUpdate[]
 	newCategory: string
 	popoverElement: any
 	popoverContent: string

@@ -1,23 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import API, { graphqlOperation } from '@aws-amplify/api'
-import {
-	Typography,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	TextField,
-	MenuItem,
-	Button,
-} from '@material-ui/core'
+import { Typography, Table, TableBody, TableCell, TableHead, TableRow, TextField, MenuItem, Button } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createSkill, updateSkill } from '../../graphql/mutations'
 import CategoriesModal from './CategoriesModal'
 import DeleteSkillConfirmationModal from './DeleteSkillConfirmationModal'
 import { SkillItem, CategoryItem } from '../../types'
+import { addSkill, updateSkills } from '../../js/actions'
 
 const headers = [{ id: 'name', label: 'Name' }, { id: 'category', label: 'Category' }]
 
@@ -26,18 +15,21 @@ const nullCategory = { id: '_null', name: 'General' }
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
 
+export interface SkillToUpdate extends SkillItem {
+	isUpdated?: boolean
+	skillCategoryId: string
+}
+
 interface Props {
 	allCategories: CategoryItem[]
 	allSkills: SkillItem[]
-	userId: string
-	showSpinner: (show: boolean) => null
-	addSkillToStore: (skill: SkillItem) => null
-	updateSkillInStore: (skill: SkillItem) => null
+	addSkill: (name: string) => void
+	updateSkills: (skills: SkillToUpdate[], nullCategoryId: string) => void
 }
 
 interface State {
 	modalSkill: SkillItem
-	skills: (SkillItem & { isUpdated?: boolean; skillCategoryId: '' })[]
+	skills: SkillToUpdate[]
 	newSkill: string
 	modal: string
 	hideAddSkillButton: boolean
@@ -69,9 +61,7 @@ class EditSkills extends Component<Props, State> {
 	componentDidUpdate(prevProps) {
 		// if skills change in redux, update state
 		if (JSON.stringify(prevProps.allSkills) !== JSON.stringify(this.props.allSkills)) {
-			let modalSkill = this.state.modalSkill
-				? this.props.allSkills.find(i => i.id === this.state.modalSkill.id)
-				: null
+			let modalSkill = this.state.modalSkill ? this.props.allSkills.find(i => i.id === this.state.modalSkill.id) : null
 
 			this.setState({ skills: this.sortedSkills(), modalSkill })
 		}
@@ -82,42 +72,13 @@ class EditSkills extends Component<Props, State> {
 	}
 
 	handleAddSkill() {
-		const { userId, showSpinner, addSkillToStore } = this.props
-
-		showSpinner(true)
-		;(API.graphql(
-			graphqlOperation(createSkill, {
-				input: { userId, name: this.state.newSkill },
-			})
-		) as Promise<any>).then(({ data: { createSkill } }) => {
-			addSkillToStore(createSkill)
-			showSpinner(false)
-		})
-
+		this.props.addSkill(this.state.newSkill)
 		this.setState({ newSkill: '', hideAddSkillButton: true })
 	}
 
 	updateSkills() {
 		clearTimeout(updateTimeout)
-
-		this.state.skills.forEach(skill => {
-			const { id, name, skillCategoryId, isUpdated } = skill
-
-			if (isUpdated) {
-				delete skill.isUpdated
-
-				const input: any = { id, name }
-				if (skillCategoryId) {
-					input.skillCategoryId = skillCategoryId === nullCategory.id ? null : skillCategoryId
-				}
-
-				;(API.graphql(graphqlOperation(updateSkill, { input })) as Promise<any>).then(
-					({ data }) => {
-						this.props.updateSkillInStore(data.updateSkill)
-					}
-				)
-			}
-		})
+		this.props.updateSkills(this.state.skills, nullCategory.id)
 	}
 
 	handleChangeCategory(id, { target }) {
@@ -196,11 +157,7 @@ class EditSkills extends Component<Props, State> {
 		switch (modal) {
 			case 'categories':
 				renderedModal = (
-					<CategoriesModal
-						categories={allCategories}
-						nullCategory={nullCategory}
-						close={this.closeModal.bind(this)}
-					/>
+					<CategoriesModal categories={allCategories} nullCategory={nullCategory} close={this.closeModal.bind(this)} />
 				)
 				break
 
@@ -250,10 +207,7 @@ class EditSkills extends Component<Props, State> {
 										<DeleteIcon onClick={this.handleOpenDeleteModal.bind(this, skill)} />
 									</TableCell>
 									<TableCell padding="dense">
-										<TextField
-											value={skill.name}
-											onChange={this.handleNameChange.bind(this, skill.id)}
-										/>
+										<TextField value={skill.name} onChange={this.handleNameChange.bind(this, skill.id)} />
 									</TableCell>
 
 									<TableCell padding="dense">
@@ -261,7 +215,8 @@ class EditSkills extends Component<Props, State> {
 											select
 											value={skill.skillCategoryId || skill.category.id}
 											onChange={this.handleChangeCategory.bind(this, skill.id)}
-											style={{ width: '100%' }}>
+											style={{ width: '100%' }}
+										>
 											>
 											{adjCategories.map(category => {
 												return (
@@ -279,18 +234,15 @@ class EditSkills extends Component<Props, State> {
 						<TableRow>
 							<TableCell />
 							<TableCell padding="dense">
-								<TextField
-									value={newSkill}
-									placeholder="New Skill"
-									onChange={this.handleNewSkillChange.bind(this)}
-								/>
+								<TextField value={newSkill} placeholder="New Skill" onChange={this.handleNewSkillChange.bind(this)} />
 							</TableCell>
 							<TableCell>
 								<Button
 									color="secondary"
 									variant="contained"
 									disabled={this.state.hideAddSkillButton}
-									onClick={this.handleAddSkill.bind(this)}>
+									onClick={this.handleAddSkill.bind(this)}
+								>
 									Create
 								</Button>
 							</TableCell>
@@ -302,25 +254,15 @@ class EditSkills extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allCategories, allSkills, userId }) => ({
+const mapStateToProps = ({ allCategories, allSkills }) => ({
 	allCategories,
 	allSkills,
-	userId,
 })
 
-const mapDispatchToProps = dispatch => {
-	return {
-		updateSkillInStore: updatedSkill => {
-			dispatch({ type: 'UPDATE_SKILL', updatedSkill })
-		},
-		addSkillToStore: skill => {
-			dispatch({ type: 'ADD_SKILL', skill })
-		},
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	addSkill: name => dispatch(addSkill(name)),
+	updateSkills: (skills, nullCategoryId) => dispatch(updateSkills(skills, nullCategoryId)),
+})
 
 export default connect(
 	mapStateToProps,
