@@ -11,7 +11,7 @@ const initialState = {
 	showSpinner: false, // show the loading spinner
 }
 
-interface State {
+export interface State {
 	userId: string
 	projects: ProjectItem[]
 	allCategories: CategoryItem[]
@@ -47,9 +47,7 @@ const rootReducer = (state: State = initialState, action) =>
 				return
 
 			case 'REMOVE_CATEGORY':
-				draft.allCategories = draft.allCategories.filter(
-					category => category.id !== action.categoryId
-				)
+				draft.allCategories = draft.allCategories.filter(category => category.id !== action.categoryId)
 
 				draft.allSkills = draft.allSkills.map(skill => {
 					if (skill.category && skill.category.id === action.categoryId) skill.category = null
@@ -124,15 +122,11 @@ const rootReducer = (state: State = initialState, action) =>
 				return
 
 			case 'UPDATE_SKILL':
-				draft.allSkills = draft.allSkills.map(skill =>
-					skill.id === action.updatedSkill.id ? action.updatedSkill : skill
-				)
+				draft.allSkills = draft.allSkills.map(skill => (skill.id === action.updatedSkill.id ? action.updatedSkill : skill))
 				return
 
 			case 'UPDATE_TOOL':
-				draft.allTools = draft.allTools.map(tool =>
-					tool.id === action.tool.id ? action.tool : tool
-				)
+				draft.allTools = draft.allTools.map(tool => (tool.id === action.tool.id ? action.tool : tool))
 				return
 
 			default:

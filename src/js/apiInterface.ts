@@ -4,6 +4,8 @@ import { Auth } from 'aws-amplify'
 import { listProjects, listCategorys, listSkills, listTools, listProjectSkills, getUser } from '../graphql/queries'
 import { updateProjectSkill, deleteProjectSkill, updateUser } from '../graphql/mutations'
 
+let userId
+
 function getUserId() {
 	const { NODE_ENV, REACT_APP_TEST_USER } = process.env
 
@@ -12,7 +14,7 @@ function getUserId() {
 	return Auth.currentUserInfo().then(data => data.id)
 }
 
-function endpoint(query, userId) {
+function endpoint(query) {
 	return API.graphql(
 		graphqlOperation(query, {
 			filter: { userId: { eq: userId } },
@@ -30,15 +32,15 @@ export function update(query, input) {
 	return API.graphql(graphqlOperation(query, { input })) as Promise<any>
 }
 
-const getCategories = userId => endpoint(listCategorys, userId).then(data => data.data.listCategorys.items)
+const getCategories = () => endpoint(listCategorys).then(data => data.data.listCategorys.items)
 
-const getSkills = userId => endpoint(listSkills, userId).then(data => data.data.listSkills.items)
+const getSkills = () => endpoint(listSkills).then(data => data.data.listSkills.items)
 
-const getTools = userId => endpoint(listTools, userId).then(data => data.data.listTools.items)
+const getTools = () => endpoint(listTools).then(data => data.data.listTools.items)
 
-const getProjects = userId => endpoint(listProjects, userId).then(data => data.data.listProjects.items)
+const getProjects = () => endpoint(listProjects).then(data => data.data.listProjects.items)
 
-const getProjectSkills = userId => endpoint(listProjectSkills, userId).then(data => data.data.listProjectSkills.items)
+const getProjectSkills = () => endpoint(listProjectSkills).then(data => data.data.listProjectSkills.items)
 
 const getUserData = id => (API.graphql(graphqlOperation(getUser, { id })) as Promise<any>).then(data => data.data.getUser)
 
@@ -47,7 +49,7 @@ async function cleanupDirtyTables(userId, allSkills, allTools) {
 	const userData = await getUserData(userId)
 
 	if (userData.dirtyTables) {
-		const projectSkills = await getProjectSkills(userId)
+		const projectSkills = await getProjectSkills()
 
 		// Go through all ProjectSkills
 		for (const projectSkill of projectSkills) {
@@ -91,14 +93,14 @@ export async function getAllData() {
 		return fetch('/assets/sample-data.json').then(res => res.json())
 	}
 
-	const userId = await getUserId()
-	const allSkills = await getSkills(userId)
-	const allTools = await getTools(userId)
+	userId = await getUserId()
+	const allSkills = await getSkills()
+	const allTools = await getTools()
 
 	await cleanupDirtyTables(userId, allSkills, allTools)
 
-	const projects = await getProjects(userId)
-	const allCategories = await getCategories(userId)
+	const projects = await getProjects()
+	const allCategories = await getCategories()
 
 	return { userId, projects, allSkills, allTools, allCategories }
 }

@@ -14,7 +14,6 @@ const updateCheckTime = 5000 // [ms] how long to wait after editting to update t
 
 interface Props {
 	allTools: ToolItem[]
-	userId: string
 	addTool: (tool: string) => null
 	updateTools: (tools: ToolItem[]) => null
 }
@@ -173,14 +172,12 @@ class EditTools extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allTools, userId }) => ({ allTools, userId })
+const mapStateToProps = ({ allTools }) => ({ allTools })
 
-const mapDispatchToProps = dispatch => {
-	return {
-		addTool: tool => dispatch(addTool(tool)),
-		updateTools: tools => dispatch(updateTools(tools)),
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	addTool: tool => dispatch(addTool(tool)),
+	updateTools: tools => dispatch(updateTools(tools)),
+})
 
 export default connect(
 	mapStateToProps,

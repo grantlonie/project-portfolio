@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import uniq from 'lodash/uniq'
-import API, { graphqlOperation } from '@aws-amplify/api'
 import {
 	Modal,
 	Typography,
@@ -16,18 +14,14 @@ import {
 } from '@material-ui/core'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 
-import { updateProjectSkill, deleteTool, updateUser } from '../../graphql/mutations'
-import { ToolItem, ProjectItem, ProjectSkillItem } from '../../types'
+import { ToolItem } from '../../types'
+import { removeTool, mergeTool } from '../../js/actions'
 
 interface Props {
-	userId: string
 	tool: ToolItem
-	projects: ProjectItem[]
-	removeToolFromStore: (toolId: string) => null
-	removeTool: (toolId: string) => null
-	close: () => null
-	showSpinner: (show: boolean) => null
-	updateProjectSkillInStore: (ProjectSkill: ProjectSkillItem) => null
+	removeTool: (toolId: string) => void
+	mergeTool: (fromId: string, toId: string) => void
+	close: () => void
 }
 
 interface State {
@@ -60,53 +54,14 @@ class ConfirmationModal extends Component<Props, State> {
 		this.state = { deleteTextValue: '', mergeToolId }
 	}
 
-	deleteTool() {
-		const { removeToolFromStore, removeTool, userId, tool, close } = this.props
-
+	removeTool() {
+		const { removeTool, tool, close } = this.props
 		removeTool(tool.id)
 		close()
-		;(API.graphql(graphqlOperation(deleteTool, { input: { id: tool.id } })) as Promise<any>).then(({ data }) => {
-			removeToolFromStore(data.deleteTool.id)
-			API.graphql(graphqlOperation(updateUser, { input: { id: userId, dirtyTables: true } }))
-		})
 	}
 
-	// Method merges tool with the selected tool
-	async mergeTool() {
-		const { tool, projects, updateProjectSkillInStore, showSpinner } = this.props
-		const { mergeToolId } = this.state
-
-		showSpinner(true)
-
-		// Find and merge old with new tool in each project
-		for (const project of projects) {
-			for (const projectSkill of project.skills.items) {
-				let { toolIds } = projectSkill
-				if (!toolIds) continue
-
-				for (let i = 0; i < toolIds.length; i++) {
-					if (toolIds[i] === tool.id) {
-						// Change tool id to match merge and remove duplicates
-						toolIds[i] = mergeToolId
-						toolIds = uniq(toolIds)
-
-						const data = await API.graphql(
-							graphqlOperation(updateProjectSkill, {
-								input: { id: projectSkill.id, toolIds },
-							})
-						)
-
-						// Update redux
-						updateProjectSkillInStore(data['data']['updateProjectSkill'])
-					}
-				}
-			}
-		}
-
-		showSpinner(false)
-
-		// Delete Tool
-		this.deleteTool()
+	mergeTool() {
+		this.props.mergeTool(this.props.tool.id, this.state.mergeToolId)
 	}
 
 	handleDeleteTextChange({ target }) {
@@ -172,7 +127,7 @@ class ConfirmationModal extends Component<Props, State> {
 								color="primary"
 								style={{ marginLeft: '20px' }}
 								disabled={deleteTextValue !== tool.name}
-								onClick={this.deleteTool.bind(this)}
+								onClick={this.removeTool.bind(this)}
 							>
 								Delete
 							</Button>
@@ -184,21 +139,12 @@ class ConfirmationModal extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allTools, projects, userId }) => ({ allTools, projects, userId })
+const mapStateToProps = ({ allTools, projects }) => ({ allTools, projects })
 
-const mapDispatchToProps = dispatch => {
-	return {
-		removeToolFromStore: toolId => {
-			dispatch({ type: 'REMOVE_TOOL', toolId })
-		},
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		updateProjectSkillInStore: projectSkill => {
-			dispatch({ type: 'UPDATE_PROJECT_SKILL', projectSkill })
-		},
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	removeTool: toolId => dispatch(removeTool(toolId)),
+	mergeTool: (fromId, toId) => dispatch(mergeTool(fromId, toId)),
+})
 
 export default connect(
 	mapStateToProps,
