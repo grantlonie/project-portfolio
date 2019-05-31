@@ -1,38 +1,42 @@
 import { useState, useEffect } from 'react'
 
-import { SunburstData } from './types'
+import { Sunburst } from './types'
 
 /** Colors for the categories and associated skills and projects */
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959', '#f682ff']
 
 /** This method creates the sunburst data by looping through categories, skills and projects */
 export default function useSunburstData(allCategories, allSkills, projects) {
-	const [sunburstData, setSunburstData] = useState([] as SunburstData[])
+	const [sunburstData, setSunburstData] = useState({ data: [], status: 'loading' } as Sunburst)
 
 	useEffect(() => {
 		if (allCategories.length === 0) return
 
-		let newSunburstData: SunburstData[] = allCategories.map((category, categoryI) => {
-			const skills = category.skills.items
-				.map(skill => {
-					const associatedProjects = getAssociatedProjects(skill.id, categoryI, projects)
-					if (associatedProjects.length === 0) return null
+		let newSunburstData: Sunburst['data'] = allCategories
+			.map((category, categoryI) => {
+				const skills = category.skills.items
+					.map(skill => {
+						const associatedProjects = getAssociatedProjects(skill.id, categoryI, projects)
+						if (associatedProjects.length === 0) return null
 
-					return {
-						...skill,
-						projects: associatedProjects,
-						projectCount: associatedProjects.length,
-						phi: null,
-						fill: colors[categoryI],
-					}
-				})
-				.filter(skill => skill !== null)
+						return {
+							...skill,
+							projects: associatedProjects,
+							projectCount: associatedProjects.length,
+							phi: null,
+							fill: colors[categoryI],
+						}
+					})
+					.filter(skill => !!skill)
 
-			// Number of total projects in skills
-			const projectCount = skills.reduce((acc, cur) => acc + cur.projectCount, 0)
+				if (skills.length === 0) return null
 
-			return { ...category, skills, projectCount, phi: null, fill: colors[categoryI] }
-		})
+				// Number of total projects in skills
+				const projectCount = skills.reduce((acc, cur) => acc + cur.projectCount, 0)
+
+				return { ...category, skills, projectCount, phi: null, fill: colors[categoryI] }
+			})
+			.filter(category => !!category)
 
 		// Add general category (no category) skills
 		const generalCategorySkills = allSkills
@@ -51,14 +55,16 @@ export default function useSunburstData(allCategories, allSkills, projects) {
 			})
 			.filter(skill => skill !== null)
 
-		newSunburstData.push({
-			name: 'General',
-			fill: colors[colors.length - 1],
-			id: 'general',
-			phi: null,
-			projectCount: generalCategorySkills.reduce((acc, cur) => acc + cur.projectCount, 0),
-			skills: generalCategorySkills,
-		})
+		if (generalCategorySkills.length > 0) {
+			newSunburstData.push({
+				name: 'General',
+				fill: colors[colors.length - 1],
+				id: 'general',
+				phi: null,
+				projectCount: generalCategorySkills.reduce((acc, cur) => acc + cur.projectCount, 0),
+				skills: generalCategorySkills,
+			})
+		}
 
 		// Count total projects and calculate rotation angle for each category, skill and project
 		const totalProjects = newSunburstData.reduce((acc, cur) => acc + cur.projectCount, 0)
@@ -72,7 +78,7 @@ export default function useSunburstData(allCategories, allSkills, projects) {
 			return { ...category, skills, phi: (category.projectCount * Math.PI * 2) / totalProjects }
 		})
 
-		setSunburstData(newSunburstData)
+		setSunburstData({ data: newSunburstData, status: newSunburstData.length > 0 ? 'ready' : 'empty' })
 	}, [allCategories.length])
 
 	return sunburstData

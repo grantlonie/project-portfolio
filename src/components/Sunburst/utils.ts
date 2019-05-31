@@ -1,7 +1,7 @@
 import sleep from 'sleep-promise'
 import random from 'lodash/random'
 
-import { ProjectSkill, NodeTypes, SunburstData } from './types'
+import { ProjectSkill, NodeTypes, Sunburst } from './types'
 
 /**
  * Method to calculate the selected category's total rotation clockwise from specified reference angle
@@ -10,7 +10,7 @@ import { ProjectSkill, NodeTypes, SunburstData } from './types'
  * @param categoryId selected category id
  * @param reference angle from right clockwise to use as reference point
  */
-export function sunburstRotater(sunburstData, sunburstRotation, categoryId, reference) {
+export function sunburstRotater(sunburstData: Sunburst['data'], sunburstRotation, categoryId, reference) {
 	let rotation = -sunburstData[0].phi / 2
 	for (const category of sunburstData) {
 		if (category.id !== categoryId) rotation += category.phi
@@ -59,7 +59,7 @@ export function slowlyAddProjectSkills(projectSkills, setSelectedProjectSkills) 
  * @param rotationReference angle from the right clockwise that category will eject from
  */
 export function slowlyAddCategoryNodes(
-	sunburstData: SunburstData[],
+	sunburstData: Sunburst['data'],
 	selectedCategoryId,
 	setSelectedCategoryNodes,
 	rotationReference

@@ -63,7 +63,7 @@ const Sunburst = (props: Props) => {
 		selectedCategoryId,
 		selectedProject
 	)
-	const sunburstData = useSunburstData(allCategories, allSkills, projects)
+	const sunburst = useSunburstData(allCategories, allSkills, projects)
 
 	/**
 	 * Method called after user hovers over a node
@@ -165,7 +165,7 @@ const Sunburst = (props: Props) => {
 		disableCategoryHover.current = true
 
 		const { rotationReference } = sunburstPosition
-		const rotation = sunburstRotater(sunburstData, sunburstRotation, categoryId, rotationReference)
+		const rotation = sunburstRotater(sunburst.data, sunburstRotation, categoryId, rotationReference)
 		if (Math.abs(sunburstRotation - rotation) > 0.1) {
 			setSunburstRotation(rotation)
 			await sleep(transitionDuration + 30)
@@ -176,7 +176,7 @@ const Sunburst = (props: Props) => {
 		setHoverCategoryId(null)
 		setSunburstScale(sunburstScaleDown)
 		setSelectedCategoryId(categoryId)
-		await slowlyAddCategoryNodes(sunburstData, categoryId, setSelectedCategoryNodes, rotationReference)
+		await slowlyAddCategoryNodes(sunburst.data, categoryId, setSelectedCategoryNodes, rotationReference)
 
 		nodesAreMoving.current = false
 	}
@@ -187,7 +187,8 @@ const Sunburst = (props: Props) => {
 		}
 	}
 
-	if (sunburstData.length === 0) return <h3>Loading...</h3>
+	if (sunburst.status === 'loading') return <h3>Loading...</h3>
+	if (sunburst.status === 'empty') return <h3>You need skills and projects tied to the skills to genterate a sunburst</h3>
 
 	let categoryRotation = 0
 
@@ -218,9 +219,9 @@ const Sunburst = (props: Props) => {
 						transition: `all ${transitionDuration}ms`,
 					}}
 				>
-					{sunburstData.map((category, categoryI) => {
+					{sunburst.data.map((category, categoryI) => {
 						// Rotation logic for skills
-						if (categoryI > 0) categoryRotation += sunburstData[categoryI - 1].phi / 2 + category.phi / 2
+						if (categoryI > 0) categoryRotation += sunburst.data[categoryI - 1].phi / 2 + category.phi / 2
 						let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
 
 						let transform = null

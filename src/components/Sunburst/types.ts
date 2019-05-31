@@ -45,9 +45,14 @@ export interface SkillData extends NodeData {
 	projects: ProjectData[]
 }
 
-export interface SunburstData extends NodeData {
+interface SunburstData extends NodeData {
 	projectCount: number
 	skills: SkillData[]
+}
+
+export interface Sunburst {
+	data: SunburstData[]
+	status: 'loading' | 'ready' | 'empty'
 }
 
 export interface ProjectSkill {
