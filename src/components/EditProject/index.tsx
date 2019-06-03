@@ -2,14 +2,12 @@ import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Typography } from '@material-ui/core'
-import API, { graphqlOperation } from '@aws-amplify/api'
 
 import MainProps from './MainProps'
 import Skills from './Skills'
-import { getProject } from '../../graphql/queries'
-import { updateProjectSkill, createProjectSkill, deleteProjectSkill } from '../../graphql/mutations'
 import { ProjectItem } from '../../types'
 import { addProject, modifyProject } from '../../js/actions'
+import { addProjectSkill, modifyProjectSkill, removeProjectSkill } from '../../js/actions'
 
 let updateTimeout // used for timeout to edit project database and redux
 const updateCheckTime = 5000 // [ms] how long to wait after editting to update the component
@@ -34,12 +32,11 @@ interface Props {
 	history: any
 	projects: ProjectItem[]
 	userId: string
-	addProject: () => string
+	addProject: () => Promise<string>
 	modifyProject: (project: ProjectMetaData) => void
-	addProjectSkillToStore: (skill: any) => null
-	removeSkillFromProject: (skill: any) => null
-	updateProjectInStore: (project: any) => null
-	showSpinner: (show: boolean) => null
+	addProjectSkill: (projectId: string, skillId: string) => Promise<any>
+	modifyProjectSkill: (data: any) => void
+	removeProjectSkill: (id: string) => Promise<any>
 }
 
 type SkillItem = ProjectItem['skills']['items'][0] & { isUpdated?: boolean }
@@ -112,34 +109,16 @@ class Edit extends Component<Props, State> {
 		this.setState({ [name]: value, mainPropsAreUpdated: true })
 	}
 
-	addProjectSkill(skillId) {
-		const { userId, addProjectSkillToStore } = this.props
-		;(API.graphql(
-			graphqlOperation(createProjectSkill, {
-				input: { userId, skillId, projectSkillProjectId: this.state.id },
-			})
-		) as Promise<any>).then(({ data: { createProjectSkill } }) => {
-			const skills: any = [...(this.state.skills || []), { id: createProjectSkill.id, skillId }]
-			this.setState({ skills })
-			addProjectSkillToStore(createProjectSkill)
-		})
+	async handleAddProjectSkill(skillId) {
+		const projectSkill = await this.props.addProjectSkill(this.state.id, skillId)
+		const skills: any = [...(this.state.skills || []), { id: projectSkill.id, skillId }]
+		this.setState({ skills })
 	}
 
-	removeProjectSkill(id) {
-		const { showSpinner, removeSkillFromProject } = this.props
-
-		showSpinner(true)
-		;(API.graphql(
-			graphqlOperation(deleteProjectSkill, {
-				input: { id },
-			})
-		) as Promise<any>).then(({ data: { deleteProjectSkill } }) => {
-			const skills = [...this.state.skills].filter(skill => skill.id !== deleteProjectSkill.id)
-
-			this.setState({ skills })
-			removeSkillFromProject(deleteProjectSkill)
-			showSpinner(false)
-		})
+	async removeProjectSkill(id) {
+		const deletedSkill = await this.props.removeProjectSkill(id)
+		const skills = [...this.state.skills].filter(skill => skill.id !== deletedSkill.id)
+		this.setState({ skills })
 	}
 
 	updateTools(skillId, tools) {
@@ -175,13 +154,10 @@ class Edit extends Component<Props, State> {
 
 	updateProject() {
 		const { id, name, date, company, description, skills, mainPropsAreUpdated, skillsAreUpdated } = this.state
-		const { modifyProject, updateProjectInStore } = this.props
-
 		clearTimeout(updateTimeout)
 
 		if (mainPropsAreUpdated) {
-			modifyProject({ id, name, date, company, description })
-
+			this.props.modifyProject({ id, name, date, company, description })
 			this.setState({ mainPropsAreUpdated: false })
 		}
 
@@ -192,16 +168,7 @@ class Edit extends Component<Props, State> {
 
 				if (isUpdated) {
 					delete skill.isUpdated
-					;(API.graphql(
-						graphqlOperation(updateProjectSkill, {
-							input: { id, description, toolIds },
-						})
-					) as Promise<any>).then(({ data: { updateProjectSkill } }) => {
-						const { id } = updateProjectSkill.project
-						;(API.graphql(graphqlOperation(getProject, { id })) as Promise<any>).then(({ data }) => {
-							updateProjectInStore(data.getProject)
-						})
-					})
+					this.props.modifyProjectSkill({ id, description, toolIds })
 				}
 
 				return skill
@@ -212,6 +179,7 @@ class Edit extends Component<Props, State> {
 	}
 
 	async addAnotherProject() {
+		this.updateProject()
 		const projectId = await this.props.addProject()
 		this.props.history.replace(`/editProject/${projectId}/true`)
 	}
@@ -242,7 +210,7 @@ class Edit extends Component<Props, State> {
 
 					<Skills
 						skills={this.state.skills}
-						addProjectSkill={this.addProjectSkill.bind(this)}
+						addProjectSkill={this.handleAddProjectSkill.bind(this)}
 						removeProjectSkill={this.removeProjectSkill.bind(this)}
 						updateTools={this.updateTools.bind(this)}
 						handleDescriptionChange={this.handleSkillDescriptionChange.bind(this)}
@@ -258,18 +226,9 @@ const mapStateToProps = ({ projects, userId }) => ({ projects, userId })
 const mapDispatchToProps = dispatch => ({
 	addProject: () => dispatch(addProject()),
 	modifyProject: project => dispatch(modifyProject(project)),
-	updateProjectInStore: project => {
-		dispatch({ type: 'UPDATE_PROJECT', project })
-	},
-	addProjectSkillToStore: skill => {
-		dispatch({ type: 'ADD_SKILL_TO_PROJECT', skill })
-	},
-	removeSkillFromProject: skill => {
-		dispatch({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
-	},
-	showSpinner: show => {
-		dispatch({ type: 'SHOW_SPINNER', show })
-	},
+	addProjectSkill: (projectId, skillId) => dispatch(addProjectSkill(projectId, skillId)),
+	modifyProjectSkill: data => dispatch(modifyProjectSkill(data)),
+	removeProjectSkill: id => dispatch(removeProjectSkill(id)),
 })
 
 export default connect(

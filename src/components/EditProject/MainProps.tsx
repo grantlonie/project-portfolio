@@ -2,7 +2,7 @@ import React from 'react'
 import { TextField, Typography } from '@material-ui/core'
 
 const MainProps = ({ project, handleChange }) => {
-	const { id, name, company, date, description } = project
+	const { name, company, date, description } = project
 
 	return (
 		<div>

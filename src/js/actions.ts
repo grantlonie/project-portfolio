@@ -18,7 +18,8 @@ import {
 	updateSkill,
 	deleteSkill,
 } from '../graphql/mutations'
-import { update } from './apiInterface'
+import { getProject } from '../graphql/queries'
+import { read, update } from './apiInterface'
 import { ToolItem, ProjectSkillItem, CategoryItem, SkillItem, ProjectItem } from '../types'
 import { State } from './reducers'
 import { SkillToUpdate } from '../components/EditSkills'
@@ -38,15 +39,17 @@ const addToolToStore = (tool: ToolItem) => ({ type: 'ADD_TOOL', tool })
 const updateToolInStore = (tool: ToolItem) => ({ type: 'UPDATE_TOOL', tool })
 const deleteToolFromStore = (toolId: ToolItem['id']) => ({ type: 'REMOVE_TOOL', toolId })
 
-export const addTool = (name: string) => (dispatch, getState) => {
-	dispatch(showSpinner(true))
-	const userId = getState().userId
+export const addTool = (name: string) => (dispatch, getState) =>
+	new Promise(resolve => {
+		dispatch(showSpinner(true))
+		const userId = getState().userId
 
-	update(createTool, { name, userId }).then(({ data: { createTool } }) => {
-		dispatch(addToolToStore(createTool))
-		dispatch(showSpinner(false))
+		update(createTool, { name, userId }).then(({ data: { createTool } }) => {
+			dispatch(addToolToStore(createTool))
+			dispatch(showSpinner(false))
+			resolve(createTool)
+		})
 	})
-}
 
 export const updateTools = (tools: ToolToUpdate[]) => dispatch => {
 	tools.forEach(tool => {
@@ -105,6 +108,38 @@ export const mergeTool = (fromId: string, toId: string) => async (dispatch, getS
  */
 
 const updateProjectSkillInStore = (projectSkill: ProjectSkillItem) => ({ type: 'UPDATE_PROJECT_SKILL', projectSkill })
+const addProjectSkillToStore = (skill: ProjectSkillItem) => ({ type: 'ADD_SKILL_TO_PROJECT', skill })
+
+export const addProjectSkill = (projectId: string, skillId: string) => (dispatch, getState) =>
+	new Promise(resolve => {
+		const userId = getState().userId
+
+		dispatch(showSpinner(true))
+		update(createProjectSkill, { userId, skillId, projectSkillProjectId: projectId }).then(({ data: { createProjectSkill } }) => {
+			dispatch(addProjectSkillToStore(createProjectSkill))
+			dispatch(showSpinner(false))
+			resolve(createProjectSkill)
+		})
+	})
+
+export const modifyProjectSkill = data => dispatch => {
+	update(updateProjectSkill, data).then(({ data: { updateProjectSkill } }) => {
+		const { id } = updateProjectSkill.project
+		read(getProject, { id }).then(({ data: { getProject } }) => {
+			dispatch(updateProjectInStore(getProject))
+		})
+	})
+}
+
+export const removeProjectSkill = id => dispatch =>
+	new Promise(resolve => {
+		dispatch(showSpinner(true))
+		update(deleteProjectSkill, { id }).then(({ data: { deleteProjectSkill } }) => {
+			dispatch(removeSkillFromProject(deleteProjectSkill))
+			dispatch(showSpinner(false))
+			resolve(deleteProjectSkill)
+		})
+	})
 
 /**
  * CATEGORY ACTIONS
@@ -152,15 +187,17 @@ const removeSkillFromStore = (skillId: SkillItem['id']) => ({ type: 'REMOVE_SKIL
 const addSkillToProject = (skill: SkillItem) => ({ type: 'ADD_SKILL_TO_PROJECT', skill })
 const removeSkillFromProject = (skill: SkillItem) => ({ type: 'REMOVE_SKILL_FROM_PROJECT', skill })
 
-export const addSkill = (name: string) => (dispatch, getState) => {
-	dispatch(showSpinner(true))
-	const userId = getState().userId
+export const addSkill = (name: string) => (dispatch, getState) =>
+	new Promise(resolve => {
+		dispatch(showSpinner(true))
+		const userId = getState().userId
 
-	update(createSkill, { name, userId }).then(({ data: { createSkill } }) => {
-		dispatch(addSkillToStore(createSkill))
-		dispatch(showSpinner(false))
+		update(createSkill, { name, userId }).then(({ data: { createSkill } }) => {
+			resolve(createSkill)
+			dispatch(addSkillToStore(createSkill))
+			dispatch(showSpinner(false))
+		})
 	})
-}
 
 export const updateSkills = (skills: SkillToUpdate[], nullCategoryId: string) => dispatch => {
 	skills.forEach(skill => {
@@ -223,7 +260,7 @@ const updateProjectInStore = (project: ProjectItem) => ({ type: 'UPDATE_PROJECT'
 const removeProjectFromStore = (projectId: ProjectItem['id']) => ({ type: 'REMOVE_PROJECT', projectId })
 
 export const addProject = () => (dispatch, getState) =>
-	new Promise(async resolve => {
+	new Promise(resolve => {
 		dispatch(showSpinner(true))
 		const { userId } = getState()
 

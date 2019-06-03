@@ -2,26 +2,23 @@ import React, { Component, createRef } from 'react'
 import { connect } from 'react-redux'
 import { Typeahead } from 'react-bootstrap-typeahead'
 import 'react-bootstrap-typeahead/css/Typeahead.css'
-import API, { graphqlOperation } from '@aws-amplify/api'
 import { Typography, TextField, Paper } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 
-import { createSkill, createTool } from '../../graphql/mutations'
+import { addSkill, addTool } from '../../js/actions'
 import { SkillItem, ProjectSkillItem, CategoryItem, ToolItem } from '../../types'
 
 interface Props {
 	allCategories: CategoryItem[]
 	allSkills: SkillItem[]
 	allTools: ToolItem[]
-	userId: string
 	skills: ProjectSkillItem[]
 	addProjectSkill: (skillId: string) => null
 	updateTools: (skillId: string, tools: ToolItem[]) => null
 	removeProjectSkill: (skillId: string) => null
 	handleDescriptionChange: (id: string, value: string) => null
-	showSpinner: (show: boolean) => null
-	addSkillToStore: (skill: SkillItem) => null
-	addToolToStore: (tool: ToolItem) => null
+	addSkill: (name: string) => Promise<any>
+	addTool: (name: string) => Promise<any>
 }
 
 interface State {
@@ -34,8 +31,8 @@ interface State {
 class Skills extends Component<Props, State> {
 	private typeaheadRef: any = createRef()
 
-	handleSelectedSkill(skill) {
-		const { userId, allSkills, addProjectSkill, addSkillToStore, showSpinner } = this.props
+	async handleSelectedSkill(skill) {
+		const { allSkills, addProjectSkill, addSkill } = this.props
 
 		const { id, name, customOption } = skill[0]
 
@@ -44,27 +41,19 @@ class Skills extends Component<Props, State> {
 			if (allSkills.findIndex(skill => skill.name === name) !== -1) {
 				this.forceUpdate() // HACK: prevents skills typeaway from adding already selected skill to list
 			} else {
-				showSpinner(true)
-				;(API.graphql(
-					graphqlOperation(createSkill, {
-						input: { userId, name: name },
-					})
-				) as Promise<any>).then(({ data: { createSkill } }) => {
-					addSkillToStore(createSkill)
-					addProjectSkill(createSkill.id)
-					showSpinner(false)
-				})
+				const skill = await addSkill(name)
+				addProjectSkill(skill.id)
 			}
 		} else {
 			addProjectSkill(id)
 		}
 
 		// clear typeahead input
-		this.typeaheadRef.current.instanceRef.clear()
+		this.typeaheadRef.current.clear()
 	}
 
-	handleUpdateTools(id, tools) {
-		const { userId, allTools, addToolToStore, updateTools, showSpinner } = this.props
+	async handleUpdateTools(id, tools) {
+		const { allTools, addTool, updateTools } = this.props
 
 		const lastTool = tools[tools.length - 1] || {}
 		const { name, customOption } = lastTool
@@ -74,19 +63,9 @@ class Skills extends Component<Props, State> {
 			if (allTools.findIndex(tool => tool.name === name) !== -1) {
 				this.forceUpdate() // HACK: prevents tools typeaway from adding already selected tool to list
 			} else {
-				showSpinner(true)
-				;(API.graphql(
-					graphqlOperation(createTool, {
-						input: { userId, name: name },
-					})
-				) as Promise<any>).then(({ data: { createTool } }) => {
-					const { id: toolId, name, userId } = createTool
-					const newTool: any = { id: toolId, name, userId }
-					tools[tools.length - 1] = newTool
-
-					addToolToStore(createTool)
+				addTool(name).then(tool => {
+					tools[tools.length - 1] = tool
 					updateTools(id, tools)
-					showSpinner(false)
 				})
 			}
 		} else {
@@ -112,9 +91,7 @@ class Skills extends Component<Props, State> {
 		})
 
 		// List of skills that are not in project that can be added
-		const unselectedSkills = allSkills.filter(
-			i => (skills || []).findIndex(skill => skill.skillId === i.id) === -1
-		)
+		const unselectedSkills = allSkills.filter(i => (skills || []).findIndex(skill => skill.skillId === i.id) === -1)
 
 		// If a skill exists, create skills component
 		let skillsComponent = null
@@ -124,10 +101,7 @@ class Skills extends Component<Props, State> {
 				<div>
 					{categoryNames.map(categoryName => {
 						return (
-							<Paper
-								key={categoryName}
-								style={{ padding: '10px', marginBottom: '20px' }}
-								elevation={1}>
+							<Paper key={categoryName} style={{ padding: '10px', marginBottom: '20px' }} elevation={1}>
 								<Typography color="primary" variant="h5">
 									{categoryName}
 								</Typography>
@@ -138,10 +112,7 @@ class Skills extends Component<Props, State> {
 										let selectedTools = []
 										let unselectedTools = []
 										allTools.forEach(tool => {
-											if (
-												skill.toolIds &&
-												skill.toolIds.findIndex(toolId => toolId === tool.id) > -1
-											) {
+											if (skill.toolIds && skill.toolIds.findIndex(toolId => toolId === tool.id) > -1) {
 												selectedTools.push(tool)
 											} else unselectedTools.push(tool)
 										})
@@ -162,9 +133,7 @@ class Skills extends Component<Props, State> {
 														label="Description"
 														name="description"
 														value={skill.description || ''}
-														onChange={({ target: { value } }) =>
-															handleDescriptionChange(skill.id, value)
-														}
+														onChange={({ target: { value } }) => handleDescriptionChange(skill.id, value)}
 													/>
 
 													<Typeahead
@@ -210,21 +179,12 @@ class Skills extends Component<Props, State> {
 	}
 }
 
-const mapStateToProps = ({ allSkills, allTools, userId }) => ({ allSkills, allTools, userId })
+const mapStateToProps = ({ allSkills, allTools }) => ({ allSkills, allTools })
 
-const mapDispatchToProps = dispatch => {
-	return {
-		showSpinner: show => {
-			dispatch({ type: 'SHOW_SPINNER', show })
-		},
-		addSkillToStore: skill => {
-			dispatch({ type: 'ADD_SKILL', skill })
-		},
-		addToolToStore: tool => {
-			dispatch({ type: 'ADD_TOOL', tool })
-		},
-	}
-}
+const mapDispatchToProps = dispatch => ({
+	addSkill: name => dispatch(addSkill(name)),
+	addTool: name => dispatch(addTool(name)),
+})
 
 export default connect(
 	mapStateToProps,
