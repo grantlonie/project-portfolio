@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { connect } from 'react-redux'
 import sleep from 'sleep-promise'
 import useWindowSize from 'react-use/esm/useWindowSize'
 
@@ -320,10 +319,4 @@ const Sunburst = (props: Props) => {
 	)
 }
 
-const mapStateToProps = ({ projects, allCategories, allSkills }) => ({
-	projects,
-	allCategories,
-	allSkills,
-})
-
-export default connect(mapStateToProps)(Sunburst)
+export default Sunburst
