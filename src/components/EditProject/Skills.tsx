@@ -120,7 +120,7 @@ class Skills extends Component<Props, State> {
 										return (
 											<div key={skill.id}>
 												<div style={{ display: 'flex' }}>
-													<Typography variant="title">{skill.name}</Typography>
+													<Typography variant="h4">{skill.name}</Typography>
 													<DeleteIcon onClick={() => removeProjectSkill(skill.id)} />
 												</div>
 
@@ -137,6 +137,7 @@ class Skills extends Component<Props, State> {
 													/>
 
 													<Typeahead
+														id={skill.id}
 														options={unselectedTools}
 														selected={selectedTools}
 														multiple
@@ -166,6 +167,7 @@ class Skills extends Component<Props, State> {
 				{skillsComponent}
 
 				<Typeahead
+					id={'add-skill'}
 					options={unselectedSkills}
 					labelKey="name"
 					onChange={selected => this.handleSelectedSkill(selected)}

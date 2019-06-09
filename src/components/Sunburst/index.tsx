@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { connect } from 'react-redux'
 import sleep from 'sleep-promise'
-import { useWindowSize } from 'react-use'
+import useWindowSize from 'react-use/esm/useWindowSize'
 
 import { ProjectItem, CategoryItem, SkillItem } from '../../types'
 import NodePositioner, { NodePositionerProps } from './NodePositioner'
@@ -87,8 +87,10 @@ const Sunburst = (props: Props) => {
 		}, 300)
 	}
 
-	/** Method called after leaving the Sunburst */
 	const leaveSunburstTimeout = useRef(null)
+	useEffect(() => () => clearTimeout(leaveSunburstTimeout.current))
+
+	/** Method called after leaving the Sunburst */
 	const leaveSunburst = () => {
 		currentHoverNode.current = null
 		setHoveringProjectId(null)

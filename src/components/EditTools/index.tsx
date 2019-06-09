@@ -138,15 +138,15 @@ class EditTools extends Component<Props, State> {
 						{tools.map(tool => {
 							return (
 								<TableRow hover key={tool.id}>
-									<TableCell padding="dense">
+									<TableCell size="small">
 										<DeleteIcon onClick={this.handleOpenDeleteModal.bind(this, tool)} />
 									</TableCell>
 
-									<TableCell padding="dense">
+									<TableCell size="small">
 										<TextField name="name" value={tool.name} onChange={this.handlePropChange.bind(this, tool.id)} />
 									</TableCell>
 
-									<TableCell padding="dense">
+									<TableCell size="small">
 										<TextField name="website" value={tool.website || ''} onChange={this.handlePropChange.bind(this, tool.id)} />
 									</TableCell>
 								</TableRow>
@@ -155,7 +155,7 @@ class EditTools extends Component<Props, State> {
 
 						<TableRow>
 							<TableCell />
-							<TableCell padding="dense">
+							<TableCell size="small">
 								<TextField value={newTool} placeholder="New Tool" onChange={this.handleNewToolChange.bind(this)} />
 							</TableCell>
 							<TableCell>

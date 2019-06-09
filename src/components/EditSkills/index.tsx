@@ -203,14 +203,14 @@ class EditSkills extends Component<Props, State> {
 						{skills.map(skill => {
 							return (
 								<TableRow hover key={skill.id}>
-									<TableCell padding="dense">
+									<TableCell size="small">
 										<DeleteIcon onClick={this.handleOpenDeleteModal.bind(this, skill)} />
 									</TableCell>
-									<TableCell padding="dense">
+									<TableCell size="small">
 										<TextField value={skill.name} onChange={this.handleNameChange.bind(this, skill.id)} />
 									</TableCell>
 
-									<TableCell padding="dense">
+									<TableCell size="small">
 										<TextField
 											select
 											value={skill.skillCategoryId || skill.category.id}
@@ -233,7 +233,7 @@ class EditSkills extends Component<Props, State> {
 
 						<TableRow>
 							<TableCell />
-							<TableCell padding="dense">
+							<TableCell size="small">
 								<TextField value={newSkill} placeholder="New Skill" onChange={this.handleNewSkillChange.bind(this)} />
 							</TableCell>
 							<TableCell>

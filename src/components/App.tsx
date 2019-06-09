@@ -25,7 +25,7 @@ const App = (props: Props) => {
 		getAllData().then(data => {
 			updateAllData(data)
 		})
-	}, [])
+	}, [updateAllData])
 
 	const [showDrawer, setShowDrawer] = useState(false)
 

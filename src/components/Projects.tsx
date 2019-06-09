@@ -189,13 +189,13 @@ class Projects extends Component<Props, State> {
 							.map(project => {
 								return (
 									<TableRow hover key={project.id} onClick={this.handleClickRow.bind(this, project.id)}>
-										<TableCell padding="dense">
+										<TableCell size="small">
 											<DeleteIcon onClick={this.handleRequestRemoveProject.bind(this, project)} />
 										</TableCell>
-										<TableCell padding="dense">{project.date}</TableCell>
-										<TableCell padding="dense">{project.name}</TableCell>
-										<TableCell padding="dense">{project.company}</TableCell>
-										{viewPortWidth < 1000 ? null : <TableCell padding="dense">{project.description}</TableCell>}
+										<TableCell size="small">{project.date}</TableCell>
+										<TableCell size="small">{project.name}</TableCell>
+										<TableCell size="small">{project.company}</TableCell>
+										{viewPortWidth < 1000 ? null : <TableCell size="small">{project.description}</TableCell>}
 									</TableRow>
 								)
 							})}

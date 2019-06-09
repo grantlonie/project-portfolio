@@ -114,7 +114,7 @@ const Node = (props: NodeProps) => {
 				basedOn="letters"
 			/>
 		)
-	}, [fontSize, name, rectangle])
+	}, [fontSize, name, c1, classes.text])
 
 	return (
 		<div>
