@@ -41,17 +41,17 @@ export function update(query, input) {
 	return API.graphql(graphqlOperation(query, { input })) as Promise<any>
 }
 
-const getCategories = () => endpoint(listCategorys).then(data => data.data.listCategorys.items)
+const getCategories = () => endpoint(listCategorys).then(res => res.data.listCategorys.items)
 
-const getSkills = () => endpoint(listSkills).then(data => data.data.listSkills.items)
+const getSkills = () => endpoint(listSkills).then(res => res.data.listSkills.items)
 
-const getTools = () => endpoint(listTools).then(data => data.data.listTools.items)
+const getTools = () => endpoint(listTools).then(res => res.data.listTools.items)
 
-const getProjects = () => endpoint(listProjects).then(data => data.data.listProjects.items)
+const getProjects = () => endpoint(listProjects).then(res => res.data.listProjects.items)
 
-const getProjectSkills = () => endpoint(listProjectSkills).then(data => data.data.listProjectSkills.items)
+const getProjectSkills = () => endpoint(listProjectSkills).then(res => res.data.listProjectSkills.items)
 
-const getUserData = id => (API.graphql(graphqlOperation(getUser, { id })) as Promise<any>).then(data => data.data.getUser)
+const getUserData = id => (API.graphql(graphqlOperation(getUser, { id })) as Promise<any>).then(res => res.data.getUser)
 
 // This method checks to see if dirty tables exist and cleans them
 async function cleanupDirtyTables(userId, allSkills, allTools) {
