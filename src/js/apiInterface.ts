@@ -96,13 +96,17 @@ async function cleanupDirtyTables(userId, allSkills, allTools) {
 	}
 }
 
-export async function getAllData() {
+/**
+ * Get all project portfolio data for specified user
+ * @param cdnUser optional. user specified with sunburst cdn
+ */
+export async function getAllData(cdnUser?: string) {
 	// If working with local data
 	if (process.env.REACT_APP_USE_LOCAL_DATA) {
 		return fetch('/assets/sample-data.json').then(res => res.json())
 	}
 
-	userId = await getUserId()
+	userId = cdnUser || (await getUserId())
 	const allSkills = await getSkills()
 	const allTools = await getTools()
 
