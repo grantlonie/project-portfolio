@@ -9,6 +9,11 @@
             "UnauthRoleName": "project-portfolio-master-20190723093308-unauthRole",
             "StackName": "project-portfolio-master-20190723093308",
             "StackId": "arn:aws:cloudformation:us-east-1:334642524908:stack/project-portfolio-master-20190723093308/b3040430-ad4e-11e9-b7de-12a109124258"
+        },
+        "categories": {
+            "auth": {
+                "projectportfolio49321010": {}
+            }
         }
     }
 }
