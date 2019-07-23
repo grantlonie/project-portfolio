@@ -13,6 +13,7 @@ import {
 	deleteUser,
 } from '../graphql/mutations'
 import { read, update } from './apiInterface'
+import { getSampleData } from './sampleData'
 
 let userId
 
@@ -126,7 +127,7 @@ function renameUserId(oldId: string, newId: string) {
 export async function getAllData(cdnUser?: string) {
 	// If working with local data
 	if (process.env.REACT_APP_USE_LOCAL_DATA) {
-		return fetch('/assets/sample-data.json').then(res => res.json())
+		return getSampleData()
 	}
 
 	userId = cdnUser || (await getUserId())
