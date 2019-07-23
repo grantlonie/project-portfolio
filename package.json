@@ -24,12 +24,11 @@
 		"react-spinners": "^0.5.4",
 		"react-transition-group": "^4.1.0",
 		"react-truncate": "^2.4.0",
-		"react-use": "^9.4.0",
+		"react-use": "^10.1.2",
 		"redux": "^4.0.1",
 		"redux-thunk": "^2.3.0",
 		"sleep-promise": "^8.0.1",
-		"typescript": "^3.5.1",
-		"xstate": "^4.6.1"
+		"typescript": "^3.5.1"
 	},
 	"scripts": {
 		"start": "react-scripts start",
@@ -49,7 +48,7 @@
 	],
 	"devDependencies": {
 		"@aws-amplify/cli": "^1.8.2",
-		"@rescripts/cli": "0.0.10",
+		"@rescripts/cli": "0.0.11",
 		"@welldone-software/why-did-you-render": "^3.2.3"
 	}
 }

@@ -20,7 +20,7 @@ export default ({ status }) => {
 	}
 
 	return (
-		<div style={{ width: '50%', margin: '50px auto' }}>
+		<div style={{ width: '550px', margin: '50px auto' }}>
 			<Content />
 		</div>
 	)
