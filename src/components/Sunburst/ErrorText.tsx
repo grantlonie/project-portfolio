@@ -20,8 +20,10 @@ export default ({ status }) => {
 	}
 
 	return (
-		<div style={{ width: '550px', margin: '50px auto' }}>
-			<Content />
+		<div style={{ position: 'relative', width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
+			<div style={{ width: '550px', margin: '50px auto' }}>
+				<Content />
+			</div>
 		</div>
 	)
 }
