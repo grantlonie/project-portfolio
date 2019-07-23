@@ -83,9 +83,9 @@ export function slowlyAddCategoryNodes(
 			// pulse
 			case 1:
 				setSelectedCategoryNodes(nodes => [...nodes, ...projectIds])
-				await sleep(150)
+				await sleep(200)
 				setSelectedCategoryNodes(nodes => [...nodes, ...skillIds])
-				await sleep(150)
+				await sleep(200)
 				break
 
 			// center wave
@@ -96,7 +96,7 @@ export function slowlyAddCategoryNodes(
 					if (isEven) setSelectedCategoryNodes(nodes => [...nodes, array[midPoint], array[midPoint - 1]])
 					else setSelectedCategoryNodes(nodes => [...nodes, array[midPoint]])
 					for (let i = midPoint - 1; i > -1; i--) {
-						await sleep(10)
+						await sleep(40)
 						setSelectedCategoryNodes(nodes => [...nodes, array[i], array[array.length - i - 1]])
 					}
 				}
@@ -107,7 +107,7 @@ export function slowlyAddCategoryNodes(
 				for (const skill of category.skills) {
 					for (const project of skill.projects) {
 						setSelectedCategoryNodes(nodes => [...nodes, project.id])
-						await sleep(10)
+						await sleep(40)
 					}
 					setSelectedCategoryNodes(nodes => [...nodes, skill.id])
 				}
