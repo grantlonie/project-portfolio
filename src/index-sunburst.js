@@ -5,7 +5,7 @@ import '@aws-amplify/auth'
 
 // import './index.css'
 import aws_exports from './aws-exports'
-import { getAllData } from './js/apiInterface'
+import { getAllData } from './js/apiStartupMethods'
 import Sunburst from './components/Sunburst'
 
 // in this way you are only importing Auth and configuring it.

@@ -11,7 +11,7 @@ import Spinner from './Spinner'
 
 import '../styles/body.css'
 
-import { getAllData } from '../js/apiInterface'
+import { getAllData } from '../js/apiStartupMethods'
 
 interface Props {
 	updateAllData: (data: any) => null
