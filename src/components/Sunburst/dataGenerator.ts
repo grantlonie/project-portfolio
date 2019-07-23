@@ -5,12 +5,17 @@ import { Sunburst } from './types'
 /** Colors for the categories and associated skills and projects */
 const colors = ['#6ff5fc', 'orange', 'gray', '#ff5959', '#f682ff']
 
+const initialState: Sunburst = { data: [], status: 'loading' }
+
 /** This method creates the sunburst data by looping through categories, skills and projects */
 export default function useSunburstData(allCategories, allSkills, projects) {
-	const [sunburstData, setSunburstData] = useState({ data: [], status: 'loading' } as Sunburst)
+	const [sunburstData, setSunburstData] = useState(initialState)
 
 	useEffect(() => {
-		if (allCategories.length === 0) return
+		if (allCategories.length === 0) {
+			if (sunburstData.status === 'ready') setSunburstData(initialState)
+			return
+		}
 
 		let newSunburstData: Sunburst['data'] = allCategories
 			.map((category, categoryI) => {
