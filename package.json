@@ -34,6 +34,7 @@
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"build:sunburst": "rescripts build",
+		"publish": "amplify publish",
 		"test": "react-scripts test",
 		"eject": "react-scripts eject"
 	},
