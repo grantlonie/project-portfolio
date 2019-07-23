@@ -49,6 +49,7 @@
 		"not op_mini all"
 	],
 	"devDependencies": {
+		"@aws-amplify/cli": "^1.8.2",
 		"@rescripts/cli": "0.0.10"
 	}
 }
