@@ -46,37 +46,33 @@ const getUserData = id => read(getUser, { id }).then(res => res.data.getUser)
 
 // This method checks to see if dirty tables exist and cleans them
 async function cleanupDirtyTables(userId, allSkills, allTools) {
-	const userData = await getUserData(userId)
+	const projectSkills = await getProjectSkills()
 
-	if (userData.dirtyTables) {
-		const projectSkills = await getProjectSkills()
+	// Go through all ProjectSkills
+	for (const projectSkill of projectSkills) {
+		const { id, toolIds } = projectSkill
 
-		// Go through all ProjectSkills
-		for (const projectSkill of projectSkills) {
-			const { id, toolIds } = projectSkill
+		// Remove any ProjectSkill that has a skillId that is not in Skills
+		if (allSkills.findIndex(skill => skill.id === projectSkill.skillId) === -1) {
+			await update(deleteProjectSkill, { id })
+		}
 
-			// Remove any ProjectSkill that has a skillId that is not in Skills
-			if (allSkills.findIndex(skill => skill.id === projectSkill.skillId) === -1) {
-				await update(deleteProjectSkill, { id })
-			}
+		// Remove any ProjectSkill tool that no longer exist in Tools
+		else if (Array.isArray(toolIds)) {
+			for (const toolId of toolIds) {
+				if (allTools.findIndex(tool => tool.id === toolId) === -1) {
+					const newToolIds = toolIds.filter(i => i !== toolId)
 
-			// Remove any ProjectSkill tool that no longer exist in Tools
-			else if (Array.isArray(toolIds)) {
-				for (const toolId of toolIds) {
-					if (allTools.findIndex(tool => tool.id === toolId) === -1) {
-						const newToolIds = toolIds.filter(i => i !== toolId)
-
-						await update(updateProjectSkill, { id, toolIds: newToolIds })
-					}
+					await update(updateProjectSkill, { id, toolIds: newToolIds })
 				}
 			}
 		}
-
-		// No more dirty tables!
-		await update(updateUser, { id: userId, dirtyTables: false })
-
-		console.log('Dirty tables cleaned')
 	}
+
+	// No more dirty tables!
+	await update(updateUser, { id: userId, dirtyTables: false })
+
+	console.log('Dirty tables cleaned')
 }
 
 /**
@@ -131,10 +127,12 @@ export async function getAllData(cdnUser?: string) {
 	}
 
 	userId = cdnUser || (await getUserId())
+
 	const allSkills = await getSkills()
 	const allTools = await getTools()
 
-	await cleanupDirtyTables(userId, allSkills, allTools)
+	const userData = (await getUserData(userId)) || (await update(createUser, { id: userId }))
+	if (userData.dirtyTables) await cleanupDirtyTables(userId, allSkills, allTools)
 
 	const projects = await getProjects()
 	const allCategories = await getCategories()
