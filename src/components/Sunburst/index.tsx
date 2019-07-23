@@ -7,6 +7,7 @@ import NodePositioner, { NodePositionerProps } from './NodePositioner'
 import ProjectDetails from './ProjectDetails'
 import CategoryDetails from './CategoryDetails'
 import HelpCallouts, { HelpCalloutType } from './HelpCallouts'
+import ErrorText from './ErrorText'
 import { useSunburstDimensioning, sunburstScaleDown } from './dimensioning'
 import useSunburstData from './dataGenerator'
 import { NodeTypes, ProjectSkill } from './types'
@@ -188,133 +189,139 @@ const Sunburst = (props: Props) => {
 		}
 	}
 
-	if (sunburst.status === 'loading') return <h3>Loading...</h3>
-	if (sunburst.status === 'empty') return <h3>You need skills and projects tied to the skills to genterate a sunburst</h3>
+	const Content =
+		sunburst.status !== 'ready'
+			? () => <ErrorText status={sunburst.status} />
+			: () => {
+					let categoryRotation = 0
 
-	let categoryRotation = 0
+					const nodePositionerProps = {
+						hoverNode,
+						selectNode,
+						categoryDetailsPositioning,
+						selectedCategoryNodes,
+						sunburstRotation,
+						hoveringProjectId,
+						sunburstRotationReference: sunburstPosition.rotationReference,
+					}
 
-	const nodePositionerProps = {
-		hoverNode,
-		selectNode,
-		categoryDetailsPositioning,
-		selectedCategoryNodes,
-		sunburstRotation,
-		hoveringProjectId,
-		sunburstRotationReference: sunburstPosition.rotationReference,
-	}
+					return (
+						<div
+							style={{
+								position: 'absolute',
+								transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) `,
+								transition: `all ${transitionDuration}ms`,
+							}}
+						>
+							<div
+								onMouseLeave={leaveSunburst}
+								style={{
+									position: 'absolute',
+									transform: `scale(${1 / sunburstScale})	rotate(${-sunburstRotation}rad)`,
+									transition: `all ${transitionDuration}ms`,
+								}}
+							>
+								{sunburst.data.map((category, categoryI) => {
+									// Rotation logic for skills
+									if (categoryI > 0) categoryRotation += sunburst.data[categoryI - 1].phi / 2 + category.phi / 2
+									let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
+
+									let transform = null
+									let parentSelectedCategory = null
+									let zIndex = 0
+									if (selectedCategoryId && selectedCategoryId === category.id) {
+										parentSelectedCategory = { phi: category.phi, projectCount: category.projectCount }
+										zIndex = 1
+									} else if (hoverCategoryId === category.id) {
+										transform = `translate(${40 * Math.cos(categoryRotation)}px, ${40 * Math.sin(categoryRotation)}px)`
+									}
+
+									const categoryStyle: React.CSSProperties = {
+										position: 'absolute',
+										transform,
+										transition: `all ${transitionDuration}ms`,
+										zIndex,
+									}
+
+									const categoryPositionerProps: NodePositionerProps = {
+										...nodePositionerProps,
+										parentSelectedCategory,
+										type: 'category',
+										data: [category],
+										innerRadius: radiuses.category,
+										outerRadius: radiuses.skill,
+										itemRotation: categoryRotation,
+										fontSize: 14,
+									}
+
+									const skillPositionerProps: NodePositionerProps = {
+										...nodePositionerProps,
+										parentSelectedCategory,
+										type: 'skill',
+										data: category.skills,
+										innerRadius: radiuses.skill,
+										outerRadius: radiuses.project,
+										itemRotation: skillRotation,
+										fontSize: 12,
+									}
+
+									return (
+										<div
+											key={category.id}
+											onMouseEnter={() => handleCategoryHover(category.id)}
+											onMouseUp={() => handleCategorySelect(category.id)}
+											style={categoryStyle}
+										>
+											<NodePositioner {...categoryPositionerProps} />
+
+											<NodePositioner {...skillPositionerProps} />
+
+											{category.skills.map((skill, skillI) => {
+												// Rotation logic for projects
+												if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
+												const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
+
+												const projectPositionerProps: NodePositionerProps = {
+													...nodePositionerProps,
+													parentSelectedCategory,
+													type: 'project',
+													data: skill.projects,
+													innerRadius: radiuses.project,
+													outerRadius: radiuses.outer,
+													itemRotation: projectRotation,
+													fontSize: 10,
+													selectedProjectSkills,
+													projectDetailsPositioning,
+												}
+
+												return <NodePositioner key={skill.id} {...projectPositionerProps} />
+											})}
+										</div>
+									)
+								})}
+							</div>
+
+							<ProjectDetails
+								projectDetailsPositioning={projectDetailsPositioning}
+								selectedProject={selectedProject}
+								selectedProjectSkills={selectedProjectSkills}
+							/>
+
+							<CategoryDetails categoryDetailsPositioning={categoryDetailsPositioning} show={Boolean(selectedCategoryId)} />
+
+							<HelpCallouts
+								type={helpCallout}
+								categoryDetailsPositioning={categoryDetailsPositioning}
+								sunburstRadius={radiuses.outer}
+								sunburstRotationReference={sunburstPosition.rotationReference}
+							/>
+						</div>
+					)
+			  }
 
 	return (
 		<div style={{ position: 'relative', width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
-			<div
-				style={{
-					position: 'absolute',
-					transform: `translate(${sunburstPosition.x}px, ${sunburstPosition.y}px) `,
-					transition: `all ${transitionDuration}ms`,
-				}}
-			>
-				<div
-					onMouseLeave={leaveSunburst}
-					style={{
-						position: 'absolute',
-						transform: `scale(${1 / sunburstScale})	rotate(${-sunburstRotation}rad)`,
-						transition: `all ${transitionDuration}ms`,
-					}}
-				>
-					{sunburst.data.map((category, categoryI) => {
-						// Rotation logic for skills
-						if (categoryI > 0) categoryRotation += sunburst.data[categoryI - 1].phi / 2 + category.phi / 2
-						let skillRotation = categoryRotation - category.phi / 2 + category.skills[0].phi / 2
-
-						let transform = null
-						let parentSelectedCategory = null
-						let zIndex = 0
-						if (selectedCategoryId && selectedCategoryId === category.id) {
-							parentSelectedCategory = { phi: category.phi, projectCount: category.projectCount }
-							zIndex = 1
-						} else if (hoverCategoryId === category.id) {
-							transform = `translate(${40 * Math.cos(categoryRotation)}px, ${40 * Math.sin(categoryRotation)}px)`
-						}
-
-						const categoryStyle: React.CSSProperties = {
-							position: 'absolute',
-							transform,
-							transition: `all ${transitionDuration}ms`,
-							zIndex,
-						}
-
-						const categoryPositionerProps: NodePositionerProps = {
-							...nodePositionerProps,
-							parentSelectedCategory,
-							type: 'category',
-							data: [category],
-							innerRadius: radiuses.category,
-							outerRadius: radiuses.skill,
-							itemRotation: categoryRotation,
-							fontSize: 14,
-						}
-
-						const skillPositionerProps: NodePositionerProps = {
-							...nodePositionerProps,
-							parentSelectedCategory,
-							type: 'skill',
-							data: category.skills,
-							innerRadius: radiuses.skill,
-							outerRadius: radiuses.project,
-							itemRotation: skillRotation,
-							fontSize: 12,
-						}
-
-						return (
-							<div
-								key={category.id}
-								onMouseEnter={() => handleCategoryHover(category.id)}
-								onMouseUp={() => handleCategorySelect(category.id)}
-								style={categoryStyle}
-							>
-								<NodePositioner {...categoryPositionerProps} />
-
-								<NodePositioner {...skillPositionerProps} />
-
-								{category.skills.map((skill, skillI) => {
-									// Rotation logic for projects
-									if (skillI > 0) skillRotation += category.skills[skillI - 1].phi / 2 + skill.phi / 2
-									const projectRotation = skillRotation - skill.phi / 2 + skill.projects[0].phi / 2
-
-									const projectPositionerProps: NodePositionerProps = {
-										...nodePositionerProps,
-										parentSelectedCategory,
-										type: 'project',
-										data: skill.projects,
-										innerRadius: radiuses.project,
-										outerRadius: radiuses.outer,
-										itemRotation: projectRotation,
-										fontSize: 10,
-										selectedProjectSkills,
-										projectDetailsPositioning,
-									}
-
-									return <NodePositioner key={skill.id} {...projectPositionerProps} />
-								})}
-							</div>
-						)
-					})}
-				</div>
-
-				<ProjectDetails
-					projectDetailsPositioning={projectDetailsPositioning}
-					selectedProject={selectedProject}
-					selectedProjectSkills={selectedProjectSkills}
-				/>
-
-				<CategoryDetails categoryDetailsPositioning={categoryDetailsPositioning} show={Boolean(selectedCategoryId)} />
-
-				<HelpCallouts
-					type={helpCallout}
-					categoryDetailsPositioning={categoryDetailsPositioning}
-					sunburstRadius={radiuses.outer}
-					sunburstRotationReference={sunburstPosition.rotationReference}
-				/>
-			</div>
+			<Content />
 		</div>
 	)
 }

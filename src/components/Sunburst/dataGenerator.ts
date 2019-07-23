@@ -78,8 +78,8 @@ export default function useSunburstData(allCategories, allSkills, projects) {
 			return { ...category, skills, phi: (category.projectCount * Math.PI * 2) / totalProjects }
 		})
 
-		setSunburstData({ data: newSunburstData, status: newSunburstData.length > 0 ? 'ready' : 'empty' })
-	}, [allCategories.length])
+		setSunburstData({ data: newSunburstData, status: newSunburstData.length > 1 ? 'ready' : 'empty' })
+	}, [projects.length, allSkills.length, allCategories.length])
 
 	return sunburstData
 }
