@@ -115,6 +115,8 @@ function renameUserId(oldId: string, newId: string) {
 	})
 
 	update(deleteUser, { id: oldId })
+
+	console.log('done updating user ids')
 }
 
 /**

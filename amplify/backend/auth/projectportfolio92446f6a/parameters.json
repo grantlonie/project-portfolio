@@ -1,9 +1,9 @@
 {
-    "identityPoolName": "projectportfolio49321010_identitypool_49321010",
+    "identityPoolName": "projectportfolio92446f6a_identitypool_92446f6a",
     "allowUnauthenticatedIdentities": false,
-    "openIdLambdaRoleName": "projec49321010_openid_lambda_role",
-    "resourceNameTruncated": "projec49321010",
-    "userPoolName": "projectportfolio49321010_userpool_49321010",
+    "openIdLambdaRoleName": "projec92446f6a_openid_lambda_role",
+    "resourceNameTruncated": "projec92446f6a",
+    "userPoolName": "projectportfolio92446f6a_userpool_92446f6a",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -21,7 +21,7 @@
     "requiredAttributes": [
         "email"
     ],
-    "userpoolClientName": "projec49321010_app_client",
+    "userpoolClientName": "projec92446f6a_app_client",
     "userpoolClientGenerateSecret": true,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
@@ -30,10 +30,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "mfaLambdaRole": "projec49321010_totp_lambda_role",
-    "userpoolClientLambdaRole": "projec49321010_userpoolclient_lambda_role",
+    "mfaLambdaRole": "projec92446f6a_totp_lambda_role",
+    "userpoolClientLambdaRole": "projec92446f6a_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "resourceName": "projectportfolio49321010",
+    "resourceName": "projectportfolio92446f6a",
     "authSelections": "identityPoolAndUserPool",
     "authRoleName": {
         "Ref": "AuthRoleName"

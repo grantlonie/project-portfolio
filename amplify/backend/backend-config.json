@@ -1,6 +1,6 @@
 {
 	"auth": {
-		"projectportfolio49321010": {
+		"projectportfolio92446f6a": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": []
