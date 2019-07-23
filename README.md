@@ -24,4 +24,3 @@ Create a .env file at the root of the project. The following variables are used 
 
 REACT_APP_TEST_USER=test # this override your AWS SAM id with "test"
 REACT_APP_USE_LOCAL_DATA=true # this will read in local test data and not do any AWS interaction
-REACT_APP_USE_WHY_DID_YOU_UPDATE=true # this will use [why-did-you-update](https://github.com/maicki/why-did-you-update)

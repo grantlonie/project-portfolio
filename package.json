@@ -29,7 +29,6 @@
 		"redux-thunk": "^2.3.0",
 		"sleep-promise": "^8.0.1",
 		"typescript": "^3.5.1",
-		"why-did-you-update": "^1.0.6",
 		"xstate": "^4.6.1"
 	},
 	"scripts": {
@@ -50,6 +49,7 @@
 	],
 	"devDependencies": {
 		"@aws-amplify/cli": "^1.8.2",
-		"@rescripts/cli": "0.0.10"
+		"@rescripts/cli": "0.0.10",
+		"@welldone-software/why-did-you-render": "^3.2.3"
 	}
 }
