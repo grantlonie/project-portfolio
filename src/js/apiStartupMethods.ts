@@ -1,7 +1,17 @@
 import { Auth } from 'aws-amplify'
 
 import { listProjects, listCategorys, listSkills, listTools, listProjectSkills, getUser } from '../graphql/queries'
-import { updateProjectSkill, deleteProjectSkill, updateUser } from '../graphql/mutations'
+import {
+	createUser,
+	updateProjectSkill,
+	deleteProjectSkill,
+	updateUser,
+	updateCategory,
+	updateProject,
+	updateSkill,
+	updateTool,
+	deleteUser,
+} from '../graphql/mutations'
 import { read, update } from './apiInterface'
 
 let userId
@@ -74,7 +84,37 @@ async function cleanupDirtyTables(userId, allSkills, allTools) {
  * @param newId new user id
  */
 function renameUserId(oldId: string, newId: string) {
-	getCategories().then(categories => {})
+	userId = oldId
+
+	update(createUser, { id: newId })
+
+	getCategories().then(items => {
+		items.forEach(({ id }) => {
+			update(updateCategory, { id, userId: newId })
+		})
+	})
+	getSkills().then(items => {
+		items.forEach(({ id }) => {
+			update(updateSkill, { id, userId: newId })
+		})
+	})
+	getTools().then(items => {
+		items.forEach(({ id }) => {
+			update(updateTool, { id, userId: newId })
+		})
+	})
+	getProjects().then(items => {
+		items.forEach(({ id }) => {
+			update(updateProject, { id, userId: newId })
+		})
+	})
+	getProjectSkills().then(items => {
+		items.forEach(({ id }) => {
+			update(updateProjectSkill, { id, userId: newId })
+		})
+	})
+
+	update(deleteUser, { id: oldId })
 }
 
 /**
@@ -88,7 +128,6 @@ export async function getAllData(cdnUser?: string) {
 	}
 
 	userId = cdnUser || (await getUserId())
-	console.log('userId: ', userId)
 	const allSkills = await getSkills()
 	const allTools = await getTools()
 
