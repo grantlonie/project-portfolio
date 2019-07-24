@@ -132,7 +132,7 @@ export async function getAllData(cdnUser?: string) {
 	const allTools = await getTools()
 
 	const userData = (await getUserData(userId)) || (await update(createUser, { id: userId }))
-	if (userData.dirtyTables) await cleanupDirtyTables(userId, allSkills, allTools)
+	if (userData.dirtyTables && !cdnUser) await cleanupDirtyTables(userId, allSkills, allTools)
 
 	const projects = await getProjects()
 	const allCategories = await getCategories()
