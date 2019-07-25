@@ -42,7 +42,7 @@ const getProjects = () => endpoint(listProjects).then(res => res.data.listProjec
 
 const getProjectSkills = () => endpoint(listProjectSkills).then(res => res.data.listProjectSkills.items)
 
-const getUserData = id => read(getUser, { id }).then(res => res.data.getUser)
+const getUserData = () => read(getUser, { id: userId }).then(res => res.data.getUser)
 
 // This method checks to see if dirty tables exist and cleans them
 async function cleanupDirtyTables(userId, allSkills, allTools) {
@@ -118,24 +118,45 @@ function renameUserId(oldId: string, newId: string) {
 
 /**
  * Get all project portfolio data for specified user
- * @param cdnUser optional. user specified with sunburst cdn
  */
-export async function getAllData(cdnUser?: string) {
+export async function getAllData() {
 	// If working with local data
 	if (process.env.REACT_APP_USE_LOCAL_DATA) {
 		return getSampleData()
 	}
 
-	userId = cdnUser || (await getUserId())
+	userId = await getUserId()
 
 	const allSkills = await getSkills()
 	const allTools = await getTools()
 
-	const userData = (await getUserData(userId)) || (await update(createUser, { id: userId }))
-	if (userData.dirtyTables && !cdnUser) await cleanupDirtyTables(userId, allSkills, allTools)
+	const userData = (await getUserData()) || (await update(createUser, { id: userId }))
+	if (userData.dirtyTables) await cleanupDirtyTables(userId, allSkills, allTools)
 
 	const projects = await getProjects()
 	const allCategories = await getCategories()
 
 	return { userId, projects, allSkills, allTools, allCategories }
+}
+
+/**
+ * Get all project portfolio data for specified user
+ * @param cdnUser user specified with sunburst cdn
+ */
+export async function getSunburstDataWithApi(cdnUser: string) {
+	userId = cdnUser
+	let userData = null
+	try {
+		userData = await getUserData()
+	} catch (err) {
+		throw new Error(err.errors) // wrong API or AWS issue
+	}
+
+	if (!userData) throw new Error('Incorrect user id')
+
+	const allSkills = await getSkills()
+	const projects = await getProjects()
+	const allCategories = await getCategories()
+
+	return { projects, allSkills, allCategories }
 }
