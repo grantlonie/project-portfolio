@@ -5,16 +5,13 @@ import '@aws-amplify/auth'
 
 // import './index.css'
 import aws_exports from './aws-exports'
-import { getAllData } from './js/apiStartupMethods'
+import { getSunburstDataWithApi } from './js/apiStartupMethods'
 import Sunburst from './components/Sunburst'
 
-// in this way you are only importing Auth and configuring it.
-Amplify.configure(aws_exports)
-
 function SunburstWrapper({ userId }) {
-	const [data, setData] = useState([])
+	const [data, setData] = useState({ projects: [], allCategories: [], allSkills: [] })
 	useEffect(() => {
-		getAllData(userId).then(data => {
+		getSunburstDataWithApi(userId).then(data => {
 			setData(data)
 		})
 	}, [])
@@ -22,6 +19,14 @@ function SunburstWrapper({ userId }) {
 	return <Sunburst {...data} />
 }
 
-export function render(userId, element) {
+export function render(userId, apiKey, element) {
+	const apiConfig = {
+		...aws_exports,
+		aws_appsync_authenticationType: 'API_KEY',
+		aws_appsync_apiKey: apiKey,
+	}
+
+	Amplify.configure(apiConfig)
+
 	ReactDOM.render(<SunburstWrapper userId={userId} />, document.getElementById(element))
 }
