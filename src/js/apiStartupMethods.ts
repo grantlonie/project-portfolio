@@ -122,7 +122,7 @@ function renameUserId(oldId: string, newId: string) {
 export async function getAllData() {
 	// If working with local data
 	if (process.env.REACT_APP_USE_LOCAL_DATA) {
-		return getSampleData()
+		return { user: { id: 'local' }, ...getSampleData() }
 	}
 
 	userId = await getUserId()
@@ -130,13 +130,13 @@ export async function getAllData() {
 	const allSkills = await getSkills()
 	const allTools = await getTools()
 
-	const userData = (await getUserData()) || (await update(createUser, { id: userId }))
-	if (userData.dirtyTables) await cleanupDirtyTables(userId, allSkills, allTools)
+	const user = (await getUserData()) || (await update(createUser, { id: userId }))
+	if (user.dirtyTables) await cleanupDirtyTables(userId, allSkills, allTools)
 
 	const projects = await getProjects()
 	const allCategories = await getCategories()
 
-	return { userId, projects, allSkills, allTools, allCategories }
+	return { user, projects, allSkills, allTools, allCategories }
 }
 
 /**
@@ -145,14 +145,14 @@ export async function getAllData() {
  */
 export async function getSunburstDataWithApi(cdnUser: string) {
 	userId = cdnUser
-	let userData = null
+	let user = null
 	try {
-		userData = await getUserData()
+		user = await getUserData()
 	} catch (err) {
 		throw new Error(err.errors) // wrong API or AWS issue
 	}
 
-	if (!userData) throw new Error('Incorrect user id')
+	if (!user) throw new Error('Incorrect user id')
 
 	const allSkills = await getSkills()
 	const projects = await getProjects()

@@ -42,7 +42,7 @@ const deleteToolFromStore = (toolId: ToolItem['id']) => ({ type: 'REMOVE_TOOL', 
 export const addTool = (name: string) => (dispatch, getState) =>
 	new Promise(resolve => {
 		dispatch(showSpinner(true))
-		const userId = getState().userId
+		const userId = getState().user.id
 
 		update(createTool, { name, userId }).then(({ data: { createTool } }) => {
 			dispatch(addToolToStore(createTool))
@@ -65,7 +65,7 @@ export const updateTools = (tools: ToolToUpdate[]) => dispatch => {
 export const removeTool = id => (dispatch, getState: GetState) => {
 	update(deleteTool, { id }).then(({ data: { deleteTool } }) => {
 		dispatch(deleteToolFromStore(deleteTool.id))
-		update(updateUser, { id: getState().userId, dirtyTables: true })
+		update(updateUser, { id: getState().user.id, dirtyTables: true })
 	})
 }
 
@@ -112,7 +112,7 @@ const addProjectSkillToStore = (skill: ProjectSkillItem) => ({ type: 'ADD_SKILL_
 
 export const addProjectSkill = (projectId: string, skillId: string) => (dispatch, getState) =>
 	new Promise(resolve => {
-		const userId = getState().userId
+		const userId = getState().user.id
 
 		dispatch(showSpinner(true))
 		update(createProjectSkill, { userId, skillId, projectSkillProjectId: projectId }).then(({ data: { createProjectSkill } }) => {
@@ -151,7 +151,7 @@ const removeCategoryFromStore = (categoryId: CategoryItem['id']) => ({ type: 'RE
 
 export const addCategory = (name: string) => (dispatch, getState) => {
 	dispatch(showSpinner(true))
-	const userId = getState().userId
+	const userId = getState().user.id
 
 	update(createCategory, { name, userId }).then(({ data: { createCategory } }) => {
 		dispatch(addCategoryToStore(createCategory))
@@ -173,7 +173,7 @@ export const updateCategories = (categories: CategoryToUpdate[]) => dispatch => 
 export const removeCategory = id => (dispatch, getState: GetState) => {
 	update(deleteCategory, { id }).then(({ data: { deleteCategory } }) => {
 		dispatch(removeCategoryFromStore(deleteCategory.id))
-		update(updateUser, { id: getState().userId, dirtyTables: true })
+		update(updateUser, { id: getState().user.id, dirtyTables: true })
 	})
 }
 
@@ -190,7 +190,7 @@ const removeSkillFromProject = (skill: SkillItem) => ({ type: 'REMOVE_SKILL_FROM
 export const addSkill = (name: string) => (dispatch, getState) =>
 	new Promise(resolve => {
 		dispatch(showSpinner(true))
-		const userId = getState().userId
+		const userId = getState().user.id
 
 		update(createSkill, { name, userId }).then(({ data: { createSkill } }) => {
 			resolve(createSkill)
@@ -220,7 +220,7 @@ export const updateSkills = (skills: SkillToUpdate[], nullCategoryId: string) =>
 export const removeSkill = id => (dispatch, getState: GetState) => {
 	update(deleteSkill, { id }).then(({ data: { deleteSkill } }) => {
 		dispatch(removeSkillFromStore(deleteSkill.id))
-		update(updateUser, { id: getState().userId, dirtyTables: true })
+		update(updateUser, { id: getState().user.id, dirtyTables: true })
 	})
 }
 
@@ -262,7 +262,7 @@ const removeProjectFromStore = (projectId: ProjectItem['id']) => ({ type: 'REMOV
 export const addProject = () => (dispatch, getState) =>
 	new Promise(resolve => {
 		dispatch(showSpinner(true))
-		const { userId } = getState()
+		const userId = getState().user.id
 
 		const date = new Date()
 		const year = date.getFullYear()

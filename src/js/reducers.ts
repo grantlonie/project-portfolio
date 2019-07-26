@@ -1,9 +1,9 @@
 import produce from 'immer'
 
-import { ProjectItem, CategoryItem, SkillItem, ToolItem } from '../types'
+import { ProjectItem, CategoryItem, SkillItem, ToolItem, User } from '../types'
 
 const initialState = {
-	userId: null,
+	user: null,
 	projects: [],
 	allCategories: [],
 	allSkills: [],
@@ -12,7 +12,7 @@ const initialState = {
 }
 
 export interface State {
-	userId: string
+	user: User
 	projects: ProjectItem[]
 	allCategories: CategoryItem[]
 	allSkills: SkillItem[]
@@ -81,7 +81,7 @@ const rootReducer = (state: State = initialState, action) =>
 				return
 
 			case 'UPDATE_ALL_DATA':
-				draft.userId = action.userId
+				draft.user = action.user
 				draft.projects = action.projects
 				draft.allSkills = action.allSkills
 				draft.allCategories = action.allCategories

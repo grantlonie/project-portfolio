@@ -5,8 +5,10 @@ import {
 	CreateProjectMutation,
 	ListToolsQuery,
 	ListProjectSkillsQuery,
+	CreateUserInput,
 } from './API'
 
+export type User = CreateUserInput
 export type ProjectItem = ListProjectsQuery['listProjects']['items'][0]
 export type ProjectSkillItem = ListProjectSkillsQuery['listProjectSkills']['items'][0]
 export type SkillItem = ListSkillsQuery['listSkills']['items'][0]
